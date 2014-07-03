@@ -1,0 +1,28 @@
+{
+    "name": "digbang/security",
+    "description": "",
+    "authors": [
+        {
+	    "name": "Guido Contreras Woda",
+            "email": "gcontreras@digbang.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "illuminate/support": "~4.1",
+        "illuminate/routing": "~4.1",
+	    "cartalyst/sentry": "~2.1"
+    },
+	"require-dev": {
+		"phpspec/phpspec": "~2.0"
+	},
+    "autoload": {
+        "classmap": [
+            "src/migrations"
+        ],
+        "psr-0": {
+            "Digbang\\Security\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
