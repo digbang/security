@@ -24,14 +24,14 @@ class SecureUrl
 	 * @throws \Digbang\Security\Exceptions\PermissionException
 	 */
 	public function route($route, $permission, $parameters = [])
-    {
+	{
 	    if (! $this->user->hasPermission($permission))
 	    {
 		    throw new PermissionException("Current user does not have required permission: $permission");
 	    }
 
-        return $this->url->route($route, $parameters);
-    }
+	    return $this->url->route($route, $parameters);
+	}
 
 	/**
 	 * @param string $action
@@ -42,14 +42,14 @@ class SecureUrl
 	 * @throws \Digbang\Security\Exceptions\PermissionException
 	 */
 	public function action($action, $permission, $parameters = [])
-    {
+	{
 	    if (! $this->user->hasPermission($permission))
 	    {
 		    throw new PermissionException("Current user does not have required permission: $permission");
 	    }
 
 	    return $this->url->action($action, $parameters);
-    }
+	}
 
 	/**
 	 * @param string $path
@@ -61,12 +61,12 @@ class SecureUrl
 	 * @throws \Digbang\Security\Exceptions\PermissionException
 	 */
 	public function may($path, $permission, $extra = array(), $secure = null)
-    {
+	{
 	    if (! $this->user->hasPermission($permission))
 	    {
 		    throw new PermissionException("Current user does not have required permission: $permission");
 	    }
 
 	    return $this->url->to($path, $extra, $secure);
-    }
+	}
 }
