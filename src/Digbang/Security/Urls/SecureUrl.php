@@ -15,6 +15,14 @@ class SecureUrl
 		$this->url = $url;
 	}
 
+	/**
+	 * @param string $route
+	 * @param string $permission
+	 * @param array  $parameters
+	 *
+	 * @return string
+	 * @throws \Digbang\Security\Exceptions\PermissionException
+	 */
 	public function route($route, $permission, $parameters = [])
     {
 	    if (! $this->user->hasPermission($permission))
@@ -25,7 +33,15 @@ class SecureUrl
         return $this->url->route($route, $parameters);
     }
 
-    public function action($action, $permission, $parameters = [])
+	/**
+	 * @param string $action
+	 * @param string $permission
+	 * @param array  $parameters
+	 *
+	 * @return string
+	 * @throws \Digbang\Security\Exceptions\PermissionException
+	 */
+	public function action($action, $permission, $parameters = [])
     {
 	    if (! $this->user->hasPermission($permission))
 	    {
@@ -35,7 +51,16 @@ class SecureUrl
 	    return $this->url->action($action, $parameters);
     }
 
-    public function may($path, $permission, $extra = array(), $secure = null)
+	/**
+	 * @param string $path
+	 * @param string $permission
+	 * @param array  $extra
+	 * @param null   $secure
+	 *
+	 * @return string
+	 * @throws \Digbang\Security\Exceptions\PermissionException
+	 */
+	public function may($path, $permission, $extra = array(), $secure = null)
     {
 	    if (! $this->user->hasPermission($permission))
 	    {
