@@ -1,6 +1,6 @@
 {
 	"name": "digbang/security",
-	"description": "",
+	"description": "Security package for new laravel projects.",
 	"authors": [
 		{
 			"name": "Guido Contreras Woda",
