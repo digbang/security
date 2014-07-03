@@ -20,9 +20,9 @@ class SecureUrlSpec extends ObjectBehavior
 		$user->hasPermission(Argument::exact($this->validPermission))->willReturn(true);
 		$user->hasPermission(Argument::not($this->validPermission))->willReturn(false);
 
-		$url->route(Argument::any(), Argument::any())->willReturn($this->url);
-		$url->action(Argument::any(), Argument::any())->willReturn($this->url);
-		$url->to(Argument::any(), Argument::any(), Argument::any())->willReturn($this->url);
+		$url->route(  Argument::cetera() )->willReturn($this->url);
+		$url->action( Argument::cetera() )->willReturn($this->url);
+		$url->to(     Argument::cetera() )->willReturn($this->url);
 
 		$this->beConstructedWith($user, $url);
 	}
