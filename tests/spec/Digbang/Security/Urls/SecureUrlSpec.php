@@ -27,10 +27,10 @@ class SecureUrlSpec extends ObjectBehavior
 		$this->beConstructedWith($user, $url);
 	}
 
-    function it_is_initializable()
-    {
-        $this->shouldHaveType('Digbang\Security\Urls\SecureUrl');
-    }
+	function it_is_initializable()
+	{
+	    $this->shouldHaveType('Digbang\Security\Urls\SecureUrl');
+	}
 
 	function it_should_make_urls_by_route_if_the_user_has_a_permission()
 	{
