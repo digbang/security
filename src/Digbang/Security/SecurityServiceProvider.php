@@ -1,5 +1,6 @@
 <?php namespace Digbang\Security;
 
+use Digbang\Security\Commands\InstallCommand;
 use Illuminate\Support\ServiceProvider;
 
 class SecurityServiceProvider extends ServiceProvider {
@@ -24,6 +25,7 @@ class SecurityServiceProvider extends ServiceProvider {
 		$this->app->register('Cartalyst\Sentry\SentryServiceProvider');
 
 		$this->registerUser();
+		$this->registerCommands();
 	}
 
 	/**
@@ -41,5 +43,14 @@ class SecurityServiceProvider extends ServiceProvider {
 		$this->app->bind('Cartalyst\Sentry\Users\UserInterface', function($app){
 			return $app['sentry']->getUser();
 		});
+	}
+	protected function registerCommands()
+	{
+		$this->app['security.install'] = $this->app->share(function ($app)
+		{
+			return new InstallCommand();
+		});
+
+		$this->commands('security.install');
 	}
 }
