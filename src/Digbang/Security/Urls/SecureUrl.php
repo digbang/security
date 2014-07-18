@@ -11,11 +11,11 @@ class SecureUrl
 	protected $url;
 	protected $permissionRepository;
 
-	public function __construct(UserInterface $user, UrlGenerator $url, PermissionRepositoryInterface $permissionRepository)
+	public function __construct(UrlGenerator $url, PermissionRepositoryInterface $permissionRepository, UserInterface $user = null)
 	{
-		$this->user = $user;
 		$this->url = $url;
 		$this->permissionRepository = $permissionRepository;
+		$this->user = $user;
 	}
 
 	/**
@@ -29,12 +29,12 @@ class SecureUrl
 	{
 		$permission = $this->permissionRepository->getForRoute($route);
 
-	    if (! $this->user->hasPermission($permission))
+	    if (! $this->hasPermission($permission))
 	    {
 		    throw new PermissionException("Current user does not have required permission: $permission");
 	    }
 
-	    return $this->url->route($route, $parameters);;
+	    return $this->url->route($route, $parameters);
 	}
 
 	/**
@@ -48,7 +48,7 @@ class SecureUrl
 	{
 		$permission = $this->permissionRepository->getForAction($action);
 
-	    if (! $this->user->hasPermission($permission))
+	    if (! $this->hasPermission($permission))
 	    {
 		    throw new PermissionException("Current user does not have required permission: $permission");
 	    }
@@ -68,11 +68,26 @@ class SecureUrl
 	{
 		$permission = $this->permissionRepository->getForPath($path);
 
-	    if (! $this->user->hasPermission($permission))
+	    if (! $this->hasPermission($permission))
 	    {
 		    throw new PermissionException("Current user does not have required permission: $permission");
 	    }
 
 	    return $this->url->to($path, $extra, $secure);
+	}
+
+	protected function hasPermission($permission)
+	{
+		if (!$permission)
+		{
+			return true;
+		}
+
+		if (!$this->user)
+		{
+			return false;
+		}
+
+		return $this->user->hasPermission($permission);
 	}
 }
