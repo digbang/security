@@ -1,6 +1,6 @@
-<?php namespace Digbang\Security\Contracts;
+<?php namespace Digbang\Security\Permissions;
 
-interface PermissionRepositoryInterface
+interface PermissionRepository
 {
 	/**
 	 * @param  string $route
@@ -19,4 +19,10 @@ interface PermissionRepositoryInterface
 	 * @return string The permission matching the path, if it needs one.
 	 */
 	public function getForPath($path);
+
+	/**
+	 * List all permissions.
+	 * @return array
+	 */
+	public function all();
 }
