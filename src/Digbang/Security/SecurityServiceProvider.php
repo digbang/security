@@ -5,13 +5,6 @@ use Illuminate\Support\ServiceProvider;
 class SecurityServiceProvider extends ServiceProvider {
 
 	/**
-	 * Indicates if loading of the provider is deferred.
-	 *
-	 * @var bool
-	 */
-	protected $defer = false;
-
-	/**
 	 * Bootstrap the application events.
 	 *
 	 * @return void
@@ -28,7 +21,9 @@ class SecurityServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		//
+		$this->app->register('Cartalyst\Sentry\SentryServiceProvider');
+
+		$this->registerUser();
 	}
 
 	/**
@@ -38,7 +33,13 @@ class SecurityServiceProvider extends ServiceProvider {
 	 */
 	public function provides()
 	{
-		return array();
+		return ['digbang/security', 'cartalyst/sentry'];
 	}
 
+	protected function registerUser()
+	{
+		$this->app->bind('Cartalyst\Sentry\Users\UserInterface', function($app){
+			return $app['sentry']->getUser();
+		});
+	}
 }
