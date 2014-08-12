@@ -16,7 +16,7 @@ return [
 		'model'           => 'Cartalyst\Sentry\Users\Eloquent\User',
 		'login_attribute' => 'email'
 	],
-	'user_groups_pivot_table' => 'user_group',
+	'user_groups_pivot_table' => 'users_groups',
 	'throttling' => [
 		'enabled'         => false,
 		'model'           => 'Cartalyst\Sentry\Throttling\Eloquent\Throttle',
