@@ -1,6 +1,6 @@
 <?php namespace Digbang\Security;
 
-use Digbang\Security\Commands\InstallCommand;
+use Digbang\Security\Commands\MigrationsCommand;
 use Illuminate\Support\ServiceProvider;
 
 class SecurityServiceProvider extends ServiceProvider {
@@ -46,11 +46,11 @@ class SecurityServiceProvider extends ServiceProvider {
 	}
 	protected function registerCommands()
 	{
-		$this->app['security.install'] = $this->app->share(function ($app)
+		$this->app['security.migrations'] = $this->app->share(function ($app)
 		{
-			return new InstallCommand();
+			return new MigrationsCommand();
 		});
 
-		$this->commands('security.install');
+		$this->commands('security.migrations');
 	}
 }
