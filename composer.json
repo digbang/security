@@ -13,7 +13,8 @@
 		"illuminate/routing": "~4.2",
 		"illuminate/database": "~4.2",
 		"illuminate/console": "~4.2",
-		"cartalyst/sentry": "~2.1"
+		"cartalyst/sentry": "~2.1",
+		"doctrine/dbal": "~2.4"
 	},
 	"require-dev": {
 		"phpspec/phpspec": "~2.0"
