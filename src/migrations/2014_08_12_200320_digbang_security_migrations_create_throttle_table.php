@@ -113,7 +113,7 @@ class DigbangSecurityMigrationsCreateThrottleTable extends Migration
 			// We'll need to ensure that MySQL uses the InnoDB engine to
 			// support the indexes, other engines aren't affected.
 			$table->engine = 'InnoDB';
-			$doctrineTable = Schema::getConnection()->getDoctrineSchemaManager()->listTableDetails('groups');
+			$doctrineTable = Schema::getConnection()->getDoctrineSchemaManager()->listTableDetails('throttle');
 
 			if (! $doctrineTable->hasIndex('throttle_user_id_index'))
 			{
