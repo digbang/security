@@ -23,7 +23,7 @@ class SecureUrl
 	 * @param array  $parameters
 	 *
 	 * @return string
-	 * @throws \Digbang\Security\Exceptions\PermissionException
+	 * @throws \Digbang\Security\Permissions\Exceptions\PermissionException
 	 */
 	public function route($route, $parameters = [])
 	{
@@ -42,7 +42,7 @@ class SecureUrl
 	 * @param array  $parameters
 	 *
 	 * @return string
-	 * @throws \Digbang\Security\Exceptions\PermissionException
+	 * @throws \Digbang\Security\Permissions\Exceptions\PermissionException
 	 */
 	public function action($action, $parameters = [])
 	{
@@ -62,7 +62,7 @@ class SecureUrl
 	 * @param null   $secure
 	 *
 	 * @return string
-	 * @throws \Digbang\Security\Exceptions\PermissionException
+	 * @throws \Digbang\Security\Permissions\Exceptions\PermissionException
 	 */
 	public function may($path, $extra = array(), $secure = null)
 	{
