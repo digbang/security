@@ -26,6 +26,7 @@ class SecurityServiceProvider extends ServiceProvider {
 
 		$this->registerUser();
 		$this->registerCommands();
+		$this->registerPermissionRepository();
 	}
 
 	/**
@@ -52,5 +53,12 @@ class SecurityServiceProvider extends ServiceProvider {
 		});
 
 		$this->commands('security.migrations');
+	}
+
+	protected function registerPermissionRepository()
+	{
+		$this->app->bind('Digbang\\Security\\Permissions\\PermissionRepository', function($app){
+			return $app->make(\Config::get('security::permissions.repository'));
+		});
 	}
 }
