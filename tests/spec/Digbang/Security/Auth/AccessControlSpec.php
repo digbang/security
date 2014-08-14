@@ -117,4 +117,40 @@ class AccessControlSpec extends ObjectBehavior
 
 		$this->isLogged()->shouldReturn(false);
 	}
+
+	function it_should_check_if_a_reset_password_code_is_valid_for_a_given_user(Sentry $sentry, UserInterface $user)
+	{
+		$id = 1;
+		$sentry->findUserById($id)->shouldBeCalled()->willReturn($user);
+
+		$resetCode = 'a.reset.code';
+		$user->checkResetPasswordCode($resetCode)->shouldBeCalled()->willReturn(true);
+		$this->beConstructedWith($sentry);
+
+		$this->checkResetPasswordCode($id, $resetCode)->shouldReturn(true);
+	}
+
+	function it_should_check_if_a_reset_password_code_is_invalid_for_a_given_user(Sentry $sentry, UserInterface $user)
+	{
+		$id = 1;
+		$sentry->findUserById($id)->shouldBeCalled()->willReturn($user);
+
+		$resetCode = 'a.reset.code';
+		$user->checkResetPasswordCode($resetCode)->shouldBeCalled()->willReturn(false);
+		$this->beConstructedWith($sentry);
+
+		$this->checkResetPasswordCode($id, $resetCode)->shouldReturn(false);
+	}
+
+	function it_should_squeak_if_a_reset_password_code_is_given_for_an_invalid_user(Sentry $sentry)
+	{
+		$id = 'clearly-not-a-valid-id';
+		$sentry->findUserById($id)->shouldBeCalled()->willThrow('Cartalyst\Sentry\Users\UserNotFoundException');
+
+		$resetCode = 'a.reset.code';
+		$this->beConstructedWith($sentry);
+
+		$this->shouldThrow('Cartalyst\Sentry\Users\UserNotFoundException')
+			->duringCheckResetPasswordCode($id, $resetCode);
+	}
 }

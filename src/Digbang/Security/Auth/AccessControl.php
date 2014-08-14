@@ -53,4 +53,14 @@ class AccessControl
     {
         return $this->sentry->check();
     }
+
+	public function checkResetPasswordCode($id, $resetCode)
+	{
+		if ($user = $this->sentry->findUserById($id))
+		{
+			return $user->checkResetPasswordCode($resetCode);
+		}
+
+		return false;
+	}
 }
