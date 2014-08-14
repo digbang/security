@@ -101,4 +101,20 @@ class AccessControlSpec extends ObjectBehavior
 		$this->activate($code)
 			->shouldReturn(false);
 	}
+
+	function it_should_know_if_a_user_is_logged(Sentry $sentry)
+	{
+		$sentry->check()->shouldBeCalled()->willReturn(true);
+		$this->beConstructedWith($sentry);
+
+		$this->isLogged()->shouldReturn(true);
+	}
+
+	function it_should_know_if_a_user_isnt_logged(Sentry $sentry)
+	{
+		$sentry->check()->shouldBeCalled()->willReturn(false);
+		$this->beConstructedWith($sentry);
+
+		$this->isLogged()->shouldReturn(false);
+	}
 }

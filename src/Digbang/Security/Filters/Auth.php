@@ -1,26 +1,37 @@
 <?php namespace Digbang\Security\Filters;
 
-use Cartalyst\Sentry\Sentry;
+use Digbang\Security\Auth\AccessControl;
 use Digbang\Security\Urls\SecureUrl;
 use Illuminate\Routing\Redirector;
 use Illuminate\Routing\Route;
 
 class Auth
 {
+	/**
+	 * @var \Illuminate\Routing\Redirector
+	 */
 	protected $redirector;
-	protected $sentry;
+
+	/**
+	 * @var \Digbang\Security\Auth\AccessControl
+	 */
+	protected $accessControl;
+
+	/**
+	 * @var \Digbang\Security\Urls\SecureUrl
+	 */
 	protected $secureUrl;
 
-	public function __construct(Redirector $redirector, Sentry $sentry, SecureUrl $secureUrl)
+	public function __construct(Redirector $redirector, AccessControl $accessControl, SecureUrl $secureUrl)
 	{
-		$this->redirector   = $redirector;
-		$this->sentry       = $sentry;
-		$this->secureUrl = $secureUrl;
+		$this->redirector    = $redirector;
+		$this->accessControl = $accessControl;
+		$this->secureUrl     = $secureUrl;
 	}
 
 	public function logged()
 	{
-		if (!$this->sentry->check())
+		if (!$this->accessControl->isLogged())
 		{
 			return $this->redirector->guest($this->secureUrl->route('backoffice.auth.login'));
 		}

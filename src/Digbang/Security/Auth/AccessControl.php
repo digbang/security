@@ -48,4 +48,9 @@ class AccessControl
 
 	    return false;
     }
+
+    public function isLogged()
+    {
+        return $this->sentry->check();
+    }
 }
