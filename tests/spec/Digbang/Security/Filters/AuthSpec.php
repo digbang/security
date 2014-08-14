@@ -4,6 +4,7 @@ use Cartalyst\Sentry\Sentry;
 use Digbang\Security\Permissions\Exceptions\PermissionException;
 use Digbang\Security\Urls\SecureUrl;
 use Illuminate\Routing\Redirector;
+use Illuminate\Routing\Route;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -40,26 +41,26 @@ class AuthSpec extends ObjectBehavior
 		$this->logged()->shouldReturn(null);
 	}
 
-	function it_should_squeak_when_user_doesnt_have_permissions(Redirector $redirector, Sentry $sentry, SecureUrl $secureUrl)
+	function it_should_squeak_when_user_doesnt_have_permissions(Redirector $redirector, Sentry $sentry, SecureUrl $secureUrl, Route $route)
 	{
 		$sentry->check()->willReturn(true);
 
-		$secureUrl->may(Argument::cetera())->willThrow(new PermissionException());
+		$secureUrl->action(Argument::cetera())->willThrow(new PermissionException());
 
 		$this->beConstructedWith($redirector, $sentry, $secureUrl);
 
 		$this->shouldThrow('Digbang\Security\Permissions\Exceptions\PermissionException')
-			->duringWithPermissions('some.crazy.route');
+			->duringWithPermissions($route);
 	}
 
-	function it_should_let_user_with_permissions_pass(Redirector $redirector, Sentry $sentry, SecureUrl $secureUrl)
+	function it_should_let_user_with_permissions_pass(Redirector $redirector, Sentry $sentry, SecureUrl $secureUrl, Route $route)
 	{
 		$sentry->check()->willReturn(true);
 
-		$secureUrl->may(Argument::cetera())->willReturn('a/valid/url');
+		$secureUrl->action(Argument::cetera())->willReturn('a/valid/url');
 
 		$this->beConstructedWith($redirector, $sentry, $secureUrl);
 
-		$this->withPermissions('some.crazy.route')->shouldReturn(null);
+		$this->withPermissions($route)->shouldReturn(null);
 	}
 }
