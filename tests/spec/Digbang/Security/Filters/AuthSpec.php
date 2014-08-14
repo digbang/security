@@ -10,6 +10,7 @@ use Prophecy\Argument;
 
 /**
  * Class AuthSpec
+ * @mixin \PhpSpec\Wrapper\Subject
  * @mixin \Digbang\Security\Filters\Auth
  * @package spec\Digbang\Security\Filters
  */
