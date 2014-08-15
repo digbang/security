@@ -1,12 +1,12 @@
-@extends("l4-backoffice::emails.layout")
+@extends("security::emails.layout")
 
 @section('title')
-	{{ Lang::get('l4-backoffice::emails.activation.title', ['name' => $name]) }}
+	{{ Lang::get('security::emails.activation.title', ['name' => $name]) }}
 @stop
 
 @section('body')
 	<p>
-		{{ Lang::get('l4-backoffice::emails.activation.text') }}:
+		{{ Lang::get('security::emails.activation.text') }}:
 		<a href="{{ $link }}">{{ $link }}</a>
 	</p>
 @stop
