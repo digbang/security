@@ -31,6 +31,9 @@ class EmailerSpec extends ObjectBehavior
 
 		$this->beConstructedWith($mailer, $config);
 
+		$user->name = 'Some Username';
+		$user->email = 'some@email.com';
+
 		$this->sendActivation($user, 'http://an/activation/url');
 	}
 
@@ -43,6 +46,9 @@ class EmailerSpec extends ObjectBehavior
 		$config->get('security::emails.from')->shouldBeCalled();
 
 		$this->beConstructedWith($mailer, $config);
+
+		$user->name = 'Some Username';
+		$user->email = 'some@email.com';
 
 		$this->sendPasswordReset($user, 'http://the/password/reset/link');
 	}
