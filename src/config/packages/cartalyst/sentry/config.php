@@ -27,7 +27,7 @@ return [
 	|
 	*/
 
-	'hasher' => Config::get('l4-backoffice::auth.hasher'),
+	'hasher' => Config::get('security::auth.hasher'),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -49,7 +49,7 @@ return [
 		| Supported: string
 		|
 		*/
-		'key' => Config::get('l4-backoffice::auth.cookie.key'),
+		'key' => Config::get('security::auth.cookie.key'),
 
  	],
 
@@ -74,7 +74,7 @@ return [
 		|
 		*/
 
-		'model' => Config::get('l4-backoffice::auth.groups.model'),
+		'model' => Config::get('security::auth.groups.model'),
 
 	],
 
@@ -99,7 +99,7 @@ return [
 		|
 		*/
 
-		'model' => Config::get('l4-backoffice::auth.users.model'),
+		'model' => Config::get('security::auth.users.model'),
 
 		/*
 		|--------------------------------------------------------------------------
@@ -111,7 +111,7 @@ return [
 		| even subclassing the model, simply by specifying the attribute below.
 		|
 		*/
-		'login_attribute' => Config::get('l4-backoffice::auth.users.login_attribute')
+		'login_attribute' => Config::get('security::auth.users.login_attribute')
 	],
 
 	/*
@@ -126,7 +126,7 @@ return [
 	|
 	*/
 
-	'user_groups_pivot_table' => Config::get('l4-backoffice::auth.user_groups_pivot_table'),
+	'user_groups_pivot_table' => Config::get('security::auth.user_groups_pivot_table'),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -151,7 +151,7 @@ return [
 		|
 		*/
 
-		'enabled' => Config::get('l4-backoffice::auth.throttling.enabled'),
+		'enabled' => Config::get('security::auth.throttling.enabled'),
 
 		/*
 		|--------------------------------------------------------------------------
@@ -163,7 +163,7 @@ return [
 		|
 		*/
 
-		'model' => Config::get('l4-backoffice::auth.throttling.model'),
+		'model' => Config::get('security::auth.throttling.model'),
 
 		/*
 		|--------------------------------------------------------------------------
@@ -177,7 +177,7 @@ return [
 		|
 		*/
 
-		'attempt_limit' => Config::get('l4-backoffice::auth.throttling.attempt_limit'),
+		'attempt_limit' => Config::get('security::auth.throttling.attempt_limit'),
 
 		/*
 		|--------------------------------------------------------------------------
@@ -191,6 +191,6 @@ return [
 		|
 		*/
 
-		'suspension_time' => Config::get('l4-backoffice::auth.throttling.suspension_time')
+		'suspension_time' => Config::get('security::auth.throttling.suspension_time')
 	]
 ];
