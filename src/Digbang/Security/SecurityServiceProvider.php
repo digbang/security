@@ -13,6 +13,16 @@ class SecurityServiceProvider extends ServiceProvider {
 	public function boot()
 	{
 		$this->package('digbang/security');
+
+		$this->overrideSentry();
+	}
+
+	protected function overrideSentry()
+	{
+		foreach ($this->app['config']['security::auth'] as $key => $val)
+		{
+			$this->app['config']["cartalyst/sentry::$key"] = $val;
+		}
 	}
 
 	/**
