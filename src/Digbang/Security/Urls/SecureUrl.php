@@ -88,6 +88,6 @@ class SecureUrl
 			return false;
 		}
 
-		return $this->user->hasPermission($permission);
+		return $this->user->hasAccess($permission);
 	}
 }
