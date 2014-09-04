@@ -33,7 +33,7 @@ class Auth
 	{
 		if (!$this->accessControl->isLogged())
 		{
-			return $this->redirector->guest($this->secureUrl->route('backoffice.auth.login'));
+			return $this->redirector->guest(route('backoffice.auth.login'));
 		}
 	}
 
