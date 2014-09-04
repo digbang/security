@@ -1,4 +1,5 @@
 <?php
 return [
-	'repository' => 'Digbang\\Security\\Permissions\\InsecurePermissionRepository'
+	'repository' => 'Digbang\\Security\\Permissions\\InsecurePermissionRepository',
+	'prefix'     => 'backoffice'
 ];
