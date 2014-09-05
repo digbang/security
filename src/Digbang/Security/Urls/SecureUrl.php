@@ -1,21 +1,25 @@
 <?php namespace Digbang\Security\Urls;
 
-use Cartalyst\Sentry\Users\UserInterface;
+use Cartalyst\Sentry\Sentry;
 use Digbang\Security\Permissions\PermissionRepository;
 use Digbang\Security\Permissions\Exceptions\PermissionException;
 use Illuminate\Routing\UrlGenerator;
 
+/**
+ * Class SecureUrl
+ * @package Digbang\Security\Urls
+ */
 class SecureUrl
 {
-	protected $user;
+	protected $sentry;
 	protected $url;
 	protected $permissionRepository;
 
-	public function __construct(UrlGenerator $url, PermissionRepository $permissionRepository, UserInterface $user = null)
+	public function __construct(UrlGenerator $url, PermissionRepository $permissionRepository, Sentry $sentry)
 	{
 		$this->url = $url;
 		$this->permissionRepository = $permissionRepository;
-		$this->user = $user;
+		$this->sentry = $sentry;
 	}
 
 	/**
@@ -83,11 +87,20 @@ class SecureUrl
 			return true;
 		}
 
-		if (!$this->user)
+		if (! $user = $this->sentry->getUser())
 		{
 			return false;
 		}
 
-		return $this->user->hasAccess($permission);
+		return $user->hasAccess($permission);
+	}
+
+	/**
+	 * Allow access to the URL object
+	 * @return UrlGenerator
+	 */
+	public function insecure()
+	{
+		return $this->url;
 	}
 }

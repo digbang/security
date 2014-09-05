@@ -34,7 +34,6 @@ class SecurityServiceProvider extends ServiceProvider {
 	{
 		$this->app->register('Cartalyst\Sentry\SentryServiceProvider');
 
-		$this->registerUser();
 		$this->registerCommands();
 		$this->registerPermissionRepository();
 	}
@@ -49,12 +48,6 @@ class SecurityServiceProvider extends ServiceProvider {
 		return ['digbang/security', 'cartalyst/sentry'];
 	}
 
-	protected function registerUser()
-	{
-		$this->app->bind('Cartalyst\Sentry\Users\UserInterface', function($app){
-			return $app['sentry']->getUser();
-		});
-	}
 	protected function registerCommands()
 	{
 		$this->app['security.migrations'] = $this->app->share(function ($app)

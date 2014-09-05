@@ -24,8 +24,10 @@ class AuthSpec extends ObjectBehavior
 
 	function it_should_filter_unlogged_users(Redirector $redirector, AccessControl $accessControl, SecureUrl $secureUrl)
 	{
-		$accessControl->isLogged()->willReturn(false);
-		$secureUrl->route(Argument::cetera())->willReturn('some/url');
+		$accessControl->isLogged()->shouldBeCalled()->willReturn(false);
+		$secureUrl->insecure()->shouldBeCalled()->willReturn($redirector);
+
+		$redirector->route(Argument::cetera())->willReturn('some/url');
 		$redirector->guest('some/url')->willReturn('aRedirectObject');
 
 		$this->beConstructedWith($redirector, $accessControl, $secureUrl);
