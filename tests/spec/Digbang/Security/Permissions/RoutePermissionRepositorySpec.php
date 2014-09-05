@@ -20,20 +20,61 @@ class RoutePermissionRepositorySpec extends ObjectBehavior
         $this->shouldHaveType('Digbang\Security\Permissions\RoutePermissionRepository');
     }
 
-	function it_should_return_the_same_route_for_route_permissions(Router $router, Repository $config)
+	function it_should_return_the_same_route_for_route_permissions(Router $router, Repository $config, Route $routeA, Route $routeB, Route $routeC)
 	{
-		$config->get('security::permissions.prefix')->willReturn('a');
+		$config->get('security::permissions.prefix')->willReturn('the');
+		$aValidRoute = 'the.valid.route';
+
+		$routeA->getName()->shouldBeCalled()->willReturn('the.invalid.route');
+		$routeB->getName()->shouldBeCalled()->willReturn('an.invalid.route');
+		$routeC->getName()->shouldBeCalled()->willReturn($aValidRoute);
+
+		$routeC->getAction()->shouldBeCalled()->willReturn(['permission' => $aValidRoute]);
+
+		$router->getRoutes()->shouldBeCalled()->willReturn([$routeA, $routeB, $routeC]);
+
 		$this->beConstructedWith($router, $config);
-		$this->getForRoute('a.given.route')->shouldReturn('a.given.route');
+
+		$this->getForRoute($aValidRoute)->shouldReturn($aValidRoute);
+	}
+
+	function it_should_extract_permissions_from_routes(Router $router, Repository $config, Route $route)
+	{
+		$aValidRoute = 'the.valid.route';
+
+		$route->getAction()->shouldBeCalled()->willReturn(['permission' => $aValidRoute]);
+		$this->beConstructedWith($router, $config);
+
+		$this->extractPermissionFrom($route)->shouldReturn($aValidRoute);
 	}
 
 	function it_should_return_all_permissions(Router $router, Repository $config, Route $routeA, Route $routeB, Route $routeC)
 	{
-		$config->get('security::permissions.prefix')->willReturn('a');
+		$config->get('security::permissions.prefix')->willReturn('');
+
+		$routeA->getAction()->shouldBeCalled()->willReturn(['permission' => 'a.given.route']);
+		$routeB->getAction()->shouldBeCalled()->willReturn(['permission' => 'another.permission']);
+		$routeC->getAction()->shouldBeCalled()->willReturn([]);
+
 		$router->getRoutes()->shouldBeCalled()->willReturn([$routeA, $routeB, $routeC]);
+
+		$this->beConstructedWith($router, $config);
+		$this->all()->shouldReturn(['a.given.route', 'another.permission']);
+	}
+
+	function it_should_return_some_permissions_filtered_by_prefix(Router $router, Repository $config, Route $routeA, Route $routeB, Route $routeC)
+	{
+		$config->get('security::permissions.prefix')->willReturn('a');
+
 		$routeA->getName()->shouldBeCalled()->willReturn('a.given.route');
 		$routeB->getName()->shouldBeCalled()->willReturn('other.given.route');
 		$routeC->getName()->shouldBeCalled()->willReturn(null);
+
+		$routeA->getAction()->shouldBeCalled()->willReturn(['permission' => 'a.given.route']);
+		$routeB->getAction()->shouldNotBeCalled();
+		$routeC->getAction()->shouldNotBeCalled();
+
+		$router->getRoutes()->shouldBeCalled()->willReturn([$routeA, $routeB, $routeC]);
 
 		$this->beConstructedWith($router, $config);
 		$this->all()->shouldReturn(['a.given.route']);
@@ -55,6 +96,8 @@ class RoutePermissionRepositorySpec extends ObjectBehavior
 		$routeB->getName()->shouldNotBeCalled();
 		$routeC->getName()->willReturn($aValidRoute);
 
+		$routeC->getAction()->shouldBeCalled()->willReturn(['permission' => $aValidRoute]);
+
 		$this->beConstructedWith($router, $config);
 		$this->getForAction($aValidAction)->shouldReturn($aValidRoute);
 	}
@@ -74,6 +117,8 @@ class RoutePermissionRepositorySpec extends ObjectBehavior
 		$routeA->getName()->shouldBeCalled()->willReturn('the.some.route');
 		$routeB->getName()->shouldBeCalled()->willReturn('the.other.route');
 		$routeC->getName()->shouldBeCalled()->willReturn($aValidRoute);
+
+		$routeC->getAction()->shouldBeCalled()->willReturn(['permission' => $aValidRoute]);
 
 		$this->beConstructedWith($router, $config);
 		$this->getForAction($aValidAction)->shouldReturn($aValidRoute);
