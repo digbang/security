@@ -69,7 +69,13 @@ class User extends SentryUser
 	 */
 	public function setAllPermissions(array $newPermissions)
 	{
-		$newPermissions = array_combine($newPermissions, array_fill(0, count($newPermissions), 1));
+		if ($this->isSuperUser())
+		{
+			// Superuser doesn't care about permissions
+			return;
+		}
+		
+		$newPermissions = empty($newPermissions) ? [] : array_combine($newPermissions, array_fill(0, count($newPermissions), 1));
 
 		foreach ($this->getGroupPermissions() as $permission => $aOne)
 		{
