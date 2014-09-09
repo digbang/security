@@ -68,6 +68,10 @@ class User extends SentryUser
 			{
 				$newPermissions[$permission] = -1;
 			}
+			else
+			{
+				unset($newPermissions[$permission]);
+			}
 		}
 
 		$this->permissions = $newPermissions;
