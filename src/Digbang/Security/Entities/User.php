@@ -75,6 +75,15 @@ class User extends SentryUser
 			}
 		}
 
+		foreach ($this->getPermissions() as $permission => $aOne)
+		{
+			if (!array_key_exists($permission, $newPermissions))
+			{
+				// Erase old user-level permission
+				$newPermissions[$permission] = 0;
+			}
+		}
+
 		$this->permissions = $newPermissions;
 	}
 } 
