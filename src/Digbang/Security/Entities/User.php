@@ -70,7 +70,8 @@ class User extends SentryUser
 			}
 			else
 			{
-				unset($newPermissions[$permission]);
+				// Inherit from group
+				$newPermissions[$permission] = 0;
 			}
 		}
 
