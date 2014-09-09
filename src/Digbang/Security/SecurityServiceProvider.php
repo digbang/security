@@ -13,6 +13,8 @@ class SecurityServiceProvider extends ServiceProvider {
 	public function boot()
 	{
 		$this->package('digbang/security');
+
+		$this->overrideSentry();
 	}
 
 	protected function overrideSentry()
@@ -21,6 +23,8 @@ class SecurityServiceProvider extends ServiceProvider {
 		{
 			$this->app['config']["cartalyst/sentry::$key"] = $val;
 		}
+
+		$this->app['Cartalyst\Sentry\Sentry'] = $this->app['sentry'];
 	}
 
 	/**
@@ -30,8 +34,6 @@ class SecurityServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->overrideSentry();
-
 		$this->app->register('Cartalyst\Sentry\SentryServiceProvider');
 
 		$this->registerCommands();
