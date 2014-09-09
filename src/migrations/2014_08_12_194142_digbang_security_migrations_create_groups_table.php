@@ -7,10 +7,12 @@ class DigbangSecurityMigrationsCreateGroupsTable extends Migration
 {
 	protected $shouldUpdate;
 	protected $createdColumns = [];
+	protected $tableName = 'groups';
 
 	function __construct()
 	{
-		$this->shouldUpdate = Schema::hasTable('groups');
+		$this->tableName = \Config::get('security::auth.groups.table', $this->tableName);
+		$this->shouldUpdate = Schema::hasTable($this->tableName);
 	}
 
 	public function up()
@@ -27,7 +29,7 @@ class DigbangSecurityMigrationsCreateGroupsTable extends Migration
 
 	protected function create()
 	{
-		Schema::create('groups', function(Blueprint $table)
+		Schema::create($this->tableName, function(Blueprint $table)
 		{
 			$table->increments('id');
 			$table->string('name');
@@ -43,33 +45,33 @@ class DigbangSecurityMigrationsCreateGroupsTable extends Migration
 
 	protected function update()
 	{
-		Schema::table('groups', function(Blueprint $table)
+		Schema::table($this->tableName, function(Blueprint $table)
 		{
-			if (! Schema::hasColumn('groups', 'id'))
+			if (! Schema::hasColumn($this->tableName, 'id'))
 			{
 				$this->createdColumns[] = 'id';
 				$table->increments('id');
 			}
 
-			if (! Schema::hasColumn('groups', 'name'))
+			if (! Schema::hasColumn($this->tableName, 'name'))
 			{
 				$this->createdColumns[] = 'name';
 				$table->string('name');
 			}
 
-			if (! Schema::hasColumn('groups', 'permissions'))
+			if (! Schema::hasColumn($this->tableName, 'permissions'))
 			{
 				$this->createdColumns[] = 'permissions';
 				$table->text('permissions')->nullable();
 			}
 
-			if (! Schema::hasColumn('groups', 'created_at'))
+			if (! Schema::hasColumn($this->tableName, 'created_at'))
 			{
 				$this->createdColumns[] = 'created_at';
 				$table->timestamp('created_at');
 			}
 
-			if (! Schema::hasColumn('groups', 'updated_at'))
+			if (! Schema::hasColumn($this->tableName, 'updated_at'))
 			{
 				$this->createdColumns[] = 'updated_at';
 				$table->timestamp('updated_at');
@@ -78,9 +80,9 @@ class DigbangSecurityMigrationsCreateGroupsTable extends Migration
 			// We'll need to ensure that MySQL uses the InnoDB engine to
 			// support the indexes, other engines aren't affected.
 			$table->engine = 'InnoDB';
-			$doctrineTable = Schema::getConnection()->getDoctrineSchemaManager()->listTableDetails('groups');
+			$doctrineTable = Schema::getConnection()->getDoctrineSchemaManager()->listTableDetails($this->tableName);
 
-			if (! $doctrineTable->hasIndex('groups_name_unique'))
+			if (! $doctrineTable->hasIndex("{$this->tableName}_name_unique"))
 			{
 				$table->unique('name');
 			}
@@ -101,7 +103,7 @@ class DigbangSecurityMigrationsCreateGroupsTable extends Migration
 
 	protected function drop()
 	{
-		Schema::drop('groups');
+		Schema::drop($this->tableName);
 	}
 
 	protected function removeCautiously()
@@ -110,7 +112,7 @@ class DigbangSecurityMigrationsCreateGroupsTable extends Migration
 
 		if (!empty($columns))
 		{
-			Schema::table('groups', function(Blueprint $table) use ($columns) {
+			Schema::table($this->tableName, function(Blueprint $table) use ($columns) {
 				$table->dropColumn($columns);
 			});
 		}

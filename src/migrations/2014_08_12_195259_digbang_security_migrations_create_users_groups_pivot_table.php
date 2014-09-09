@@ -7,10 +7,12 @@ class DigbangSecurityMigrationsCreateUsersGroupsPivotTable extends Migration
 {
 	protected $shouldUpdate;
 	protected $createdColumns = [];
+	protected $tableName = 'users_groups';
 
 	function __construct()
 	{
-		$this->shouldUpdate = Schema::hasTable('users_groups');
+		$this->tableName = \Config::get('security::auth.user_groups_pivot_table', $this->tableName);
+		$this->shouldUpdate = Schema::hasTable($this->tableName);
 	}
 
 
@@ -33,7 +35,7 @@ class DigbangSecurityMigrationsCreateUsersGroupsPivotTable extends Migration
 
 	protected function create()
 	{
-		Schema::create('users_groups', function(Blueprint $table)
+		Schema::create($this->tableName, function(Blueprint $table)
 		{
 			$table->integer('user_id')->unsigned();
 			$table->integer('group_id')->unsigned();
@@ -47,15 +49,15 @@ class DigbangSecurityMigrationsCreateUsersGroupsPivotTable extends Migration
 
 	protected function update()
 	{
-		Schema::table('users_groups', function(Blueprint $table)
+		Schema::table($this->tableName, function(Blueprint $table)
 		{
-			if (! Schema::hasColumn('users_groups', 'user_id'))
+			if (! Schema::hasColumn($this->tableName, 'user_id'))
 			{
 				$this->createdColumns[] = 'user_id';
 				$table->integer('user_id')->unsigned();
 			}
 
-			if (! Schema::hasColumn('users_groups', 'group_id'))
+			if (! Schema::hasColumn($this->tableName, 'group_id'))
 			{
 				$this->createdColumns[] = 'group_id';
 				$table->integer('group_id')->unsigned();
@@ -64,7 +66,7 @@ class DigbangSecurityMigrationsCreateUsersGroupsPivotTable extends Migration
 			// We'll need to ensure that MySQL uses the InnoDB engine to
 			// support the indexes, other engines aren't affected.
 			$table->engine = 'InnoDB';
-			$doctrineTable = Schema::getConnection()->getDoctrineSchemaManager()->listTableDetails('groups');
+			$doctrineTable = Schema::getConnection()->getDoctrineSchemaManager()->listTableDetails($this->tableName);
 
 			if (! $doctrineTable->hasPrimaryKey())
 			{
@@ -92,7 +94,7 @@ class DigbangSecurityMigrationsCreateUsersGroupsPivotTable extends Migration
 
 	protected function drop()
 	{
-		Schema::drop('users_groups');
+		Schema::drop($this->tableName);
 	}
 
 	protected function removeCautiously()
@@ -101,7 +103,7 @@ class DigbangSecurityMigrationsCreateUsersGroupsPivotTable extends Migration
 
 		if (!empty($columns))
 		{
-			Schema::table('users_groups', function(Blueprint $table) use ($columns) {
+			Schema::table($this->tableName, function(Blueprint $table) use ($columns) {
 				$table->dropColumn($columns);
 			});
 		}

@@ -10,9 +10,11 @@ return [
 		'key' => 'db_backoffice_'
 	],
 	'groups' => [
-		'model' => 'Cartalyst\Sentry\Groups\Eloquent\Group'
+		'table' => 'groups',
+		'model' => 'Digbang\Security\Entities\Group'
 	],
 	'users'  => [
+		'table'           => 'users',
 		'model'           => 'Digbang\Security\Entities\User',
 		'login_attribute' => 'email'
 	],

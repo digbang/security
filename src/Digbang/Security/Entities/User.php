@@ -7,6 +7,15 @@ use Cartalyst\Sentry\Users\Eloquent\User as SentryUser;
  */
 class User extends SentryUser
 {
+	public function __construct(array $attributes = array())
+	{
+		$this->setTable(\Config::get('security::auth.users.table', 'users'));
+		$this->setGroupModel(\Config::get('security::auth.groups.model', 'Digbang\Security\Entities\Group'));
+		$this->setUserGroupsPivot(\Config::get('security::auth.user_groups_pivot_table', 'users_groups'));
+
+		parent::__construct($attributes);
+	}
+
 	/**
 	 * This method will return all the permissions that this
 	 * user is allowed for. This means that denied permissions won't be there,
