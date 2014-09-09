@@ -13,7 +13,7 @@ return [
 		'model' => 'Cartalyst\Sentry\Groups\Eloquent\Group'
 	],
 	'users'  => [
-		'model'           => 'Cartalyst\Sentry\Users\Eloquent\User',
+		'model'           => 'Digbang\Security\Entities\User',
 		'login_attribute' => 'email'
 	],
 	'user_groups_pivot_table' => 'users_groups',
