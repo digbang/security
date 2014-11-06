@@ -180,4 +180,34 @@ class SecureUrlSpec extends ObjectBehavior
 		$this->shouldThrow('Digbang\Security\Permissions\Exceptions\PermissionException')
 			->duringMay($this->securePath);
 	}
+
+	function it_should_give_me_the_best_allowed_route_based_on_the_current_users_permissions(UrlGenerator $url, PermissionRepository $permissionRepo, Sentry $sentry)
+	{
+		$this->beConstructedWithUser($url, $permissionRepo, $sentry);
+
+		$this->bestRoute([$this->secureRoute])->shouldReturn($this->url);
+		$this->bestRoute([$this->insecureRoute])->shouldReturn($this->url);
+	}
+
+	function it_should_give_me_null_with_no_user_permissions(UrlGenerator $url, PermissionRepository $permissionRepo, Sentry $sentry)
+	{
+		$this->beConstructedWithoutUser($url, $permissionRepo, $sentry);
+
+		$this->bestRoute([$this->secureRoute])->shouldReturn(null);
+	}
+
+	function it_should_give_me_the_best_allowed_action_based_on_the_current_users_permissions(UrlGenerator $url, PermissionRepository $permissionRepo, Sentry $sentry)
+	{
+		$this->beConstructedWithUser($url, $permissionRepo, $sentry);
+
+		$this->bestAction([$this->secureAction])->shouldReturn($this->url);
+		$this->bestAction([$this->insecureAction])->shouldReturn($this->url);
+	}
+
+	function it_should_give_me_null_on_an_action_with_no_user_permissions(UrlGenerator $url, PermissionRepository $permissionRepo, Sentry $sentry)
+	{
+		$this->beConstructedWithoutUser($url, $permissionRepo, $sentry);
+
+		$this->bestAction([$this->secureAction])->shouldReturn(null);
+	}
 }

@@ -103,4 +103,34 @@ class SecureUrl
 	{
 		return $this->url;
 	}
+
+	public function best($method, array $routes)
+	{
+		if (!method_exists($this, $method))
+		{
+			throw new \UnexpectedValueException("Method $method does not exist.");
+		}
+
+		foreach ($routes as $route)
+		{
+			if (! is_array($route))
+			{
+				$route = [$route];
+			}
+
+			try {
+				return call_user_func_array([$this, $method], $route);
+			} catch (PermissionException $e){}
+		}
+	}
+
+    public function bestRoute(array $routes)
+    {
+	    return $this->best('route', $routes);
+    }
+
+	public function bestAction(array $actions)
+	{
+		return $this->best('action', $actions);
+	}
 }
