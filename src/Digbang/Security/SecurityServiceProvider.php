@@ -1,5 +1,6 @@
 <?php namespace Digbang\Security;
 
+use Cartalyst\Sentry\SentryServiceProvider;
 use Digbang\Security\Commands\MigrationsCommand;
 use Illuminate\Support\ServiceProvider;
 
@@ -34,7 +35,21 @@ class SecurityServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->app->register('Cartalyst\Sentry\SentryServiceProvider');
+        /** @type \Illuminate\Config\Repository $config */
+        $config = $this->app['config'];
+
+        switch ($config->get('security::auth.driver', 'eloquent'))
+        {
+            case 'custom':
+                $this->app->register(CustomSecurityServiceProvider::class);
+                break;
+            case 'eloquent':
+                $this->app->register(SentryServiceProvider::class);
+                break;
+            default:
+                throw new \UnexpectedValueException("Security driver " . $config->get('security::auth.driver') . ' does not exist.');
+        }
+
 
 		$this->registerCommands();
 		$this->registerPermissionRepository();

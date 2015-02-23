@@ -5,6 +5,7 @@
  * @see https://cartalyst.com/manual/sentry
  */
 return [
+    'driver' => 'eloquent',
 	'hasher' => 'bcrypt',
 	'cookie' => [
 		'key' => 'db_backoffice_'
