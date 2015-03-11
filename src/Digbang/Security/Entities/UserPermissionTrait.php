@@ -6,7 +6,7 @@ trait UserPermissionTrait
 {
 	use PermissionTrait {
 		allows as doAllows;
-	};
+	}
 
 	/**
 	 * @type UserInterface
