@@ -2,4 +2,3 @@ suites:
   l4-backoffice:
     namespace: Digbang\Security
     spec_path: tests
-    psr4_prefix: Digbang\Security

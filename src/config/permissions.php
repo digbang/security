@@ -1,5 +1,5 @@
 <?php
 return [
-	'repository' => 'Digbang\\Security\\Permissions\\InsecurePermissionRepository',
+	'repository' => Digbang\Security\Permissions\InsecurePermissionRepository::class,
 	'prefix'     => 'backoffice'
 ];

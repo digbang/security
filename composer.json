@@ -8,7 +8,7 @@
 		}
 	],
 	"require": {
-		"php": ">=5.4.0",
+		"php": ">=5.6",
 		"illuminate/support": "~4.2",
 		"illuminate/routing": "~4.2",
 		"illuminate/database": "~4.2",
@@ -19,7 +19,8 @@
 		"doctrine/dbal": "~2.4"
 	},
 	"require-dev": {
-		"phpspec/phpspec": "~2.0"
+		"phpspec/phpspec": "~2.0",
+        "digbang/doctrine": "0.2.*"
 	},
 	"autoload": {
 		"classmap": [
@@ -29,5 +30,12 @@
 			"Digbang\\Security\\": "src/"
 		}
 	},
-	"minimum-stability": "stable"
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@git.digbang.com:digbang/doctrine.git"
+        }
+    ],
+	"minimum-stability": "dev",
+    "prefer-stable": true
 }

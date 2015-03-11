@@ -10,8 +10,18 @@ use Cartalyst\Sentry\Throttling\ProviderInterface as ThrottleProvider;
 use Illuminate\Container\Container;
 use Illuminate\Support\ServiceProvider;
 
-class CustomSecurityServiceProvider extends ServiceProvider
+/**
+ * Class SentryWithDoctrineServiceProvider
+ *
+ * @package Digbang\Security
+ */
+class SentryWithDoctrineServiceProvider extends ServiceProvider
 {
+	/**
+	 * @type Container
+	 */
+	protected $app;
+
 	/**
 	 * Register the service provider.
 	 *
@@ -76,13 +86,13 @@ class CustomSecurityServiceProvider extends ServiceProvider
 	protected function registerUserProvider()
 	{
 		$this->app['sentry.user'] = $this->app->share(function ($app){
-			if (isset($this->app[UserProvider::class]))
-			{
-				return $this->app[UserProvider::class];
-			}
-
-			throw new \UnexpectedValueException("User provider not configured.");
+			return $this->app[UserProvider::class];
 		});
+
+		if (! isset($this->app[UserProvider::class]))
+		{
+			$this->app->singleton(UserProvider::class, Repositories\DoctrineUserRepository::class);
+		}
 	}
 
 	/**
@@ -93,13 +103,13 @@ class CustomSecurityServiceProvider extends ServiceProvider
 	protected function registerGroupProvider()
 	{
 		$this->app['sentry.group'] = $this->app->share(function ($app){
-			if (isset($this->app[GroupProvider::class]))
-			{
-				return $this->app[GroupProvider::class];
-			}
-
-			throw new \UnexpectedValueException("Group provider not configured.");
+			return $this->app[GroupProvider::class];
 		});
+
+		if (isset($this->app[GroupProvider::class]))
+		{
+			$this->app->singleton(GroupProvider::class, Repositories\DoctrineGroupRepository::class);
+		}
 	}
 
 	/**
@@ -110,13 +120,13 @@ class CustomSecurityServiceProvider extends ServiceProvider
 	protected function registerThrottleProvider()
 	{
 		$this->app['sentry.throttle'] = $this->app->share(function ($app){
-			if (isset($this->app[ThrottleProvider::class]))
-			{
-				return $this->app[ThrottleProvider::class];
-			}
-
-			throw new \UnexpectedValueException("Throttling provider not configured.");
+			return $this->app[ThrottleProvider::class];
 		});
+
+		if (isset($this->app[ThrottleProvider::class]))
+		{
+			$this->app->singleton(ThrottleProvider::class, Repositories\DoctrineThrottleRepository::class);
+		}
 	}
 
 	/**
@@ -176,6 +186,10 @@ class CustomSecurityServiceProvider extends ServiceProvider
 				$app['sentry.cookie'],
 				$app['request']->getClientIp()
 			);
+		});
+
+		$this->app->bindShared(Sentry::class, function(){
+			return $this->app['sentry'];
 		});
 	}
 }

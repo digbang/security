@@ -17,13 +17,16 @@ class Emailer
 	 */
 	protected $config;
 
-	function __construct(Mailer $mailer, Repository $config)
+	public function __construct(Mailer $mailer, Repository $config)
 	{
 		$this->mailer = $mailer;
 		$this->config = $config;
 	}
 
-
+	/**
+	 * @param UserInterface $user
+	 * @param string        $link
+	 */
 	public function sendPasswordReset(UserInterface $user, $link)
     {
 	    $this->send('security::emails.reset-password', $user, $link, $this->config->get(
@@ -31,6 +34,10 @@ class Emailer
 	    ));
     }
 
+	/**
+	 * @param UserInterface $user
+	 * @param string        $link
+	 */
     public function sendActivation(UserInterface $user, $link)
     {
 	    $this->send('security::emails.activation', $user, $link, $this->config->get(
@@ -38,6 +45,12 @@ class Emailer
 	    ));
     }
 
+	/**
+	 * @param string        $view
+	 * @param UserInterface $user
+	 * @param string        $link
+	 * @param string        $subject
+	 */
 	protected function send($view, UserInterface $user, $link, $subject)
 	{
 		$from = $this->config->get('security::emails.from');

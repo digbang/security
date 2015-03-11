@@ -29,6 +29,9 @@ class Auth
 		$this->secureUrl     = $secureUrl;
 	}
 
+	/**
+	 * @return \Illuminate\Http\RedirectResponse|null
+	 */
 	public function logged()
 	{
 		if (!$this->accessControl->isLogged())
@@ -37,6 +40,11 @@ class Auth
 		}
 	}
 
+	/**
+	 * @param Route $route
+	 *
+	 * @return \Illuminate\Http\RedirectResponse|null
+	 */
 	public function withPermissions(Route $route)
 	{
 		if ($redirect = $this->logged())

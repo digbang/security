@@ -1,18 +1,36 @@
 <?php namespace Digbang\Security\Entities;
 
-use Cartalyst\Sentry\Groups\Eloquent\Group as SentryGroup;
-/**
- * Class Group
- * @package Digbang\L4Backoffice\Auth
- */
-class Group extends SentryGroup
-{
-	public function __construct(array $attributes = array())
-	{
-		$this->setUserModel(\Config::get('security::auth.users.model', 'Digbang\Security\Entities\User'));
-		$this->setTable(\Config::get('security::auth.groups.table', 'groups'));
-		$this->setUserGroupsPivot(\Config::get('security::auth.user_groups_pivot_table', 'users_groups'));
+use Digbang\Security\Contracts\Group as GroupInterface;
+use Digbang\Security\Contracts\RepositoryAware;
+use Doctrine\Common\Collections\ArrayCollection;
 
-		parent::__construct($attributes);
+final class Group implements GroupInterface, RepositoryAware
+{
+	use GroupTrait;
+
+	/**
+	 * @param string $name
+	 * @param array  $permissions
+	 */
+	public function __construct($name, array $permissions = [])
+	{
+		$this->name        = $name;
+		$this->permissions = new ArrayCollection();
+
+		if (!empty($permissions))
+		{
+			$this->setPermissions($permissions);
+		}
 	}
-} 
+
+	/**
+	 * @param string $name
+	 * @param array  $permissions
+	 *
+	 * @return GroupInterface
+	 */
+	public static function create($name, array $permissions = [])
+	{
+		return new static($name, $permissions);
+	}
+}

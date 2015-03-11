@@ -1,11 +1,17 @@
 <?php namespace Digbang\Security;
 
-use Cartalyst\Sentry\SentryServiceProvider;
+use Cartalyst\Sentry\Sentry;
 use Digbang\Security\Commands\MigrationsCommand;
+use Digbang\Security\Permissions\InsecurePermissionRepository;
+use Digbang\Security\Permissions\PermissionRepository;
 use Illuminate\Support\ServiceProvider;
 
-class SecurityServiceProvider extends ServiceProvider {
-
+class SecurityServiceProvider extends ServiceProvider
+{
+	/**
+	 * @type \Illuminate\Container\Container
+	 */
+	protected $app;
 	/**
 	 * Bootstrap the application events.
 	 *
@@ -25,7 +31,9 @@ class SecurityServiceProvider extends ServiceProvider {
 			$this->app['config']["cartalyst/sentry::$key"] = $val;
 		}
 
-		$this->app['Cartalyst\Sentry\Sentry'] = $this->app['sentry'];
+		$this->app->share(Sentry::class, function(){
+			return $this->app['sentry'];
+		});
 	}
 
 	/**
@@ -35,22 +43,6 @@ class SecurityServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-        /** @type \Illuminate\Config\Repository $config */
-        $config = $this->app['config'];
-
-        switch ($config->get('security::auth.driver', 'eloquent'))
-        {
-            case 'custom':
-                $this->app->register(CustomSecurityServiceProvider::class);
-                break;
-            case 'eloquent':
-                $this->app->register(SentryServiceProvider::class);
-                break;
-            default:
-                throw new \UnexpectedValueException("Security driver " . $config->get('security::auth.driver') . ' does not exist.');
-        }
-
-
 		$this->registerCommands();
 		$this->registerPermissionRepository();
 	}
@@ -62,13 +54,12 @@ class SecurityServiceProvider extends ServiceProvider {
 	 */
 	public function provides()
 	{
-		return ['digbang/security', 'cartalyst/sentry'];
+		return ['digbang/security'];
 	}
 
 	protected function registerCommands()
 	{
-		$this->app['security.migrations'] = $this->app->share(function ($app)
-		{
+		$this->app['security.migrations'] = $this->app->share(function(){
 			return new MigrationsCommand();
 		});
 
@@ -77,8 +68,13 @@ class SecurityServiceProvider extends ServiceProvider {
 
 	protected function registerPermissionRepository()
 	{
-		$this->app->bind('Digbang\\Security\\Permissions\\PermissionRepository', function($app){
-			return $app->make(\Config::get('security::permissions.repository'));
+		$this->app->bind(PermissionRepository::class, function(){
+			$config = $this->app['config'];
+
+			return $this->app->make($config->get(
+				'security::permissions.repository',
+				InsecurePermissionRepository::class
+			));
 		});
 	}
 }

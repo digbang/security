@@ -5,14 +5,13 @@
  * @see https://cartalyst.com/manual/sentry
  */
 return [
-    'driver' => 'eloquent',
 	'hasher' => 'bcrypt',
 	'cookie' => [
 		'key' => 'db_backoffice_'
 	],
 	'groups' => [
 		'table' => 'groups',
-		'model' => 'Digbang\Security\Entities\Group'
+		'model' => Digbang\Security\Entities\Group::class
 	],
 	'users'  => [
 		'table'           => 'users',
