@@ -30,10 +30,6 @@ class SecurityServiceProvider extends ServiceProvider
 		{
 			$this->app['config']["cartalyst/sentry::$key"] = $val;
 		}
-
-		$this->app->share(Sentry::class, function(){
-			return $this->app['sentry'];
-		});
 	}
 
 	/**
