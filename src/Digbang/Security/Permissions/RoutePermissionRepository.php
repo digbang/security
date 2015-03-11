@@ -1,4 +1,5 @@
 <?php namespace Digbang\Security\Permissions;
+
 use Digbang\Security\Permissions\Exceptions\PermissionException;
 use Illuminate\Config\Repository;
 use Illuminate\Routing\Route;
@@ -15,27 +16,37 @@ use Illuminate\Routing\Router;
 class RoutePermissionRepository implements PermissionRepository
 {
 	/**
-	 * @var \Illuminate\Routing\Router
+	 * @type \Illuminate\Routing\Router
 	 */
 	protected $router;
 
 	/**
-	 * @var string
+	 * @type string
 	 */
 	protected $prefix;
 
 	/**
-	 * @var \Illuminate\Config\Repository
+	 * @type \Illuminate\Config\Repository
 	 */
 	protected $config;
 
 	/**
 	 * Flyweight Pattern
-	 * @var array
+	 * @type array
 	 */
 	protected $routes = [];
 
-	function __construct(Router $router, Repository $config)
+	/**
+	 * Flyweight Pattern
+	 * @type array
+	 */
+	protected $permissions = [];
+
+	/**
+	 * @param Router     $router
+	 * @param Repository $config
+	 */
+	public function __construct(Router $router, Repository $config)
 	{
 		$this->router = $router;
 		$this->config = $config;
@@ -49,7 +60,7 @@ class RoutePermissionRepository implements PermissionRepository
 	{
 		foreach ($this->getRoutes() as $route)
 		{
-			/* @var $route \Illuminate\Routing\Route */
+			/* @type $route \Illuminate\Routing\Route */
 			if ($route->getName() == $routeName)
 			{
 				return $this->extractPermissionFrom($route);
@@ -66,7 +77,7 @@ class RoutePermissionRepository implements PermissionRepository
 	{
 		foreach ($this->getRoutes() as $route)
 		{
-			/* @var $route \Illuminate\Routing\Route */
+			/* @type $route \Illuminate\Routing\Route */
 			if ($route->getActionName() == $action)
 			{
 				return $this->extractPermissionFrom($route);
@@ -91,25 +102,24 @@ class RoutePermissionRepository implements PermissionRepository
 	 */
 	public function all()
 	{
-		$permissions = [];
-
-		foreach ($this->getRoutes() as $route)
+		if (empty($this->permissions))
 		{
-			/* @var $route \Illuminate\Routing\Route */
-			if ($permission = $this->extractPermissionFrom($route))
+			foreach ($this->getRoutes() as $route)
 			{
-				$permissions[] = $permission;
+				/* @type $route \Illuminate\Routing\Route */
+				if ($permission = $this->extractPermissionFrom($route))
+				{
+					$this->permissions[] = $permission;
+				}
 			}
 		}
 
-		return $permissions;
+		return $this->permissions;
 	}
 
-	public function rou()
-	{
-		return $this->routes;
-	}
-
+	/**
+	 * @return array
+	 */
 	protected function getRoutes()
 	{
 		if (empty($this->routes))
@@ -118,7 +128,7 @@ class RoutePermissionRepository implements PermissionRepository
 
 			foreach ($this->router->getRoutes() as $route)
 			{
-				/* @var $route \Illuminate\Routing\Route */
+				/* @type $route \Illuminate\Routing\Route */
 				if (empty($this->prefix) || starts_with($route->getName(), $this->prefix))
 				{
 					$this->routes[] = $route;
@@ -129,6 +139,12 @@ class RoutePermissionRepository implements PermissionRepository
 		return $this->routes;
 	}
 
+	/**
+	 * @param Route $route
+	 *
+	 * @return string|null
+	 * @internal
+	 */
 	public function extractPermissionFrom(Route $route)
 	{
 		$parameters = $route->getAction();
@@ -137,5 +153,7 @@ class RoutePermissionRepository implements PermissionRepository
 		{
 			return $parameters['permission'];
 		}
+
+		return null;
 	}
 }
