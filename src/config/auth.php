@@ -15,13 +15,13 @@ return [
 	],
 	'users'  => [
 		'table'           => 'users',
-		'model'           => 'Digbang\Security\Entities\User',
+		'model'           => Digbang\Security\Entities\User::class,
 		'login_attribute' => 'email'
 	],
-	'user_groups_pivot_table' => 'users_groups',
+	'user_groups_pivot_table' => 'user_group',
 	'throttling' => [
 		'enabled'         => false,
-		'model'           => 'Cartalyst\Sentry\Throttling\Eloquent\Throttle',
+		'model'           => Digbang\Security\Entities\Throttle::class,
 		'attempt_limit'   => 5,
 		'suspension_time' => 15
 	]
