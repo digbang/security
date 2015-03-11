@@ -106,7 +106,7 @@ class SentryWithDoctrineServiceProvider extends ServiceProvider
 			return $this->app[GroupProvider::class];
 		});
 
-		if (isset($this->app[GroupProvider::class]))
+		if (! isset($this->app[GroupProvider::class]))
 		{
 			$this->app->singleton(GroupProvider::class, Repositories\DoctrineGroupRepository::class);
 		}
@@ -123,7 +123,7 @@ class SentryWithDoctrineServiceProvider extends ServiceProvider
 			return $this->app[ThrottleProvider::class];
 		});
 
-		if (isset($this->app[ThrottleProvider::class]))
+		if (! isset($this->app[ThrottleProvider::class]))
 		{
 			$this->app->singleton(ThrottleProvider::class, Repositories\DoctrineThrottleRepository::class);
 		}
