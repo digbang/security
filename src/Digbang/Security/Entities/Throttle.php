@@ -4,7 +4,7 @@ use Digbang\Security\Contracts\RepositoryAware;
 use Digbang\Security\Contracts\User as UserInterface;
 use Digbang\Security\Contracts\Throttle as ThrottleInterface;
 
-final class Throttle implements ThrottleInterface, RepositoryAware
+class Throttle implements ThrottleInterface, RepositoryAware
 {
 	use ThrottleTrait;
 

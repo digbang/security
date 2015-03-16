@@ -3,7 +3,7 @@
 use Digbang\Security\Contracts\User as UserInterface;
 use Digbang\Security\Contracts\RepositoryAware;
 
-final class User implements UserInterface, RepositoryAware
+class User implements UserInterface, RepositoryAware
 {
 	use UserTrait;
 

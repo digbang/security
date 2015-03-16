@@ -4,7 +4,7 @@ use Digbang\Security\Contracts\Group as GroupInterface;
 use Digbang\Security\Contracts\RepositoryAware;
 use Doctrine\Common\Collections\ArrayCollection;
 
-final class Group implements GroupInterface, RepositoryAware
+class Group implements GroupInterface, RepositoryAware
 {
 	use GroupTrait;
 
