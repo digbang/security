@@ -50,36 +50,20 @@ final class UserMappingHelper
 	 */
 	public function addProperties(Builder $builder)
 	{
-		$builder->primary();
-		$builder->string('email', function (FieldBuilder $fieldBuilder){
-			$fieldBuilder->unique();
-		});
-		$builder->string('password');
-		$builder->boolean('activated');
-		$builder->boolean('superUser');
-		$builder->string('activationCode', function (FieldBuilder $fieldBuilder){
-			$fieldBuilder->nullable();
-		});
-		$builder->datetime('activatedAt', function (FieldBuilder $fieldBuilder){
-			$fieldBuilder->nullable();
-		});
-		$builder->datetime('lastLogin', function (FieldBuilder $fieldBuilder){
-			$fieldBuilder->nullable();
-		});
-		$builder->string('persistCode', function (FieldBuilder $fieldBuilder){
-			$fieldBuilder->nullable();
-		});
-		$builder->string('resetPasswordCode', function (FieldBuilder $fieldBuilder){
-			$fieldBuilder->nullable();
-		});
-		$builder->string('firstName', function (FieldBuilder $fieldBuilder){
-			$fieldBuilder->nullable();
-		});
-		$builder->string('lastName', function (FieldBuilder $fieldBuilder){
-			$fieldBuilder->nullable();
-		});
-
-		$builder->timestamps();
+		$builder
+			->primary()
+			->uniqueString('email')
+			->string('password')
+			->boolean('activated')
+			->boolean('superUser')
+			->nullableString('activationCode')
+			->nullableDatetime('activatedAt')
+			->nullableDatetime('lastLogin')
+			->nullableString('persistCode')
+			->nullableString('resetPasswordCode')
+			->nullableString('firstName')
+			->nullableString('lastName')
+			->timestamps();
 	}
 
 	/**
@@ -89,18 +73,17 @@ final class UserMappingHelper
 	 */
 	public function addRelations(Builder $builder)
 	{
-		$builder->belongsToMany($this->groupClassName, 'groups', function(BelongsToMany $belongsToMany){
-			$belongsToMany->inversedBy('users');
-			$belongsToMany->cascadePersist();
+		$builder
+			->belongsToMany($this->groupClassName, 'groups', function(BelongsToMany $belongsToMany){
+				$belongsToMany->inversedBy('users');
+				$belongsToMany->cascadePersist();
+			})
+			->hasMany($this->userPermissionClass, 'permissions', function(HasMany $hasMany){
+				$hasMany->mappedBy('user');
+				$hasMany->cascadeAll();
 
-		});
-
-		$builder->hasMany($this->userPermissionClass, 'permissions', function(HasMany $hasMany){
-			$hasMany->mappedBy('user');
-			$hasMany->cascadeAll();
-
-			$this->orphanRemovalHack($hasMany);
-		});
+				$hasMany->orphanRemoval();
+			});
 	}
 
 	/**

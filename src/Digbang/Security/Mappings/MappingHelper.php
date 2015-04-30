@@ -8,6 +8,7 @@ trait MappingHelper
 {
 	/**
 	 * @param BelongsTo $belongsTo
+	 * @deprecated Use $belongsTo->isPrimaryKey()
 	 */
 	protected function foreignIdentityHack(BelongsTo $belongsTo)
 	{
@@ -24,6 +25,10 @@ trait MappingHelper
 		return snake_case(str_singular(class_basename($groupClass))) . '_id';
 	}
 
+	/**
+	 * @param Relation $relation
+	 * @deprecated Use $relation->orphanRemoval()
+	 */
 	protected function orphanRemovalHack(Relation $relation)
 	{
 		// Hack to allow orphan removal

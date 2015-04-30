@@ -28,25 +28,23 @@ final class GroupMappingHelper
 
 	public function addProperties(Builder $builder)
 	{
-		$builder->primary();
-		$builder->string('name', function(FieldBuilder $fieldBuilder){
-			$fieldBuilder->unique();
-		});
-		$builder->timestamps();
+		$builder
+			->primary()
+			->uniqueString('name')
+			->timestamps();
 	}
 
 	public function addRelations(Builder $builder)
 	{
-		$builder->belongsToMany($this->userClass, 'users', function(BelongsToMany $belongsToMany){
-			$belongsToMany->mappedBy('groups');
-			$belongsToMany->cascadeAll();
-		});
-
-		$builder->hasMany($this->groupPermissionClass, 'permissions', function(HasMany $hasMany){
-			$hasMany->mappedBy('group');
-			$hasMany->cascadeAll();
-
-			$this->orphanRemovalHack($hasMany);
-		});
+		$builder
+			->belongsToMany($this->userClass, 'users', function(BelongsToMany $belongsToMany){
+				$belongsToMany->mappedBy('groups');
+				$belongsToMany->cascadeAll();
+			})
+			->hasMany($this->groupPermissionClass, 'permissions', function(HasMany $hasMany){
+				$hasMany->mappedBy('group');
+				$hasMany->cascadeAll();
+				$hasMany->orphanRemoval();
+			});
 	}
 }

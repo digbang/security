@@ -18,13 +18,12 @@ class GroupPermissionMappingHelper
 
 	public function addMappings(Builder $builder)
 	{
-		$builder->string('permission', function(FieldBuilder $fieldBuilder){
-			$fieldBuilder->isPrimaryKey();
-		});
-
-		$builder->belongsTo($this->groupClass, 'group', function(BelongsTo $belongsTo){
-			$belongsTo->keys($this->foreignKey($this->groupClass), 'id', false);
-			$this->foreignIdentityHack($belongsTo);
-		});
+		$builder
+			->string('permission', function(FieldBuilder $fieldBuilder){
+				$fieldBuilder->makePrimaryKey();
+			})
+			->belongsTo($this->groupClass, 'group', function(BelongsTo $belongsTo){
+				$belongsTo->isPrimaryKey();
+			});
 	}
 }

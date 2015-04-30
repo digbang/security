@@ -26,16 +26,13 @@ class UserPermissionMappingHelper
 	 */
 	public function addMappings(Builder $builder)
 	{
-		$builder->string('permission', function(FieldBuilder $fieldBuilder){
-			$fieldBuilder->isPrimaryKey();
-		});
-
-		$builder->belongsTo($this->userClass, 'user', function(BelongsTo $belongsTo){
-			$belongsTo->keys($this->foreignKey($this->userClass), 'id', false);
-
-			$this->foreignIdentityHack($belongsTo);
-		});
-
-		$builder->boolean('allowed');
+		$builder
+			->string('permission', function(FieldBuilder $fieldBuilder){
+				$fieldBuilder->makePrimaryKey();
+			})
+			->belongsTo($this->userClass, 'user', function(BelongsTo $belongsTo){
+				$belongsTo->isPrimaryKey();
+			})
+			->boolean('allowed');
 	}
 }

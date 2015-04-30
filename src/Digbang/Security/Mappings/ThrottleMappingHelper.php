@@ -17,45 +17,23 @@ final class ThrottleMappingHelper
 	 */
 	private $userField;
 
-	/**
-	 * @type string
-	 */
-	private $foreignKey;
-
-	/**
-	 * @type string
-	 */
-	private $otherKey;
-
-	function __construct($userClassName = User::class, $userField = 'user', $foreignKey = 'user_id', $otherKey = 'id')
+	function __construct($userClassName = User::class, $userField = 'user')
 	{
 		$this->userClassName = $userClassName;
 		$this->userField     = $userField;
-		$this->foreignKey = $foreignKey;
-		$this->otherKey = $otherKey;
 	}
 
 	public function addMappings(Builder $builder)
 	{
-		$builder->primary();
-		$builder->string('ipAddress', function(FieldBuilder $fieldBuilder){
-			$fieldBuilder->nullable();
-		});
-		$builder->integer('attempts');
-		$builder->boolean('suspended');
-		$builder->boolean('banned');
-		$builder->datetime('lastAttemptAt', function (FieldBuilder $fieldBuilder){
-			$fieldBuilder->nullable();
-		});
-		$builder->datetime('suspendedAt', function (FieldBuilder $fieldBuilder){
-			$fieldBuilder->nullable();
-		});
-		$builder->datetime('bannedAt', function (FieldBuilder $fieldBuilder){
-			$fieldBuilder->nullable();
-		});
-
-		$builder->belongsTo($this->userClassName, $this->userField, function (BelongsTo $belongsTo){
-			$belongsTo->keys($this->foreignKey, $this->otherKey, true);
-		});
+		$builder
+			->primary()
+			->nullableString('ipAddress')
+			->integer('attempts')
+			->boolean('suspended')
+			->boolean('banned')
+			->nullableDatetime('lastAttemptAt')
+			->nullableDatetime('suspendedAt')
+			->nullableDatetime('bannedAt')
+			->mayBelongTo($this->userClassName, $this->userField);
 	}
 }
