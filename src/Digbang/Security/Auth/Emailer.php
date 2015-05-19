@@ -58,13 +58,13 @@ class Emailer
 		$this->mailer->send(
 			$view,
 			[
-				'name' => $user->name,
+				'name' => $user->getLoginName(),
 				'link' => $link
 			],
 			function (Message $message) use ($user, $from, $subject)
 			{
 				$message->from($from);
-				$message->to($user->email, $user->name);
+				$message->to($user->getLogin(), $user->getLoginName());
 				$message->subject($subject);
 			}
 		);
