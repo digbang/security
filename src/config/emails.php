@@ -1,6 +1,9 @@
 <?php
 return [
-	'from' => 'backoffice@digbang.com',
+	'from' => [
+		'address' => 'backoffice@digbang.com',
+		'name' => 'Backoffice'
+	],
 	'activation' => [
 		'subject' => 'Activate your account'
 	],

@@ -55,16 +55,18 @@ class Emailer
 	{
 		$from = $this->config->get('security::emails.from');
 
+		$name = $user->getFirstName() ? $user->getFirstName() : $user->getLogin();
+
 		$this->mailer->send(
 			$view,
 			[
-				'name' => $user->name,
+				'name' => $name,
 				'link' => $link
 			],
-			function (Message $message) use ($user, $from, $subject)
+			function (Message $message) use ($user, $from, $subject, $name)
 			{
-				$message->from($from);
-				$message->to($user->email, $user->name);
+				$message->from($from['address'], $from['name']);
+				$message->to($user->getLogin(), $name);
 				$message->subject($subject);
 			}
 		);
