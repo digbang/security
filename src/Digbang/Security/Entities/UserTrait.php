@@ -698,8 +698,10 @@ trait UserTrait
 
 		foreach ($this->permissions as $userPermission)
 		{
+			$key = array_search((string) $userPermission, $permissions);
+
 			/** @type UserPermission $userPermission */
-			if (! in_array((string) $userPermission, $permissions))
+			if ($key === false)
 			{
 				if (($key = array_search($userPermission, $denials)) !== false)
 				{
@@ -722,7 +724,7 @@ trait UserTrait
 			else
 			{
 				// Already there, unset it
-				unset($permissions[(string) $userPermission]);
+				unset($permissions[$key]);
 			}
 		}
 
