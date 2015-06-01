@@ -90,12 +90,12 @@ trait UserTrait
 	 * This is needed to emulate an AR behavior.
 	 * Sentry uses AR to save/delete entities...
 	 *
-	 * @type \Digbang\Security\Repositories\DoctrineUserRepository
+	 * @type \Digbang\Security\Repositories\DoctrineUserRepository|\Doctrine\Common\Persistence\ObjectRepository
 	 */
 	private $userRepository;
 
 	/**
-	 * @param \Digbang\Security\Repositories\DoctrineUserRepository $userRepository
+	 * @param \Digbang\Security\Repositories\DoctrineUserRepository|\Doctrine\Common\Persistence\ObjectRepository $userRepository
 	 */
 	public function setRepository(\Doctrine\Common\Persistence\ObjectRepository $userRepository)
 	{
@@ -450,6 +450,7 @@ trait UserTrait
 
 			foreach ($this->permissions as $permission)
 			{
+				/** @type UserPermission $permission */
 				$key = (string) $permission;
 
 				if ($permission->isAllowed())

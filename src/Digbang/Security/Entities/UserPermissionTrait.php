@@ -48,4 +48,12 @@ trait UserPermissionTrait
 	{
 		$this->allowed = false;
 	}
+
+	/**
+	 * @return bool
+	 */
+	public function isAllowed()
+	{
+		return $this->allowed;
+	}
 }
