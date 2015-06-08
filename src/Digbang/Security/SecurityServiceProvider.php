@@ -35,21 +35,7 @@ class SecurityServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-        /** @type \Illuminate\Config\Repository $config */
-        $config = $this->app['config'];
-
-        switch ($config->get('security::auth.driver', 'eloquent'))
-        {
-            case 'custom':
-                $this->app->register(CustomSecurityServiceProvider::class);
-                break;
-            case 'eloquent':
-                $this->app->register(SentryServiceProvider::class);
-                break;
-            default:
-                throw new \UnexpectedValueException("Security driver " . $config->get('security::auth.driver') . ' does not exist.');
-        }
-
+        $this->app->register(SentryServiceProvider::class);
 
 		$this->registerCommands();
 		$this->registerPermissionRepository();
