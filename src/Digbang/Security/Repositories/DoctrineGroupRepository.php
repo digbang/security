@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Illuminate\Config\Repository;
 
 class DoctrineGroupRepository extends EntityRepository implements GroupProviderInterface
@@ -123,6 +124,18 @@ class DoctrineGroupRepository extends EntityRepository implements GroupProviderI
         return $group;
     }
 
+	/**
+	 * @param string $name
+	 * @param string $permission
+	 * @param string $orderBy
+	 * @param string $orderSense
+	 * @param int    $limit
+	 * @param int    $offset
+	 *
+	 * @return Paginator
+	 * @throws Mapping\MappingException
+	 * @throws \Doctrine\ORM\Query\QueryException
+	 */
 	public function search($name = null, $permission = null, $orderBy = null, $orderSense = 'asc', $limit = 10, $offset = 0)
 	{
 		$queryBuilder = $this->createQueryBuilder('g');
@@ -162,6 +175,6 @@ class DoctrineGroupRepository extends EntityRepository implements GroupProviderI
 			$queryBuilder->setParameter('permission', "%$permission%");
 		}
 
-		return $queryBuilder->getQuery()->getResult();
+		return new Paginator($queryBuilder->getQuery());
 	}
 }

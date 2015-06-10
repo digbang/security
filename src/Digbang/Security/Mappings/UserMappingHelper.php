@@ -76,7 +76,7 @@ final class UserMappingHelper
 		$builder
 			->belongsToMany($this->groupClassName, 'groups', function(BelongsToMany $belongsToMany){
 				$belongsToMany->inversedBy('users');
-				$belongsToMany->cascadePersist();
+				$belongsToMany->cascadeAll();
 			})
 			->hasMany($this->userPermissionClass, 'permissions', function(HasMany $hasMany){
 				$hasMany->mappedBy('user');

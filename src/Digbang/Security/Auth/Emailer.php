@@ -1,6 +1,7 @@
 <?php namespace Digbang\Security\Auth;
 
 use Cartalyst\Sentry\Users\UserInterface;
+use Digbang\Security\Contracts\User;
 use Illuminate\Config\Repository;
 use Illuminate\Mail\Mailer;
 use Illuminate\Mail\Message;
@@ -55,20 +56,30 @@ class Emailer
 	{
 		$from = $this->config->get('security::emails.from');
 
-		$name = $user->getFirstName() ? $user->getFirstName() : $user->getLogin();
+		$name = $this->extractName($user);
 
-		$this->mailer->send(
-			$view,
-			[
-				'name' => $name,
-				'link' => $link
-			],
-			function (Message $message) use ($user, $from, $subject, $name)
-			{
-				$message->from($from['address'], $from['name']);
-				$message->to($user->getLogin(), $name);
-				$message->subject($subject);
-			}
-		);
+		$this->mailer->send($view, compact('name', 'link'), function (Message $message) use ($user, $from, $subject, $name){
+			$message->from($from['address'], $from['name']);
+			$message->to($user->getLogin(), $name);
+			$message->subject($subject);
+		});
+	}
+
+	/**
+	 * @param UserInterface $user
+	 *
+	 * @return string
+	 */
+	protected function extractName(UserInterface $user)
+	{
+		switch (true)
+		{
+			case $user instanceof User:
+				return $user->getFirstName() ?: $user->getLogin();
+			case isset($user->name):
+				return $user->name;
+			default:
+				return $user->getLogin();
+		}
 	}
 }

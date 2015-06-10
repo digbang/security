@@ -810,4 +810,40 @@ trait UserTrait
 	{
 		return new UserPermission($this, $permission, $allowed);
 	}
+
+	/**
+	 * Updates the user to the given group(s).
+	 *
+	 * @param  \Illuminate\Database\Eloquent\Collection $groups
+	 * @param  bool                                     $remove
+	 *
+	 * @return bool
+	 */
+	public function updateGroups($groups, $remove = false)
+	{
+		if ($groups instanceof GroupInterface)
+		{
+			$groups = [$groups];
+		}
+
+		if ($remove)
+		{
+			$this->groups->clear();
+		}
+
+		foreach ($groups as $group)
+		{
+			if ($this->groups->contains($group))
+			{
+				continue;
+			}
+
+			if (! $this->addGroup($group))
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
 }

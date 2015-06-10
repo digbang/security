@@ -11,6 +11,7 @@ use Digbang\Security\Entities\User as DefaultUser;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Illuminate\Config\Repository;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
@@ -328,7 +329,7 @@ class DoctrineUserRepository extends EntityRepository implements ProviderInterfa
 	 * @param int           $limit
 	 * @param int           $offset
 	 *
-	 * @return \Doctrine\Common\Collections\Collection
+	 * @return Paginator
 	 */
 	public function search($email = null, $firstName = null, $lastName = null, $activated = null, $orderBy = null, $orderSense = 'asc', $limit = 10, $offset = 0)
 	{
@@ -373,6 +374,9 @@ class DoctrineUserRepository extends EntityRepository implements ProviderInterfa
 		$criteria->setMaxResults($limit);
 		$criteria->setFirstResult($offset);
 
-		return $this->matching($criteria);
+		$queryBuilder = $this->createQueryBuilder('u');
+		$queryBuilder->addCriteria($criteria);
+
+		return new Paginator($queryBuilder->getQuery());
 	}
 }
