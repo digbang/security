@@ -108,6 +108,6 @@ class GroupService
 	 */
 	public function search($name = null, $permission = null, $orderBy = null, $orderSense = 'asc', $limit = 10, $offset = 0)
 	{
-		$this->groupRepository->search($name, $permission, $orderBy, $orderSense, $limit, $offset);
+		return $this->groupRepository->search($name, $permission, $orderBy, $orderSense, $limit, $offset);
 	}
 }
