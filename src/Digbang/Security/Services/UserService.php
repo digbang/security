@@ -3,6 +3,7 @@
 use Digbang\Security\Contracts\User;
 use Digbang\Security\Repositories\DoctrineUserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class UserService
 {
@@ -154,7 +155,7 @@ class UserService
 	 * @param int           $limit
 	 * @param int           $offset
 	 *
-	 * @return \Doctrine\Common\Collections\Collection
+	 * @return Paginator
 	 */
 	public function search($email = null, $firstName = null, $lastName = null, $activated = null, $orderBy = null, $orderSense = 'asc', $limit = 10, $offset = 0)
 	{

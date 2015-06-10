@@ -2,6 +2,7 @@
 
 use Digbang\Security\Contracts\Group;
 use Digbang\Security\Repositories\DoctrineGroupRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Illuminate\Support\Collection;
 
 /**
@@ -103,12 +104,10 @@ class GroupService
 	 * @param int           $limit
 	 * @param int           $offset
 	 *
-	 * @return Collection
+	 * @return Paginator
 	 */
 	public function search($name = null, $permission = null, $orderBy = null, $orderSense = 'asc', $limit = 10, $offset = 0)
 	{
-		return new Collection(
-			$this->groupRepository->search($name, $permission, $orderBy, $orderSense, $limit, $offset)
-		);
+		$this->groupRepository->search($name, $permission, $orderBy, $orderSense, $limit, $offset);
 	}
 }
