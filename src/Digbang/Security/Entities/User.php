@@ -2,6 +2,7 @@
 
 use Digbang\Security\Contracts\User as UserInterface;
 use Digbang\Security\Contracts\RepositoryAware;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class User implements UserInterface, RepositoryAware
 {
@@ -15,6 +16,9 @@ class User implements UserInterface, RepositoryAware
 	{
 		$this->email    = $email;
 		$this->password = $password;
+
+		$this->groups      = new ArrayCollection;
+		$this->permissions = new ArrayCollection;
 	}
 
 	/**

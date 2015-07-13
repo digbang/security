@@ -19,7 +19,7 @@ trait GroupTrait
 	private $name;
 
 	/**
-	 * @type \Doctrine\Common\Collections\ArrayCollection
+	 * @type ArrayCollection
 	 */
 	private $permissions;
 

@@ -15,7 +15,9 @@ class Group implements GroupInterface, RepositoryAware
 	public function __construct($name, array $permissions = [])
 	{
 		$this->name        = $name;
-		$this->permissions = new ArrayCollection();
+
+		$this->permissions = new ArrayCollection;
+		$this->users       = new ArrayCollection;
 
 		if (!empty($permissions))
 		{
