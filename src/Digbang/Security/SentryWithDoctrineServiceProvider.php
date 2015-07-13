@@ -7,6 +7,7 @@ use Cartalyst\Sentry\Sessions\IlluminateSession;
 use Cartalyst\Sentry\Users\ProviderInterface as UserProvider;
 use Cartalyst\Sentry\Groups\ProviderInterface as GroupProvider;
 use Cartalyst\Sentry\Throttling\ProviderInterface as ThrottleProvider;
+use Illuminate\Config\Repository;
 use Illuminate\Container\Container;
 use Illuminate\Support\ServiceProvider;
 
@@ -125,7 +126,38 @@ class SentryWithDoctrineServiceProvider extends ServiceProvider
 
 		if (! isset($this->app[ThrottleProvider::class]))
 		{
-			$this->app->singleton(ThrottleProvider::class, Repositories\DoctrineThrottleRepository::class);
+			$this->app->singleton(ThrottleProvider::class, function(Container $app){
+				/** @type Repositories\DoctrineThrottleRepository $provider */
+				$provider = $app->make(Repositories\DoctrineThrottleRepository::class);
+
+				/** @type Repository $config */
+				$config = $app->make(Repository::class);
+
+				if (! $config->get('cartalyst/sentry::throttling.enabled', false))
+				{
+					$provider->disable();
+				}
+
+				$entity = $config->get('cartalyst/sentry::throttling.model');
+
+				if (method_exists($entity, 'setAttemptLimit'))
+				{
+					forward_static_call_array(
+						array($entity, 'setAttemptLimit'),
+						array($config->get('cartalyst/sentry::throttling.attempt_limit'))
+					);
+				}
+
+				if (method_exists($entity, 'setSuspensionTime'))
+				{
+					forward_static_call_array(
+						array($entity, 'setSuspensionTime'),
+						array($config->get('cartalyst/sentry::throttling.suspension_time'))
+					);
+				}
+
+				return $provider;
+			});
 		}
 	}
 

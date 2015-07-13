@@ -385,4 +385,20 @@ trait ThrottleTrait
 	{
 		return $this->throttleRepository;
 	}
+
+	/**
+	 * @param int $attemptLimit
+	 */
+	public static function setAttemptLimit($attemptLimit)
+	{
+		self::$attemptLimit = $attemptLimit;
+	}
+
+	/**
+	 * @param int $suspensionTime
+	 */
+	public static function setSuspensionTime($suspensionTime)
+	{
+		self::$suspensionTime = $suspensionTime;
+	}
 }
