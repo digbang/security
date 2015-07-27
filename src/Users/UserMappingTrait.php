@@ -1,16 +1,13 @@
 <?php namespace Digbang\Security\Mappings;
 
 use Digbang\Doctrine\Metadata\Builder;
-use Digbang\Doctrine\Metadata\Relations\BelongsToMany;
 use Digbang\Doctrine\Metadata\Relations\HasMany;
 use Digbang\Security\Activations\Activation;
 use Digbang\Security\Entities\Role;
-use Digbang\Security\Entities\UserPermission;
 use Digbang\Security\Permissions\PermissionCollection;
 use Digbang\Security\Persistences\Persistence;
 use Digbang\Security\Reminders\Reminder;
 use Digbang\Security\Throttling\Throttle;
-use Doctrine\ORM\Mapping\Builder\FieldBuilder;
 
 trait UserMappingTrait
 {
