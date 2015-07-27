@@ -111,7 +111,7 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottleRep
     public function __construct(EntityManager $entityManager, Repository $config, ThrottleFactory $throttleFactory)
     {
         parent::__construct($entityManager, $entityManager->getClassMetadata(
-	        $this->entityName = $config->get('security::auth.throttling.model', Throttle::class)
+	        $this->entityName = $config->get('digbang.security.auth.throttling.model', Throttle::class)
         ));
 
         $this->config          = $config;

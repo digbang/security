@@ -124,7 +124,7 @@ class RoutePermissionRepository implements PermissionRepository
 	{
 		if (empty($this->routes))
 		{
-			$this->prefix = $this->prefix ?: $this->config->get('security::permissions.prefix');
+			$this->prefix = $this->prefix ?: $this->config->get('digbang.security.permissions.prefix');
 
 			foreach ($this->router->getRoutes() as $route)
 			{

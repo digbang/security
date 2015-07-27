@@ -35,7 +35,7 @@ class DoctrineThrottleRepositorySpec extends ObjectBehavior
 		ThrottleFactory $throttleFactory
     )
     {
-	    $config->get('security::auth.throttling.model', Throttle::class)->willReturn(Throttle::class);
+	    $config->get('digbang.security.auth.throttling.model', Throttle::class)->willReturn(Throttle::class);
 	    $this->user = new User('testing', 'asd');
         $this->throttle = new UserThrottle($this->user);
 

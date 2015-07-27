@@ -51,7 +51,7 @@ final class Auth
 		{
 			return $this->responseFactory->redirectGuest(
 				$this->secureUrl->insecure()->route(
-					$this->config->get('security::auth.login_route')
+					$this->config->get('digbang.security.auth.login_route')
 				)
 			);
 		}

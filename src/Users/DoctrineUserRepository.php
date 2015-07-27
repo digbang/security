@@ -35,7 +35,7 @@ class DoctrineUserRepository extends EntityRepository implements UserRepositoryI
     public function __construct(EntityManager $entityManager, Repository $config, HasherInterface $hasher)
     {
         parent::__construct($entityManager, $entityManager->getClassMetadata(
-            $this->entityName = $config->get('security::auth.users.model', User::class)
+            $this->entityName = $config->get('digbang.security.auth.users.model', User::class)
         ));
 
         $this->hasher = $hasher;

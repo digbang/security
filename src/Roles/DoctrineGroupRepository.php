@@ -21,7 +21,7 @@ class DoctrineGroupRepository extends EntityRepository implements RoleRepository
     public function __construct(EntityManager $entityManager, Repository $config)
     {
         parent::__construct($entityManager, $entityManager->getClassMetadata(
-	        $this->entityName = $config->get('security::auth.groups.model', DefaultGroup::class)
+	        $this->entityName = $config->get('digbang.security.auth.groups.model', DefaultGroup::class)
         ));
     }
 

@@ -26,8 +26,8 @@ class EmailerSpec extends ObjectBehavior
 		$mailer->send(Argument::any(), Argument::any(), Argument::any())
 			->shouldBeCalled()->willReturn(null);
 
-		$config->get('security::emails.activation.subject')->shouldBeCalled();
-		$config->get('security::emails.from')->shouldBeCalled()->willReturn([
+		$config->get('digbang.security.emails.activation.subject')->shouldBeCalled();
+		$config->get('digbang.security.emails.from')->shouldBeCalled()->willReturn([
 			'name' => 'Testing dude',
 			'address' => 'unittests@example.com'
 		]);
@@ -45,8 +45,8 @@ class EmailerSpec extends ObjectBehavior
 		$mailer->send(Argument::any(), Argument::any(), Argument::any())
 			->shouldBeCalled()->willReturn(null);
 
-		$config->get('security::emails.password-reset.subject')->shouldBeCalled();
-		$config->get('security::emails.from')->shouldBeCalled()->willReturn([
+		$config->get('digbang.security.emails.password-reset.subject')->shouldBeCalled();
+		$config->get('digbang.security.emails.from')->shouldBeCalled()->willReturn([
 			'name' => 'Testing dude',
 			'address' => 'unittests@example.com'
 		]);

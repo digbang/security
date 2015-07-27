@@ -1,12 +1,12 @@
-@extends("security::emails.layout")
+@extends("digbang.security.emails.layout")
 
 @section('title')
-	{{ trans('security::emails.reset-password.title', ['name' => $user->getFirstName() ?: $user->getUserLogin()]) }}
+	{{ trans('digbang.security.emails.reset-password.title', ['name' => $user->getFirstName() ?: $user->getUserLogin()]) }}
 @stop
 
 @section('body')
 	<p>
-		{{ trans('security::emails.reset-password.text') }}:
+		{{ trans('digbang.security.emails.reset-password.text') }}:
 		<a href="{{ $link }}">{{ $link }}</a>
 	</p>
 @stop

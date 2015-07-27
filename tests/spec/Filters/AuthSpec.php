@@ -32,7 +32,7 @@ class AuthSpec extends ObjectBehavior
 	{
 		$accessControl->isLogged()->shouldBeCalled()->willReturn(false);
 		$secureUrl->insecure()->shouldBeCalled()->willReturn($urlGenerator);
-		$config->get('security::auth.login_route')->shouldBeCalled()->willReturn('a.named.login.route');
+		$config->get('digbang.security.auth.login_route')->shouldBeCalled()->willReturn('a.named.login.route');
 
 		$urlGenerator->route('a.named.login.route')->shouldBeCalled()->willReturn('some/url');
 		$responseFactory->redirectGuest('some/url')->shouldBeCalled()->willReturn('aRedirectObject');

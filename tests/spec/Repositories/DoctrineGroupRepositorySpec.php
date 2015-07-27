@@ -20,7 +20,7 @@ class DoctrineGroupRepositorySpec extends ObjectBehavior
 {
     function let(EntityManager $em, ClassMetadata $cm, UnitOfWork $uow, EntityPersister $ep, Repository $config)
     {
-	    $config->get('security::auth.groups.model', Role::class)->willReturn(Role::class);
+	    $config->get('digbang.security.auth.groups.model', Role::class)->willReturn(Role::class);
         $group = new Role('Testing Group');
 
         $cm->name = Role::class;

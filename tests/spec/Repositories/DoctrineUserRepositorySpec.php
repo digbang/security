@@ -25,7 +25,7 @@ class DoctrineUserRepositorySpec extends ObjectBehavior
     {
         $user = new User('testing', 'asd');
 
-        $config->get('security::auth.users.model', Argument::any())->willReturn(User::class);
+        $config->get('digbang.security.auth.users.model', Argument::any())->willReturn(User::class);
         $cm->name = User::class;
         $em->getClassMetadata(User::class)->willReturn($cm);
         $em->getUnitOfWork()->willReturn($uow);

@@ -33,8 +33,8 @@ class Emailer
 	 */
 	public function sendPasswordReset(User $user, $link)
     {
-	    $this->send('security::emails.reset-password', $user, $link, $this->config->get(
-		    'security::emails.password-reset.subject'
+	    $this->send('digbang.security.emails.reset-password', $user, $link, $this->config->get(
+		    'digbang.security.emails.password-reset.subject'
 	    ));
     }
 
@@ -44,8 +44,8 @@ class Emailer
 	 */
     public function sendActivation(User $user, $link)
     {
-	    $this->send('security::emails.activation', $user, $link, $this->config->get(
-		    'security::emails.activation.subject'
+	    $this->send('digbang.security.emails.activation', $user, $link, $this->config->get(
+		    'digbang.security.emails.activation.subject'
 	    ));
     }
 
@@ -84,7 +84,7 @@ class Emailer
 	 */
 	protected function getSenderConfiguration()
 	{
-		$config = $this->config->get('security::emails.from');
+		$config = $this->config->get('digbang.security.emails.from');
 
 		if (! array_key_exists('address', $config))
 		{
