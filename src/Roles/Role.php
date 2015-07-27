@@ -1,4 +1,4 @@
-<?php namespace Digbang\Security\Entities;
+<?php namespace Digbang\Security\Roles;
 
 use Digbang\Doctrine\TimestampsTrait;
 use Digbang\Security\Contracts\Role as RoleInterface;
