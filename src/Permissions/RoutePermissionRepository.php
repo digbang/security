@@ -1,18 +1,10 @@
 <?php namespace Digbang\Security\Permissions;
 
-use Digbang\Security\Permissions\Exceptions\PermissionException;
+use Digbang\Security\Exceptions\PermissionException;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 
-/**
- * Class RoutePermissionRepository
- * By using this class, you expect every url to be secured.
- * Permissions required for each url will have the same name as the route,
- * usually {prefix}.{resource}.{method}
- * Remember to set the default prefix through the security configuration file.
- * @package Digbang\Security\Permissions
- */
 class RoutePermissionRepository implements PermissionRepository
 {
 	/**
@@ -88,7 +80,7 @@ class RoutePermissionRepository implements PermissionRepository
 	/**
 	 * @param  string $path
 	 *
-	 * @throws Exceptions\PermissionException
+	 * @throws PermissionException
 	 * @return string The permission matching the path, if it needs one.
 	 */
 	public function getForPath($path)
@@ -124,15 +116,10 @@ class RoutePermissionRepository implements PermissionRepository
 	{
 		if (empty($this->routes))
 		{
-			$this->prefix = $this->prefix ?: $this->config->get('digbang.security.permissions.prefix');
-
 			foreach ($this->router->getRoutes() as $route)
 			{
 				/* @type $route \Illuminate\Routing\Route */
-				if (empty($this->prefix) || starts_with($route->getName(), $this->prefix))
-				{
-					$this->routes[] = $route;
-				}
+				$this->routes[] = $route;
 			}
 		}
 

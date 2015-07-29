@@ -2,7 +2,7 @@
 
 use Digbang\Doctrine\Metadata\Builder;
 use Digbang\Doctrine\Metadata\EntityMapping;
-use Digbang\Security\Persistences\Persistence;
+use Digbang\Security\Persistences\DefaultPersistence;
 use Digbang\Security\Persistences\PersistenceMappingTrait;
 
 final class PersistenceMapping implements EntityMapping, CustomTableMapping
@@ -13,6 +13,14 @@ final class PersistenceMapping implements EntityMapping, CustomTableMapping
 	 * @type string
 	 */
 	private $table;
+
+	/**
+	 * @return string
+	 */
+	public function getTable()
+	{
+		return $this->table;
+	}
 
 	/**
 	 * @param string $table
@@ -29,7 +37,7 @@ final class PersistenceMapping implements EntityMapping, CustomTableMapping
 	 */
 	public function getEntityName()
 	{
-		return Persistence::class;
+		return DefaultPersistence::class;
 	}
 
 	/**

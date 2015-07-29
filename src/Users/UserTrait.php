@@ -11,93 +11,82 @@ trait UserTrait
 	/**
 	 * @type int
 	 */
-	private $id;
+	protected $id;
 
 	/**
 	 * @type string
 	 */
-	private $email;
+	protected $email;
 
 	/**
 	 * @type string
 	 */
-	private $password;
+	protected $username;
 
 	/**
 	 * @type string
 	 */
-	private $firstName;
+	protected $password;
 
 	/**
 	 * @type string
 	 */
-	private $lastName;
+	protected $firstName;
+
+	/**
+	 * @type string
+	 */
+	protected $lastName;
 
 	/**
 	 * @type \DateTimeInterface
 	 */
-	private $lastLogin;
+	protected $lastLogin;
 
 	/**
 	 * @type bool
 	 */
-	private $activated = false;
+	protected $activated = false;
 
 	/**
 	 * @type string
 	 */
-	private $activationCode;
+	protected $activationCode;
 
 	/**
 	 * @type \DateTimeInterface
 	 */
-	private $activatedAt;
+	protected $activatedAt;
 
 	/**
 	 * @type bool
 	 */
-	private $superUser = false;
+	protected $superUser = false;
 
 	/**
 	 * @type string
 	 */
-	private $persistCode;
+	protected $persistCode;
 
 	/**
 	 * @type string
 	 */
-	private $resetPasswordCode;
+	protected $resetPasswordCode;
 
 	/**
 	 * @type ArrayCollection
 	 */
-	private $groups;
+	protected $groups;
 
 	/**
 	 * @type ArrayCollection
 	 */
-	private $permissions;
+	protected $permissions;
 
 	/**
 	 * @type array
 	 */
-	private $mergedPermissions;
-
-	/**
-	 * This is needed to emulate an AR behavior.
-	 * Sentry uses AR to save/delete entities...
-	 *
-	 * @type DoctrineUserRepository|\Doctrine\Common\Persistence\ObjectRepository
-	 */
-	private $userRepository;
-
-	/**
-	 * @param DoctrineUserRepository|\Doctrine\Common\Persistence\ObjectRepository $userRepository
-	 */
-	public function setRepository(\Doctrine\Common\Persistence\ObjectRepository $userRepository)
-	{
-		$this->userRepository = $userRepository;
-	}
+	protected $mergedPermissions;
 
 	/**
 	 * Returns the user's ID.
@@ -546,8 +535,6 @@ trait UserTrait
 	public function recordLogin()
 	{
 		$this->lastLogin = new Carbon;
-
-		$this->save();
 	}
 
 	/**

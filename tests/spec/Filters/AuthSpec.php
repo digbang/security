@@ -1,7 +1,7 @@
 <?php namespace spec\Digbang\Security\Filters;
 
 use Digbang\Security\Auth\AccessControl;
-use Digbang\Security\Permissions\Exceptions\PermissionException;
+use Digbang\Security\Exceptions\PermissionException;
 use Digbang\Security\Urls\SecureUrl;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Routing\ResponseFactory;

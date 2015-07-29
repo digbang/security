@@ -1,7 +1,7 @@
 <?php namespace Digbang\Security\Throttling;
 
 use Digbang\Doctrine\Metadata\Builder;
-use Digbang\Security\Users\User;
+use Digbang\Security\Users\DefaultUser;
 
 trait UserThrottleMappingTrait
 {
@@ -12,7 +12,7 @@ trait UserThrottleMappingTrait
 	 * @type array
 	 */
 	private $relations = [
-		'user' => [User::class, 'user']
+		'user' => [DefaultUser::class, 'user']
 	];
 
 	public function addMappings(Builder $builder)

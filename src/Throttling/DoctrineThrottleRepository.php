@@ -4,23 +4,15 @@ use Carbon\Carbon;
 use Cartalyst\Sentinel\Throttling\ThrottleRepositoryInterface;
 use Cartalyst\Sentinel\Users\UserInterface;
 use Digbang\Security\Contracts\Factories\ThrottleFactory;
+use Digbang\Security\Users\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Support\Collection;
 
-class DoctrineThrottleRepository extends EntityRepository implements ThrottleRepositoryInterface
+abstract class DoctrineThrottleRepository extends EntityRepository implements ThrottleRepositoryInterface
 {
-	/**
-	 * @type string
-	 */
-	private $entityName;
-    /**
-     * @type Repository
-     */
-    private $config;
-
     /**
      * The interval which failed logins are checked, to prevent brute force.
      *
@@ -99,24 +91,51 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottleRep
     protected $userThrottles;
 
 	/**
-	 * @type ThrottleFactory
-	 */
-	private $throttleFactory;
-
-	/**
 	 * @param EntityManager   $entityManager
 	 * @param Repository      $config
 	 * @param ThrottleFactory $throttleFactory
 	 */
-    public function __construct(EntityManager $entityManager, Repository $config, ThrottleFactory $throttleFactory)
+    public function __construct(EntityManager $entityManager, ThrottleFactory $throttleFactory)
     {
         parent::__construct($entityManager, $entityManager->getClassMetadata(
-	        $this->entityName = $config->get('digbang.security.auth.throttling.model', Throttle::class)
+	        $this->entityName()
         ));
-
-        $this->config          = $config;
-	    $this->throttleFactory = $throttleFactory;
     }
+
+    /**
+     * Get the FQCN of each Throttle type:
+     *   - null: Base throttle type (eg: Digbang\Security\Throttling\DefaultThrottle)
+     *   - 'global': Global throttle type (eg: Digbang\Security\Throttling\DefaultGlobalThrottle)
+     *   - 'ip': Ip throttle type (eg: Digbang\Security\Throttling\DefaultIpThrottle)
+     *   - 'user': User throttle type (eg: Digbang\Security\Throttling\DefaultUserThrottle)
+     *
+     * @param string|null $type
+     *
+     * @return string
+     */
+    abstract protected function entityName($type = null);
+
+	/**
+	 * Create a GlobalThrottle object
+	 * @return Throttle
+	 */
+	abstract protected function createGlobalThrottle();
+
+	/**
+	 * Create an IpThrottle object
+	 *
+	 * @param string $ipAddress
+	 * @return Throttle
+	 */
+	abstract protected function createIpThrottle($ipAddress);
+
+	/**
+	 * Create a UserThrottle object
+	 *
+	 * @param User $user
+	 * @return Throttle
+	 */
+	abstract protected function createUserThrottle(User $user);
 
     /**
      * {@inheritDoc}
@@ -142,22 +161,23 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottleRep
         return $this->delay('user', $user);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+	/**
+	 * @param string|null $ipAddress
+	 * @param User|null   $user
+	 */
     public function log($ipAddress = null, UserInterface $user = null)
     {
         $throttles = [
-            $this->throttleFactory->createGlobalThrottle()
+            $this->createGlobalThrottle()
         ];
 
         if ($ipAddress !== null)
         {
-            $throttles[] = $this->throttleFactory->createIpThrottle($ipAddress);
+            $throttles[] = $this->createIpThrottle($ipAddress);
         }
 
         if ($user !== null) {
-            $throttles[] = $this->throttleFactory->createUserThrottle($user);
+            $throttles[] = $this->createUserThrottle($user);
         }
 
         $this->bulkSave($throttles);
@@ -313,7 +333,7 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottleRep
         if (is_array($this->$thresholds)) {
             // Great, now we compare our delay against the most recent attempt
 
-            /** @type Throttle $last */
+            /** @type DefaultThrottle $last */
             $last = $throttles->last();
 
             foreach (array_reverse($this->$thresholds, true) as $attempts => $delay) {
@@ -360,7 +380,7 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottleRep
         $interval = Carbon::now()
             ->subSeconds($this->globalInterval);
 
-        $globalRepository = $this->getEntityManager()->getRepository(GlobalThrottle::class);
+        $globalRepository = $this->getEntityManager()->getRepository($this->entityName('global'));
 
         $queryBuilder = $globalRepository->createQueryBuilder('t');
         $queryBuilder
@@ -397,7 +417,7 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottleRep
         $interval = Carbon::now()
             ->subSeconds($this->ipInterval);
 
-        $ipRepository = $this->getEntityManager()->getRepository(IpThrottle::class);
+        $ipRepository = $this->getEntityManager()->getRepository($this->entityName('ip'));
 
         $queryBuilder = $ipRepository->createQueryBuilder('t');
         $queryBuilder
@@ -440,7 +460,7 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottleRep
         $interval = Carbon::now()
             ->subSeconds($this->userInterval);
 
-        $ipRepository = $this->getEntityManager()->getRepository(UserThrottle::class);
+        $ipRepository = $this->getEntityManager()->getRepository($this->entityName('user'));
 
         $queryBuilder = $ipRepository->createQueryBuilder('t');
         $queryBuilder
@@ -458,11 +478,12 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottleRep
      * Returns the seconds to free based on the given throttle and
      * the presented delay in seconds, by comparing it to now.
      *
-     * @param  Throttle  $throttle
+     * @param  DefaultThrottle $throttle
      * @param  int       $interval
+     *
      * @return int
      */
-    protected function secondsToFree(Throttle $throttle, $interval)
+    protected function secondsToFree(DefaultThrottle $throttle, $interval)
     {
         return $throttle->getCreatedAt()->addSeconds($interval)->diffInSeconds();
     }

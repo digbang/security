@@ -1,6 +1,6 @@
 <?php namespace Digbang\Security\Throttling;
 
-class IpThrottle extends Throttle
+class DefaultIpThrottle extends DefaultThrottle
 {
 	/**
 	 * @type string

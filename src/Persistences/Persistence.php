@@ -1,24 +1,12 @@
 <?php namespace Digbang\Security\Persistences;
 
-use Digbang\Doctrine\TimestampsTrait;
-use Digbang\Security\Contracts\User;
+use Cartalyst\Sentinel\Persistences\PersistenceInterface;
+use Digbang\Security\Users\User;
 
-class Persistence
+interface Persistence extends PersistenceInterface
 {
-	use TimestampsTrait;
-
 	/**
-	 * @type int
+	 * @return User
 	 */
-	private $id;
-
-	/**
-	 * @type User
-	 */
-	private $user;
-
-	/**
-	 * @type string
-	 */
-	private $code;
+	public function getUser();
 }

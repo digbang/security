@@ -12,7 +12,9 @@
 		"illuminate/support": "~5.1",
 		"illuminate/contracts": "~5.1",
 		"cartalyst/sentinel": "~2.0",
-		"doctrine/dbal": "~2.5"
+		"doctrine/dbal": "~2.5",
+		"illuminate/events": "~5.1",
+		"illuminate/cookie": "~5.1"
 	},
 	"require-dev": {
 		"phpspec/phpspec": "~2.0",

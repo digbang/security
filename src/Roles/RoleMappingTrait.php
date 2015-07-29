@@ -2,7 +2,7 @@
 
 use Digbang\Doctrine\Metadata\Builder;
 use Digbang\Security\Permissions\PermissionCollection;
-use Digbang\Security\Users\User;
+use Digbang\Security\Users\DefaultUser;
 
 trait RoleMappingTrait
 {
@@ -13,7 +13,7 @@ trait RoleMappingTrait
 	 * @type array
 	 */
 	protected $relations = [
-		'users' => [User::class, 'users']
+		'users' => [DefaultUser::class, 'users']
 	];
 
 	/**

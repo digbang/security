@@ -1,8 +1,9 @@
 <?php namespace Digbang\Security\Urls;
 
-use Cartalyst\Sentry\Sentry;
+use Cartalyst\Sentinel\Sentinel;
+use Digbang\Security\Contracts\User;
 use Digbang\Security\Permissions\PermissionRepository;
-use Digbang\Security\Permissions\Exceptions\PermissionException;
+use Digbang\Security\Exceptions\PermissionException;
 use Illuminate\Routing\UrlGenerator;
 
 /**
@@ -11,15 +12,26 @@ use Illuminate\Routing\UrlGenerator;
  */
 class SecureUrl
 {
-	protected $sentry;
+	/**
+	 * @type Sentinel
+	 */
+	protected $sentinel;
+
+	/**
+	 * @type UrlGenerator
+	 */
 	protected $url;
+
+	/**
+	 * @type PermissionRepository
+	 */
 	protected $permissionRepository;
 
-	public function __construct(UrlGenerator $url, PermissionRepository $permissionRepository, Sentry $sentry)
+	public function __construct(UrlGenerator $url, PermissionRepository $permissionRepository, Sentinel $sentinel)
 	{
 		$this->url = $url;
 		$this->permissionRepository = $permissionRepository;
-		$this->sentry = $sentry;
+		$this->sentinel = $sentinel;
 	}
 
 	/**
@@ -27,7 +39,7 @@ class SecureUrl
 	 * @param array  $parameters
 	 *
 	 * @return string
-	 * @throws \Digbang\Security\Permissions\Exceptions\PermissionException
+	 * @throws PermissionException
 	 */
 	public function route($route, $parameters = [])
 	{
@@ -46,7 +58,7 @@ class SecureUrl
 	 * @param array  $parameters
 	 *
 	 * @return string
-	 * @throws \Digbang\Security\Permissions\Exceptions\PermissionException
+	 * @throws PermissionException
 	 */
 	public function action($action, $parameters = [])
 	{
@@ -66,7 +78,7 @@ class SecureUrl
 	 * @param null   $secure
 	 *
 	 * @return string
-	 * @throws \Digbang\Security\Permissions\Exceptions\PermissionException
+	 * @throws PermissionException
 	 */
 	public function may($path, $extra = array(), $secure = null)
 	{
@@ -87,7 +99,8 @@ class SecureUrl
 			return true;
 		}
 
-		if (! $user = $this->sentry->getUser())
+		/** @type User $user */
+		if (! $user = $this->sentinel->getUser())
 		{
 			return false;
 		}
@@ -104,7 +117,14 @@ class SecureUrl
 		return $this->url;
 	}
 
-	public function best($method, array $routes)
+	/**
+	 * @param string $method
+	 * @param array $routes
+	 *
+	 * @return string|null
+	 * @throws \UnexpectedValueException
+	 */
+	private function best($method, array $routes)
 	{
 		if (!method_exists($this, $method))
 		{
@@ -118,17 +138,35 @@ class SecureUrl
 				$route = [$route];
 			}
 
-			try {
+			try
+			{
 				return call_user_func_array([$this, $method], $route);
-			} catch (PermissionException $e){}
+			}
+			catch (PermissionException $e)
+			{
+				// Do nothing
+			}
 		}
 	}
 
+	/**
+	 * Try each route in order, return the first one that the
+	 * current user has permission to access.
+	 * @param array $routes
+	 * @return string|null
+	 */
     public function bestRoute(array $routes)
     {
 	    return $this->best('route', $routes);
     }
 
+	/**
+	 * Try each action in order, return the first one that the
+	 * current user has permission to access.
+	 *
+	 * @param array $actions
+	 * @return string|null
+	 */
 	public function bestAction(array $actions)
 	{
 		return $this->best('action', $actions);

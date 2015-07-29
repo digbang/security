@@ -1,8 +1,8 @@
 <?php namespace spec\Digbang\Security\Throttling;
 use Digbang\Security\Contracts\Factories\ThrottleFactory;
 use Digbang\Security\Entities\User;
-use Digbang\Security\Throttling\Throttle;
-use Digbang\Security\Throttling\UserThrottle;
+use Digbang\Security\Throttling\DefaultThrottle;
+use Digbang\Security\Throttling\DefaultUserThrottle;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\AbstractQuery;
@@ -35,15 +35,15 @@ class DoctrineThrottleRepositorySpec extends ObjectBehavior
 		ThrottleFactory $throttleFactory
     )
     {
-	    $config->get('digbang.security.auth.throttling.model', Throttle::class)->willReturn(Throttle::class);
+	    $config->get('digbang.security.auth.throttling.model', DefaultThrottle::class)->willReturn(DefaultThrottle::class);
 	    $this->user = new User('testing', 'asd');
-        $this->throttle = new UserThrottle($this->user);
+        $this->throttle = new DefaultUserThrottle($this->user);
 
-        $cm->name = Throttle::class;
-        $em->getClassMetadata(Throttle::class)->willReturn($cm);
+        $cm->name = DefaultThrottle::class;
+        $em->getClassMetadata(DefaultThrottle::class)->willReturn($cm);
         $em->getUnitOfWork()->willReturn($uow);
 	    $em->createQueryBuilder()->willReturn($qb);
-        $uow->getEntityPersister(Throttle::class)->willReturn($ep);
+        $uow->getEntityPersister(DefaultThrottle::class)->willReturn($ep);
 
 	    /** @type Collaborator $qb */
 	    $qb->select(Argument::cetera())->willReturn($qb);
@@ -56,7 +56,7 @@ class DoctrineThrottleRepositorySpec extends ObjectBehavior
 	    $query->getSingleResult()->willReturn($this->throttle);
 
         // Successful find by ID
-        $em->find(Throttle::class, 1, Argument::cetera())->willReturn($this->throttle);
+        $em->find(DefaultThrottle::class, 1, Argument::cetera())->willReturn($this->throttle);
         // Successful find by user
         $ep->load([Criteria::expr()->eq('user', $this->user)], Argument::cetera())->willReturn($this->throttle);
         // Successful find by user and ip address
@@ -70,7 +70,7 @@ class DoctrineThrottleRepositorySpec extends ObjectBehavior
 //	    $em->persist(Argument::any())->willReturn(true);
 //	    $em->flush(Argument::any())->willReturn(true);
         // Failed to find by id
-        $em->find(Throttle::class, Argument::not(1), Argument::cetera())->willReturn(null);
+        $em->find(DefaultThrottle::class, Argument::not(1), Argument::cetera())->willReturn(null);
         // Failed to find by everything else
         $ep->load(Argument::cetera())->willReturn(null);
 

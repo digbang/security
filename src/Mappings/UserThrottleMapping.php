@@ -2,7 +2,7 @@
 
 use Digbang\Doctrine\Metadata\Builder;
 use Digbang\Doctrine\Metadata\EntityMapping;
-use Digbang\Security\Throttling\UserThrottle;
+use Digbang\Security\Throttling\DefaultUserThrottle;
 use Digbang\Security\Throttling\UserThrottleMappingTrait;
 
 final class UserThrottleMapping implements EntityMapping
@@ -15,7 +15,7 @@ final class UserThrottleMapping implements EntityMapping
 	 */
 	public function getEntityName()
 	{
-		return UserThrottle::class;
+		return DefaultUserThrottle::class;
 	}
 
 	/**

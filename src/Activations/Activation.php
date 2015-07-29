@@ -1,35 +1,15 @@
 <?php namespace Digbang\Security\Activations;
 
-use Carbon\Carbon;
-use Digbang\Doctrine\TimestampsTrait;
-use Digbang\Security\Contracts\User;
-
-class Activation
+interface Activation
 {
-	use TimestampsTrait;
+	/**
+	 * @return void
+	 */
+	public function complete();
 
 	/**
-	 * @type int
+	 * Sentinel
+	 * @return string
 	 */
-	private $id;
-
-	/**
-	 * @type User
-	 */
-	private $user;
-
-	/**
-	 * @type string
-	 */
-	private $code;
-
-	/**
-	 * @type bool
-	 */
-	private $completed = false;
-
-	/**
-	 * @type Carbon
-	 */
-	private $completedAt;
+	public function __get();
 }

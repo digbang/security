@@ -2,7 +2,7 @@
 
 use Digbang\Doctrine\Metadata\Builder;
 use Digbang\Doctrine\Metadata\EntityMapping;
-use Digbang\Security\Roles\Role;
+use Digbang\Security\Roles\DefaultRole;
 
 final class RoleMapping implements EntityMapping, CustomTableMapping
 {
@@ -14,13 +14,21 @@ final class RoleMapping implements EntityMapping, CustomTableMapping
 	private $table;
 
 	/**
+	 * @return string
+	 */
+	public function getTable()
+	{
+		return $this->table;
+	}
+
+	/**
 	 * Returns the fully qualified name of the entity that this mapper maps.
 	 *
 	 * @return string
 	 */
 	public function getEntityName()
 	{
-		return Role::class;
+		return DefaultRole::class;
 	}
 
 	/**

@@ -2,7 +2,7 @@
 
 use Digbang\Security\Users\User;
 
-class UserThrottle extends Throttle
+class DefaultUserThrottle extends DefaultThrottle
 {
 	/**
 	 * @type User
@@ -20,7 +20,7 @@ class UserThrottle extends Throttle
 	/**
 	 * Returns the associated user with the throttler.
 	 *
-	 * @return \Digbang\Security\Users\User
+	 * @return User
 	 */
 	public function getUser()
 	{

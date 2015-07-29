@@ -1,22 +1,9 @@
 <?php namespace Digbang\Security\Throttling;
 
-use Digbang\Doctrine\TimestampsTrait;
-use Digbang\Security\Contracts\Throttle as ThrottleInterface;
-
-abstract class Throttle implements ThrottleInterface
+interface Throttle
 {
-	use TimestampsTrait;
-
-	/**
-	 * @type int
-	 */
-	protected $id;
-
 	/**
 	 * @return \Carbon\Carbon
 	 */
-	public function getCreatedAt()
-	{
-		return $this->createdAt;
-	}
+	public function getCreatedAt();
 }

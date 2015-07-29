@@ -1,28 +1,8 @@
 <?php namespace Digbang\Security\Roles;
 
-use Digbang\Doctrine\TimestampsTrait;
-use Digbang\Security\Contracts\Role as RoleInterface;
-use Doctrine\Common\Collections\ArrayCollection;
+use Cartalyst\Sentinel\Roles\RoleInterface;
 
-class Role implements RoleInterface
+interface Role extends RoleInterface
 {
-	use TimestampsTrait;
-	use RoleTrait;
-
-	/**
-	 * @return \Carbon\Carbon
-	 */
-	public function getCreatedAt()
-	{
-		return $this->createdAt;
-	}
-
-	/**
-	 * @return \Carbon\Carbon
-	 */
-	public function getUpdatedAt()
-	{
-		return $this->updatedAt;
-	}
 
 }

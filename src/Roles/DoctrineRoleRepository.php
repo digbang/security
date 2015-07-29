@@ -1,146 +1,114 @@
-<?php namespace Digbang\Security\Repositories;
+<?php namespace Digbang\Security\Roles;
 
 use Cartalyst\Sentinel\Roles\RoleRepositoryInterface;
-use Digbang\Security\Contracts\Role;
-use Digbang\Security\Contracts\RepositoryAware;
-use Digbang\Security\Entities\Role as DefaultGroup;
+use Digbang\Security\Contracts\Entities\Role as RoleInterface;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping;
-use Illuminate\Contracts\Config\Repository;
 
-class DoctrineGroupRepository extends EntityRepository implements RoleRepositoryInterface
+abstract class DoctrineRoleRepository extends EntityRepository implements RoleRepositoryInterface
 {
-	private $entityName;
-
 	/**
 	 * @param EntityManager $entityManager
-	 * @param Repository    $config
 	 */
-    public function __construct(EntityManager $entityManager, Repository $config)
+    public function __construct(EntityManager $entityManager)
     {
         parent::__construct($entityManager, $entityManager->getClassMetadata(
-	        $this->entityName = $config->get('digbang.security.auth.groups.model', DefaultGroup::class)
+	        $this->entityName()
         ));
     }
 
     /**
-     * Find the group by ID.
+     * Get the entity name for this repository.
+     * This entity MUST implement \Digbang\Security\Entities\Contracts\Role
+     *
+     * @return string
+     */
+    abstract protected function entityName();
+
+    /**
+     * Find the role by ID.
      *
      * @param  int $id
      *
-     * @return Role $group
+     * @return RoleInterface $role
      * @throws \InvalidArgumentException
      */
     public function findById($id)
     {
-        /** @type Role $group */
-        $group = $this->find($id);
+        /** @type RoleInterface $role */
+        $role = $this->find($id);
 
-        if (!$group)
+        if (!$role)
         {
             throw new \InvalidArgumentException("Group $id not found.");
         }
 
-        return $this->group($group);
+        return $role;
     }
 
     /**
      * Finds a role by the given slug.
      *
      * @param  string $slug
-     *
-*@return Role
+     * @return RoleInterface
      */
     public function findBySlug($slug)
     {
-        /** @type Role $group */
-        $group = $this->findOneBy(['slug' => $slug]);
+        /** @type RoleInterface $role */
+        $role = $this->findOneBy(['slug' => $slug]);
 
-        if (!$group)
+        if (!$role)
         {
             throw new \InvalidArgumentException("Group $slug not found.");
         }
 
-        return $this->group($group);
+        return $role;
     }
 
 
     /**
-     * Find the group by name.
+     * Find the role by name.
      *
      * @param  string $name
      *
-     * @return Role  $group
+     * @return RoleInterface  $role
      * @throws \InvalidArgumentException
      */
     public function findByName($name)
     {
-        /** @type Role $group */
-        $group = $this->findOneBy(['name' => $name]);
+        /** @type RoleInterface $role */
+        $role = $this->findOneBy(['name' => $name]);
 
-        if (!$group)
+        if (!$role)
         {
             throw new \InvalidArgumentException("Group $name not found.");
         }
 
-        return $this->group($group);
+        return $role;
     }
 
     /**
-     * Creates a group.
-     *
-     * @param  array $attributes
-     *
-     * @return Role
+     * @param RoleInterface $role
      */
-    public function create(array $attributes)
-    {
-	    $entityName = $this->entityName;
-
-        $group = $entityName::create($attributes['name'], array_get($attributes, 'permissions', []));
-
-        $this->save($group);
-
-        return $this->group($group);
-    }
-
-    /**
-     * @param Role $group
-     */
-    public function save(Role $group)
+    public function save(RoleInterface $role)
     {
         $entityManager = $this->getEntityManager();
 
-        $entityManager->persist($group);
+        $entityManager->persist($role);
         $entityManager->flush();
     }
 
     /**
-     * @param Role $group
+     * @param RoleInterface $role
      */
-    public function delete(Role $group)
+    public function delete(RoleInterface $role)
     {
         $entityManager = $this->getEntityManager();
 
-        $entityManager->remove($group);
+        $entityManager->remove($role);
         $entityManager->flush();
-    }
-
-    /**
-     * @param Role $group
-     *
-     * @return Role
-     */
-    private function group(Role $group)
-    {
-	    if ($group instanceof RepositoryAware)
-	    {
-		    $group->setRepository($this);
-	    }
-
-        return $group;
     }
 
     public function search($name = null, $permission = null, $orderBy = null, $orderSense = 'asc', $limit = 10, $offset = 0)
@@ -176,7 +144,7 @@ class DoctrineGroupRepository extends EntityRepository implements RoleRepository
 		{
 			$permissionClass = $this->getClassMetadata()->getAssociationMapping('permissions')['targetEntity'];
 			$queryBuilder->andWhere($queryBuilder->expr()->exists(
-				"SELECT 1 FROM $permissionClass p WHERE p.permission LIKE :permission AND p.group = g.id"
+				"SELECT 1 FROM $permissionClass p WHERE p.permission LIKE :permission AND p.role = g.id"
 			));
 
 			$queryBuilder->setParameter('permission', "%$permission%");

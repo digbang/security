@@ -1,7 +1,7 @@
 <?php namespace Digbang\Security\Reminders;
 
 use Digbang\Doctrine\Metadata\Builder;
-use Digbang\Security\Users\User;
+use Digbang\Security\Users\DefaultUser;
 
 trait ReminderMappingTrait
 {
@@ -12,7 +12,7 @@ trait ReminderMappingTrait
 	 * @type array
 	 */
 	protected $relations = [
-		'user' => [User::class, 'user']
+		'user' => [DefaultUser::class, 'user']
 	];
 
 	/**

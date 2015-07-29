@@ -1,21 +1,16 @@
 <?php namespace Digbang\Security\Users;
 
-use Cartalyst\Sentinel\Roles\RoleInterface;
 use Cartalyst\Sentinel\Hashing\HasherInterface;
+use Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface;
+use Cartalyst\Sentinel\Users\UserInterface;
 use Cartalyst\Sentinel\Users\UserRepositoryInterface;
 use Closure;
-use Digbang\Security\Contracts\User as UserInterface;
-use Digbang\Security\Contracts\RepositoryAware;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
-use Illuminate\Config\Repository;
-use Illuminate\Support\Collection;
 use InvalidArgumentException;
-use RuntimeException;
 
-class DoctrineUserRepository extends EntityRepository implements UserRepositoryInterface
+abstract class DoctrineUserRepository extends EntityRepository implements UserRepositoryInterface
 {
     /**
      * @type HasherInterface
@@ -23,41 +18,50 @@ class DoctrineUserRepository extends EntityRepository implements UserRepositoryI
     private $hasher;
 
 	/**
-	 * @type string
+	 * @type PersistenceRepositoryInterface
 	 */
-	private $entityName;
+	private $persistenceRepository;
 
 	/**
-	 * @param EntityManager   $entityManager
-	 * @param Repository      $config
-	 * @param HasherInterface $hasher
+	 * @param EntityManager                  $entityManager
+	 * @param HasherInterface                $hasher
+	 * @param PersistenceRepositoryInterface $persistenceRepository
 	 */
-    public function __construct(EntityManager $entityManager, Repository $config, HasherInterface $hasher)
+    public function __construct(EntityManager $entityManager, HasherInterface $hasher, PersistenceRepositoryInterface $persistenceRepository)
     {
         parent::__construct($entityManager, $entityManager->getClassMetadata(
-            $this->entityName = $config->get('digbang.security.auth.users.model', User::class)
+            $this->entityName()
         ));
 
         $this->hasher = $hasher;
+	    $this->persistenceRepository = $persistenceRepository;
     }
+
+	/**
+	 * Get the User class name.
+	 * @return string
+	 */
+    abstract protected function entityName();
+
+	/**
+	 * Create a new user based on the given credentials.
+	 *
+	 * @param array $credentials
+	 *
+*@return DefaultUser
+	 */
+	abstract protected function createUser(array $credentials);
 
 	/**
 	 * Finds a user by the given primary key.
 	 *
 	 * @param  int $id
-	 * @return UserInterface
+	 *
+*@return DefaultUser|null
 	 */
 	public function findById($id)
 	{
-		/** @type User $user */
-		$user = $this->find($id);
-
-        if (! $user)
-        {
-            throw new \InvalidArgumentException("User $id not found.");
-        }
-
-        return $this->user($user);
+		return $this->find($id);
 	}
 
 	/**
@@ -65,26 +69,19 @@ class DoctrineUserRepository extends EntityRepository implements UserRepositoryI
 	 *
 	 * @param  array $credentials
 	 *
-	 * @return \Cartalyst\Sentinel\Users\UserInterface
+	 * @return UserInterface|null
 	 */
 	public function findByCredentials(array $credentials)
 	{
 		$queryBuilder = $this->createQueryBuilder('u');
 
 		$queryBuilder->addCriteria(
-			$this->createCredentialsCriteria($queryBuilder, $credentials)
+			$this->createCredentialsCriteria($credentials)
 		);
 
 		$queryBuilder->setMaxResults(1);
 
-		$user = $queryBuilder->getQuery()->getOneOrNullResult();
-
-        if (! $user)
-        {
-            throw new \InvalidArgumentException("User " . $credentials['email'] . " not found.");
-        }
-
-		return $this->user($user);
+		return $queryBuilder->getQuery()->getOneOrNullResult();
 	}
 
 	/**
@@ -92,132 +89,178 @@ class DoctrineUserRepository extends EntityRepository implements UserRepositoryI
 	 *
 	 * @param  string $code
 	 *
-	 * @return \Cartalyst\Sentinel\Users\UserInterface
+	 * @return UserInterface|null
 	 */
 	public function findByPersistenceCode($code)
 	{
-		// TODO: Implement findByPersistenceCode() method.
+        return $this->persistenceRepository->findUserByPersistenceCode($code);
 	}
 
 	/**
 	 * Records a login for the given user.
 	 *
-	 * @param  \Cartalyst\Sentinel\Users\UserInterface $user
+	 * @param  DefaultUser $user
 	 *
-	 * @return \Cartalyst\Sentinel\Users\UserInterface|bool
+*@return UserInterface|bool
 	 */
-	public function recordLogin(\Cartalyst\Sentinel\Users\UserInterface $user)
+	public function recordLogin(UserInterface $user)
 	{
-		// TODO: Implement recordLogin() method.
+		$user->recordLogin();
+
+		return $this->save($user);
 	}
 
 	/**
 	 * Records a logout for the given user.
 	 *
-	 * @param  \Cartalyst\Sentinel\Users\UserInterface $user
+	 * @param  UserInterface $user
 	 *
-	 * @return \Cartalyst\Sentinel\Users\UserInterface|bool
+	 * @return UserInterface|bool
 	 */
-	public function recordLogout(\Cartalyst\Sentinel\Users\UserInterface $user)
+	public function recordLogout(UserInterface $user)
 	{
-		// TODO: Implement recordLogout() method.
+		return $this->save($user);
 	}
 
 	/**
 	 * Validate the password of the given user.
 	 *
-	 * @param  \Cartalyst\Sentinel\Users\UserInterface $user
-	 * @param  array                                   $credentials
+	 * @param  DefaultUser  $user
+	 * @param  array $credentials
 	 *
 	 * @return bool
 	 */
-	public function validateCredentials(\Cartalyst\Sentinel\Users\UserInterface $user, array $credentials)
+	public function validateCredentials(UserInterface $user, array $credentials)
 	{
-		if (! $this->checkHash($credentials['password'], $user->getPassword()))
-	    {
-		    throw new \InvalidArgumentException(
-			    "A user was found, but passwords did not match."
-		    );
-	    }
-
-	    if (
-		    method_exists($this->hasher, 'needsRehashed') &&
-		    $this->hasher->needsRehashed($user->getPassword())
-	    )
-	    {
-		    // The algorithm used to create the hash is outdated and insecure.
-		    // Rehash the password and save.
-		    $user->changePassword($this->hasher->hash($credentials['password']));
-		    $user->save();
-	    }
+		return $this->hasher->check($credentials['password'], $user->getPassword());
 	}
 
 	/**
 	 * Validate if the given user is valid for creation.
 	 *
 	 * @param  array $credentials
-	 *
 	 * @return bool
+	 * @throws \InvalidArgumentException
 	 */
 	public function validForCreation(array $credentials)
 	{
-		// TODO: Implement validForCreation() method.
+		return $this->validate($credentials);
 	}
 
 	/**
 	 * Validate if the given user is valid for updating.
 	 *
-	 * @param  \Cartalyst\Sentinel\Users\UserInterface|int $user
-	 * @param  array                                       $credentials
-	 *
+	 * @param  UserInterface|int $user
+	 * @param  array             $credentials
 	 * @return bool
+	 * @throws \InvalidArgumentException
 	 */
 	public function validForUpdate($user, array $credentials)
 	{
-		// TODO: Implement validForUpdate() method.
+		if ($user instanceof UserInterface)
+		{
+			$user = $user->getUserId();
+		}
+
+		return $this->validate($credentials, $user);
+	}
+
+	protected function validate(array $credentials, $id = null)
+	{
+		if ($id !== null)
+		{
+			return true;
+		}
+
+		if (! array_key_exists('password', $credentials))
+		{
+			throw new InvalidArgumentException('You have not passed a [password].');
+		}
+
+		if (! array_key_exists('email', $credentials))
+		{
+			throw new InvalidArgumentException('You have not passed an [email].');
+		}
+
+		if (! array_key_exists('username', $credentials))
+		{
+			throw new InvalidArgumentException('You have not passed an [username].');
+		}
+
+		return true;
 	}
 
 	/**
 	 * Creates a user.
 	 *
-	 * @param  array    $credentials
-	 * @param  \Closure $callback
+	 * @param array    $credentials
+	 * @param \Closure $callback
 	 *
-	 * @return \Cartalyst\Sentinel\Users\UserInterface
+	 * @return DefaultUser
 	 */
 	public function create(array $credentials, Closure $callback = null)
 	{
-		// TODO: Implement create() method.
+		$user = $this->createUser($credentials);
+
+        if ($callback)
+        {
+            $result = $callback($user);
+
+            if ($result === false)
+            {
+                return false;
+            }
+        }
+
+        $this->save($user);
+
+        return $user;
 	}
 
 	/**
 	 * Updates a user.
 	 *
-	 * @param  \Cartalyst\Sentinel\Users\UserInterface|int $user
-	 * @param  array                                       $credentials
+	 * @param  DefaultUser|int $user
+	 * @param  array    $credentials
 	 *
-	 * @return \Cartalyst\Sentinel\Users\UserInterface
+	 * @return DefaultUser
 	 */
 	public function update($user, array $credentials)
 	{
-		// TODO: Implement update() method.
+		if (! $user instanceof DefaultUser)
+		{
+            $user = $this->findById($user);
+        }
+
+        $user->update($credentials);
+
+        $this->save($user);
+
+		return $user;
 	}
 
 	/**
-	 * @param User $user
-	 * @return User
+	 * @param UserInterface $user
+	 *
+	 * @return bool|UserInterface
 	 */
-	private function user(User $user)
-    {
-	    if ($user instanceof RepositoryAware)
-	    {
-		    $user->setRepository($this);
-	    }
+	protected function save(UserInterface $user)
+	{
+		try
+		{
+			$entityManager = $this->getEntityManager();
+			$entityManager->persist($user);
+			$entityManager->flush();
 
-        return $user;
-    }
+			return $user;
+		}
+		catch (\Exception $e)
+		{
+			return false;
+		}
+	}
 
-	private function createCredentialsCriteria(array $credentials)
+	protected function createCredentialsCriteria(array $credentials)
 	{
 		$criteria = Criteria::create();
 
@@ -237,305 +280,5 @@ class DoctrineUserRepository extends EntityRepository implements UserRepositoryI
 		}
 
 		return $criteria;
-	}
-}
-
-class OldRepo
-{
-    /**
-     * Finds a user by the given user ID.
-     *
-     * @param  mixed $id
-     *
-     * @return \Digbang\Security\Contracts\User
-     * @throws \Cartalyst\Sentry\Users\UserNotFoundException
-     */
-    public function findById($id)
-    {
-        $user = $this->find($id);
-
-        if (! $user)
-        {
-            throw new UserNotFoundException("User $id not found.");
-        }
-
-        return $this->user($user);
-    }
-
-    /**
-     * Finds a user by the login value.
-     *
-     * @param  string $login
-     *
-     * @return \Digbang\Security\Contracts\User
-     * @throws \Cartalyst\Sentry\Users\UserNotFoundException
-     */
-    public function findByLogin($login)
-    {
-
-    }
-
-    /**
-     * Finds a user by the given credentials.
-     *
-     * @param  array $credentials
-     *
-     * @return \Digbang\Security\Contracts\User
-     * @throws \Cartalyst\Sentry\Users\UserNotFoundException
-     */
-    public function findByCredentials(array $credentials)
-    {
-
-    }
-
-    /**
-     * Finds a user by the given activation code.
-     *
-     * @param  string $code
-     *
-     * @return \Digbang\Security\Contracts\User
-     * @throws \Cartalyst\Sentry\Users\UserNotFoundException
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
-     */
-    public function findByActivationCode($code)
-    {
-        $user = $this->findOneBy(['activationCode' => $code]);
-
-        if (! $user)
-        {
-            throw new UserNotFoundException("User with code $code not found.");
-        }
-
-        return $this->user($user);
-    }
-
-    /**
-     * Finds a user by the given reset password code.
-     *
-     * @param  string $code
-     *
-     * @return \Digbang\Security\Contracts\User
-     * @throws RuntimeException
-     * @throws \Cartalyst\Sentry\Users\UserNotFoundException
-     */
-    public function findByResetPasswordCode($code)
-    {
-        $user = $this->findOneBy(['resetPasswordCode' => $code]);
-
-        if (! $user)
-        {
-            throw new UserNotFoundException("User with code $code not found.");
-        }
-
-        return $this->user($user);
-    }
-
-    /**
-     * Returns all users who belong to
-     * a group.
-     *
-     * @param  \Cartalyst\Sentry\Groups\GroupInterface $group
-     *
-     * @return Collection
-     */
-    public function findAllInGroup(GroupInterface $group)
-    {
-        return $this->userCollection(
-            $this->findBy([
-                'Group' => $group
-            ])
-        );
-    }
-
-    /**
-     * Returns all users with access to
-     * a permission(s).
-     *
-     * @param  string|array $permissions
-     *
-     * @return Collection
-     */
-    public function findAllWithAccess($permissions)
-    {
-        $criterias = [];
-
-        foreach ((array) $permissions as $permission)
-        {
-            $criterias[] = Criteria::expr()->contains('Permissions', $permission);
-        }
-
-        return $this->userCollection(
-            $this->findBy($criterias)
-        );
-    }
-
-    /**
-     * Returns all users with access to
-     * any given permission(s).
-     *
-     * @param  array $permissions
-     *
-     * @return Collection
-     */
-    public function findAllWithAnyAccess(array $permissions)
-    {
-        $expressionBuilder = Criteria::expr();
-
-        $permissions = (array) $permissions;
-
-        $criterias = [];
-
-        if (!empty($permissions))
-        {
-            $criterias[] = call_user_func_array([$expressionBuilder, 'orX'], array_map(function($permission){
-                return Criteria::expr()->contains('Permissions', $permission);
-            }, $permissions));
-        }
-
-        return $this->userCollection(
-            $this->findBy($criterias)
-        );
-    }
-
-    /**
-     * Creates a user.
-     *
-     * @param  array $credentials
-     *
-     * @return \Digbang\Security\Contracts\User
-     */
-    public function create(array $credentials)
-    {
-	    $entityName = $this->entityName;
-
-	    $user = $entityName::createFromCredentials(
-		    $credentials['email'],
-		    $this->hasher->hash($credentials['password'])
-	    );
-
-        $this->save($user);
-
-        return $this->user($user);
-    }
-
-    /**
-     * Returns an empty user object.
-     *
-     * @return \Digbang\Security\Contracts\User
-     */
-    public function getEmptyUser()
-    {
-        return $this->user(
-            (new \ReflectionClass($this->entityName))->newInstanceWithoutConstructor()
-        );
-    }
-
-    /**
-     * @param User $user
-     */
-    public function save(User $user)
-    {
-        $em = $this->getEntityManager();
-
-        $em->persist($user);
-        $em->flush();
-    }
-
-    /**
-     * @param User $user
-     */
-    public function delete(User $user)
-    {
-        $em = $this->getEntityManager();
-
-        $em->remove($user);
-        $em->flush();
-    }
-
-    /**
-     * @param string $string
-     * @param string $hashedString
-     *
-     * @return bool
-     */
-    public function checkHash($string, $hashedString)
-    {
-        return $this->hasher->checkhash($string, $hashedString);
-    }
-
-    private function userCollection(array $users)
-    {
-        return (new Collection($users))->map(function(User $user){
-            return $this->user($user);
-        });
-    }
-
-	/**
-	 * @param string $string
-	 *
-	 * @return string
-	 */
-	public function hash($string)
-	{
-		return $this->hasher->hash($string);
-	}
-
-	/**
-	 * @param string|null   $email
-	 * @param string|null   $firstName
-	 * @param string|null   $lastName
-	 * @param bool|null     $activated
-	 * @param string|null   $orderBy
-	 * @param string        $orderSense
-	 * @param int           $limit
-	 * @param int           $offset
-	 *
-	 * @return \Doctrine\Common\Collections\Collection
-	 */
-	public function search($email = null, $firstName = null, $lastName = null, $activated = null, $orderBy = null, $orderSense = 'asc', $limit = 10, $offset = 0)
-	{
-		$filters = [];
-
-		$expressionBuilder = Criteria::expr();
-
-		if ($email !== null)
-		{
-			$filters[] = $expressionBuilder->contains('email', $email);
-		}
-
-		if ($firstName !== null)
-		{
-			$filters[] = $expressionBuilder->contains('firstName', $firstName);
-		}
-
-		if ($lastName !== null)
-		{
-			$filters[] = $expressionBuilder->contains('lastName', $lastName);
-		}
-
-		if ($activated !== null)
-		{
-			$filters[] = $expressionBuilder->eq('activated', (boolean) $activated);
-		}
-
-		$criteria = Criteria::create();
-
-		if (!empty($filters))
-		{
-			$criteria->where($expressionBuilder->andX(...$filters));
-		}
-
-		if ($orderBy && $orderSense)
-		{
-			$criteria->orderBy([
-				$orderBy => $orderSense
-			]);
-		}
-
-		$criteria->setMaxResults($limit);
-		$criteria->setFirstResult($offset);
-
-		return $this->matching($criteria);
 	}
 }

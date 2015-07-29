@@ -1,4 +1,4 @@
-<?php namespace spec\Digbang\Security\Repositories;
+<?php namespace spec\Digbang\Security\Roles;
 
 use Cartalyst\Sentinel\Roles\RoleRepositoryInterface;
 use Digbang\Security\Entities\Role;
@@ -11,12 +11,12 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 /**
- * Class DoctrineGroupRepositorySpec
+ * Class DoctrineRoleRepositorySpec
  *
  * @package spec\Digbang\Security\Repositories
  * @mixin \Digbang\Security\Repositories\DoctrineGroupRepository
  */
-class DoctrineGroupRepositorySpec extends ObjectBehavior
+class DoctrineRoleRepositorySpec extends ObjectBehavior
 {
     function let(EntityManager $em, ClassMetadata $cm, UnitOfWork $uow, EntityPersister $ep, Repository $config)
     {

@@ -1,10 +1,9 @@
 <?php namespace Digbang\Security\Mappings;
 
 use Digbang\Doctrine\Metadata\Builder;
-use Digbang\Doctrine\Metadata\EntityMapping;
-use Digbang\Security\Users\User;
+use Digbang\Security\Users\DefaultUser;
 
-final class UserMapping implements EntityMapping, CustomTableMapping
+final class UserMapping implements SecurityUserMapping
 {
 	use UserMappingTrait;
 
@@ -12,6 +11,14 @@ final class UserMapping implements EntityMapping, CustomTableMapping
 	 * @type string
 	 */
 	private $table;
+
+	/**
+	 * @return string
+	 */
+	public function getTable()
+	{
+		return $this->table;
+	}
 
 	/**
 	 * @param string $table
@@ -28,7 +35,7 @@ final class UserMapping implements EntityMapping, CustomTableMapping
 	 */
 	public function getEntityName()
 	{
-		return User::class;
+		return DefaultUser::class;
 	}
 
 	/**

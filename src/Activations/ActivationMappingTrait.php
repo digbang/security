@@ -1,7 +1,7 @@
 <?php namespace Digbang\Security\Activations;
 
 use Digbang\Doctrine\Metadata\Builder;
-use Digbang\Security\Users\User;
+use Digbang\Security\Users\DefaultUser;
 
 trait ActivationMappingTrait
 {
@@ -12,7 +12,7 @@ trait ActivationMappingTrait
 	 * @type array
 	 */
 	protected $relations = [
-		'user' => [User::class, 'user']
+		'user' => [DefaultUser::class, 'user']
 	];
 
 	/**

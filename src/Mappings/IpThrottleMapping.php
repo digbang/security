@@ -2,7 +2,7 @@
 
 use Digbang\Doctrine\Metadata\Builder;
 use Digbang\Doctrine\Metadata\EntityMapping;
-use Digbang\Security\Throttling\IpThrottle;
+use Digbang\Security\Throttling\DefaultIpThrottle;
 use Digbang\Security\Throttling\IpThrottleMappingTrait;
 
 final class IpThrottleMapping implements EntityMapping
@@ -16,7 +16,7 @@ final class IpThrottleMapping implements EntityMapping
 	 */
 	public function getEntityName()
 	{
-		return IpThrottle::class;
+		return DefaultIpThrottle::class;
 	}
 
 	/**

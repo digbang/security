@@ -2,7 +2,7 @@
 
 use Digbang\Doctrine\Metadata\Builder;
 use Digbang\Doctrine\Metadata\EntityMapping;
-use Digbang\Security\Reminders\Reminder;
+use Digbang\Security\Reminders\DefaultReminder;
 use Digbang\Security\Reminders\ReminderMappingTrait;
 
 final class ReminderMapping implements EntityMapping, CustomTableMapping
@@ -13,6 +13,14 @@ final class ReminderMapping implements EntityMapping, CustomTableMapping
 	 * @type string
 	 */
 	private $table;
+
+	/**
+	 * @return string
+	 */
+	public function getTable()
+	{
+		return $this->table;
+	}
 
 	/**
 	 * @param string $table
@@ -29,7 +37,7 @@ final class ReminderMapping implements EntityMapping, CustomTableMapping
 	 */
 	public function getEntityName()
 	{
-		return Reminder::class;
+		return DefaultReminder::class;
 	}
 
 	/**

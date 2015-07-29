@@ -2,7 +2,7 @@
 
 use Digbang\Doctrine\Metadata\Builder;
 use Digbang\Doctrine\Metadata\EntityMapping;
-use Digbang\Security\Throttling\GlobalThrottle;
+use Digbang\Security\Throttling\DefaultGlobalThrottle;
 
 final class GlobalThrottleMapping implements EntityMapping
 {
@@ -13,7 +13,7 @@ final class GlobalThrottleMapping implements EntityMapping
 	 */
 	public function getEntityName()
 	{
-		return GlobalThrottle::class;
+		return DefaultGlobalThrottle::class;
 	}
 
 	/**

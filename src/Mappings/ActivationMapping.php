@@ -2,7 +2,7 @@
 
 use Digbang\Doctrine\Metadata\Builder;
 use Digbang\Doctrine\Metadata\EntityMapping;
-use Digbang\Security\Activations\Activation;
+use Digbang\Security\Activations\DefaultActivation;
 use Digbang\Security\Activations\ActivationMappingTrait;
 
 final class ActivationMapping implements EntityMapping, CustomTableMapping
@@ -13,6 +13,14 @@ final class ActivationMapping implements EntityMapping, CustomTableMapping
 	 * @type string
 	 */
 	private $table;
+
+	/**
+	 * @return string
+	 */
+	public function getTable()
+	{
+		return $this->table;
+	}
 
 	/**
 	 * @param string $table
@@ -29,7 +37,7 @@ final class ActivationMapping implements EntityMapping, CustomTableMapping
 	 */
 	public function getEntityName()
 	{
-		return Activation::class;
+		return DefaultActivation::class;
 	}
 
 	/**
