@@ -1,12 +1,11 @@
 <?php namespace Digbang\Security\Persistences;
 
 use Cartalyst\Sentinel\Persistences\PersistenceInterface;
-use Digbang\Security\Users\User;
 
 interface Persistence extends PersistenceInterface
 {
 	/**
-	 * @return User
+	 * @return \Digbang\Security\Users\User
 	 */
 	public function getUser();
 }

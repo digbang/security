@@ -122,8 +122,7 @@ class DefaultDoctrineActivationRepositorySpec extends ObjectBehavior
 
 		$entityManager->createQueryBuilder()->shouldBeCalled()->willReturn($queryBuilder);
 
-		$queryBuilder->delete(Argument::any())->willReturn($queryBuilder);
-		$queryBuilder->from(Argument::cetera())->willReturn($queryBuilder);
+		$queryBuilder->delete(DefaultActivation::class, Argument::any())->willReturn($queryBuilder);
 		$queryBuilder->where(Argument::any())->willReturn($queryBuilder);
 		$queryBuilder->andWhere(Argument::any())->willReturn($queryBuilder);
 		$queryBuilder->setParameters(Argument::cetera())->willReturn($queryBuilder);

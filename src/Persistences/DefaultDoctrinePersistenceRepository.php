@@ -1,28 +1,22 @@
 <?php namespace Digbang\Security\Persistences;
 
-use Cartalyst\Sentinel\Persistences\PersistableInterface;
-use Digbang\Security\Contracts\Entities\User;
+use Digbang\Security\Users\User;
 
 final class DefaultDoctrinePersistenceRepository extends DoctrinePersistenceRepository
 {
+	/**
+	 * {@inheritdoc}
+	 */
 	protected function entityName()
 	{
 		return DefaultPersistence::class;
 	}
 
 	/**
-	 * @param PersistableInterface $persistable
-	 * @param string               $code
-	 *
-	 * @return DefaultPersistence
+	 * {@inheritdoc}
 	 */
-	protected function create(PersistableInterface $persistable, $code)
+	protected function create(User $user, $code)
 	{
-		if (! $persistable instanceof User)
-		{
-			throw new \UnexpectedValueException("Default doctrine persistences are only related to the Digbang\\Security\\Contracts\\Entities\\User persistable");
-		}
-
-		return new DefaultPersistence($persistable, $code);
+		return new DefaultPersistence($user, $code);
 	}
 }

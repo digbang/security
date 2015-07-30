@@ -117,8 +117,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
 		$queryBuilder = $this->getEntityManager()->createQueryBuilder();
 
 		$queryBuilder
-			->delete()
-			->from($this->entityName(), 'a')
+			->delete($this->entityName(), 'a')
 			->where('completed = :completed')
 			->andWhere('createdAt < :expires');
 

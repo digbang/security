@@ -35,7 +35,7 @@ class DefaultPersistence implements Persistence
 	}
 
 	/**
-	 * @return User
+	 * {@inheritdoc}
 	 */
 	public function getUser()
 	{
