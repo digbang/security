@@ -28,6 +28,9 @@ trait UserMappingTrait
 	 * Relations mapping. Override this with your custom objects if needed.
 	 * Each relation value needs a FQCN in position 0 and a field name in position 1.
 	 *
+	 * IMPORTANT: Relations will NOT be iterated! Each object will access its specific
+	 *            relation keys.
+	 *
 	 * @type array
 	 */
 	protected $relations = [

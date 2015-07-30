@@ -251,33 +251,33 @@ interface SecurityApi
 	 *
 	 * @return UserRepositoryInterface
 	 */
-	public function getUserRepository();
+	public function users();
 
 	/**
 	 * Returns the role repository.
 	 *
 	 * @return RoleRepositoryInterface
 	 */
-	public function getRoleRepository();
+	public function roles();
 
 	/**
 	 * Returns the persistences repository.
 	 *
 	 * @return PersistenceRepositoryInterface
 	 */
-	public function getPersistenceRepository();
-
-	/**
-	 * Returns the activations repository.
-	 *
-	 * @return ActivationRepositoryInterface
-	 */
-	public function getActivationRepository();
+	public function persistences();
 
 	/**
 	 * Returns the reminders repository.
 	 *
 	 * @return ReminderRepositoryInterface
 	 */
-	public function getReminderRepository();
+	public function reminders();
+
+	/**
+	 * Returns the activations repository.
+	 *
+	 * @return ActivationRepositoryInterface
+	 */
+	public function activations();
 }

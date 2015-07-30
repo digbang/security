@@ -103,28 +103,6 @@ final class Security implements SecurityApi
 	 */
 	public function activate($user)
 	{
-		if (is_string($user) || is_array($user)) {
-            $users = $this->getUserRepository();
-
-            $method = 'findBy'.(is_string($user) ? 'Id' : 'Credentials');
-
-            $user = $users->{$method}($user);
-        }
-
-        if (! $user instanceof \Digbang\Security\Users\User) {
-            throw new \InvalidArgumentException('No valid user was provided.');
-        }
-
-        $this->sentinel->fireEvent('sentinel.activating', $user);
-
-        $activations = $this->getActivationRepository();
-
-        $activation = $activations->create($user);
-
-        $this->fireEvent('sentinel.activated', [ $user, $activation ]);
-
-        return $activations->complete($user, $activation->code);
-
 		return $this->sentinel->activate($user);
 	}
 
@@ -411,7 +389,7 @@ final class Security implements SecurityApi
 	 *
 	 * @return UserRepositoryInterface
 	 */
-	public function getUserRepository()
+	public function users()
 	{
 		return $this->sentinel->getUserRepository();
 	}
@@ -421,7 +399,7 @@ final class Security implements SecurityApi
 	 *
 	 * @return RoleRepositoryInterface
 	 */
-	public function getRoleRepository()
+	public function roles()
 	{
 		return $this->sentinel->getRoleRepository();
 	}
@@ -431,19 +409,9 @@ final class Security implements SecurityApi
 	 *
 	 * @return PersistenceRepositoryInterface
 	 */
-	public function getPersistenceRepository()
+	public function persistences()
 	{
 		return $this->sentinel->getPersistenceRepository();
-	}
-
-	/**
-	 * Returns the activations repository.
-	 *
-	 * @return ActivationRepositoryInterface
-	 */
-	public function getActivationRepository()
-	{
-		return $this->sentinel->getActivationRepository();
 	}
 
 	/**
@@ -451,9 +419,19 @@ final class Security implements SecurityApi
 	 *
 	 * @return ReminderRepositoryInterface
 	 */
-	public function getReminderRepository()
+	public function reminders()
 	{
 		return $this->sentinel->getReminderRepository();
+	}
+
+	/**
+	 * Returns the activations repository.
+	 *
+	 * @return ActivationRepositoryInterface
+	 */
+	public function activations()
+	{
+		return $this->sentinel->getActivationRepository();
 	}
 
 	/**

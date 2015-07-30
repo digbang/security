@@ -108,4 +108,16 @@ class DefaultUser implements User, Permissible, WithRoles
 	public function getUserPassword()
 	{
 		// TODO: Implement getUserPassword() method.
-}}
+	}
+
+	/**
+	 * @param string $email
+	 * @param string $password
+	 *
+	 * @return User
+	 */
+	public static function createFromCredentials($email, $password)
+	{
+		// TODO: Implement createFromCredentials() method.
+	}
+}
