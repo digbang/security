@@ -1,13 +1,15 @@
 <?php namespace Digbang\Security\Laravel\Middleware;
 
-use Digbang\Security\Configurations\Configuration;
+use Cartalyst\Sentinel\Activations\ActivationRepositoryInterface;
+use Cartalyst\Sentinel\Reminders\ReminderRepositoryInterface;
+use Digbang\Security\Configurations\SecurityContextConfiguration;
 use Digbang\Security\Contracts\SecurityApi;
-use Digbang\Security\Events\SecurityContextEvent;
-use Digbang\Security\Factories\SecurityFactory;
+use Digbang\Security\Security;
+use Digbang\Security\SecurityContext;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Events\Dispatcher;
+use Psr\Log\LoggerInterface;
 
-class SecurityMiddleware
+final class SecurityMiddleware
 {
 	/**
 	 * @type Container
@@ -15,26 +17,27 @@ class SecurityMiddleware
 	private $container;
 
 	/**
-	 * @type SecurityFactory
+	 * @type SecurityContext
 	 */
-	private $securityFactory;
+	private $securityContext;
+
 	/**
-	 * @type Dispatcher
+	 * @type LoggerInterface
 	 */
-	private $events;
+	private $logger;
 
 	/**
 	 * SecurityContext constructor.
 	 *
 	 * @param Container       $container
-	 * @param SecurityFactory $securityFactory
-	 * @param Dispatcher      $events
+	 * @param SecurityContext $securityContext
+	 * @param LoggerInterface $logger
 	 */
-	public function __construct(Container $container, SecurityFactory $securityFactory, Dispatcher $events)
+	public function __construct(Container $container, SecurityContext $securityContext, LoggerInterface $logger)
 	{
-		$this->container = $container;
-		$this->securityFactory = $securityFactory;
-		$this->events = $events;
+		$this->container       = $container;
+		$this->securityContext = $securityContext;
+		$this->logger          = $logger;
 	}
 
 	/**
@@ -47,15 +50,84 @@ class SecurityMiddleware
      */
     public function handle($request, \Closure $next, $context)
     {
-	    $this->container->bind(SecurityApi::class, function(Container $app) use ($context){
-		    /** @type Configuration $configuration */
-		    $configuration = $app->make(Configuration::class);
-
-		    $this->events->fire(new SecurityContextEvent($configuration, $context));
-
-		    return $this->securityFactory->fromConfiguration($configuration, $context);
+	    $this->container->bind(SecurityApi::class, function() use ($context){
+		    return $this->securityContext->getSecurity($context);
 	    });
 
-	    return $next($request);
+	    $request->setUserResolver(function() use ($context){
+            return $this->securityContext->getSecurity($context)->getUser();
+        });
+
+	    $response = $next($request);
+
+	    $this->garbageCollect(
+		    $this->securityContext->getSecurity($context),
+		    $this->securityContext->getConfigurations()
+	    );
+
+	    return $response;
+    }
+
+	/**
+	 * Garbage collect activations and reminders.
+	 *
+	 * @param Security $security
+	 * @param array    $configurations
+	 */
+    protected function garbageCollect(Security $security, array $configurations)
+    {
+	    try
+	    {
+		    $activations = $security->getActivationRepository();
+		    $reminders   = $security->getReminderRepository();
+
+	        foreach ($configurations as $configuration)
+	        {
+	            /** @type SecurityContextConfiguration $configuration */
+	            $this->sweep($activations, $configuration->getActivationsLottery());
+	            $this->sweep($reminders,   $configuration->getRemindersLottery());
+	        }
+	    }
+	    catch (\Exception $e)
+	    {
+		    // Silently fail and report, but still serve the content.
+		    $this->logger->error(
+			    "Unable to garbage collect reminders or activations: " .
+		        $e->getMessage() . PHP_EOL . $e->getTraceAsString()
+		    );
+	    }
+    }
+
+	/**
+     * Sweep expired codes.
+     *
+     * @param  ReminderRepositoryInterface|ActivationRepositoryInterface $repository
+     * @param  array  $lottery
+     * @return void
+     */
+    protected function sweep($repository, $lottery)
+    {
+        if ($this->configHitsLottery($lottery))
+        {
+            try
+            {
+                $repository->removeExpired();
+            }
+            catch (\Exception $e)
+            {
+	            // Do nothing
+            }
+        }
+    }
+
+	/**
+     * Determine if the configuration odds hit the lottery.
+     *
+     * @param  array  $lottery
+     * @return bool
+     */
+    protected function configHitsLottery(array $lottery)
+    {
+        return mt_rand(1, $lottery[1]) <= $lottery[0];
     }
 }

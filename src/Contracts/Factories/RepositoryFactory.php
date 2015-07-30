@@ -46,7 +46,21 @@ interface RepositoryFactory
 	public function createPermissionRepository();
 
 	/**
+	 * @param int $globalInterval
+	 * @param int|array $globalThresholds
+	 * @param int $ipInterval
+	 * @param int|array $ipThresholds
+	 * @param int $userInterval
+	 * @param int|array $userThresholds
+	 *
 	 * @return ThrottleRepositoryInterface
 	 */
-	public function createThrottleRepository();
+	public function createThrottleRepository(
+		$globalInterval,
+		$globalThresholds,
+		$ipInterval,
+		$ipThresholds,
+		$userInterval,
+		$userThresholds
+	);
 }

@@ -1,5 +1,8 @@
 <?php namespace Digbang\Security\Factories;
 
+use Cartalyst\Sentinel\Checkpoints\ActivationCheckpoint;
+use Cartalyst\Sentinel\Checkpoints\CheckpointInterface;
+use Cartalyst\Sentinel\Checkpoints\ThrottleCheckpoint;
 use Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface;
 use Cartalyst\Sentinel\Sentinel;
 use Digbang\Security\Configurations\SecurityContextConfiguration;
@@ -51,7 +54,7 @@ class SecurityFactory
 
 		foreach ($configuration->listCheckpoints() as $key => $checkpoint)
 		{
-			$sentinel->addCheckpoint($key, $checkpoint);
+			$sentinel->addCheckpoint($key, $this->makeCheckpoint($checkpoint, $configuration));
 		}
 
 		$sentinel->setReminderRepository(
@@ -61,7 +64,7 @@ class SecurityFactory
 		$sentinel->setRequestCredentials(function(){
             $request = $this->container->make('request');
 
-            $login = $request->getUser();
+            $login    = $request->getUser();
             $password = $request->getPassword();
 
             if ($login === null && $password === null) {
@@ -148,5 +151,53 @@ class SecurityFactory
 		return $configuration->getReminderRepository() ?: $this->repositoryFactory->createReminderRepository(
 			$configuration->getRemindersExpiration()
 		);
+	}
+
+	/**
+	 * @param CheckpointInterface|string $checkpoint
+	 * @param SecurityContextConfiguration $configuration
+	 *
+	 * @return ActivationCheckpoint|ThrottleCheckpoint
+	 */
+	private function makeCheckpoint($checkpoint, SecurityContextConfiguration $configuration)
+	{
+		if ($checkpoint instanceof CheckpointInterface)
+		{
+			return $checkpoint;
+		}
+
+		switch ($checkpoint)
+		{
+			case ThrottleCheckpoint::class:
+				return $this->makeThrottleCheckpoint($configuration);
+			case ActivationCheckpoint::class:
+				return $this->makeActivationCheckpoint($configuration);
+		}
+
+		throw new \InvalidArgumentException("Unable to create checkpoint [$checkpoint].");
+	}
+
+	private function makeThrottleCheckpoint(SecurityContextConfiguration $configuration)
+	{
+		$throttleRepository = $configuration->getThrottleRepository() ?: $this->repositoryFactory->createThrottleRepository(
+			$configuration->getGlobalThrottleInterval(),
+			$configuration->getGlobalThrottleThresholds(),
+			$configuration->getIpThrottleInterval(),
+			$configuration->getIpThrottleThresholds(),
+			$configuration->getUserThrottleInterval(),
+			$configuration->getUserThrottleThresholds()
+		);
+
+		/** @type \Illuminate\Http\Request $request */
+		$request = $this->container->make('request');
+
+		return new ThrottleCheckpoint($throttleRepository, $request->getClientIp());
+	}
+
+	private function makeActivationCheckpoint(SecurityContextConfiguration $configuration)
+	{
+		return new ActivationCheckpoint($configuration->getActivationRepository() ?: $this->repositoryFactory->createActivationRepository(
+			$configuration->getActivationsExpiration()
+		));
 	}
 }

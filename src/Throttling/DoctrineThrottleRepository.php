@@ -92,10 +92,8 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
 
 	/**
 	 * @param EntityManager   $entityManager
-	 * @param Repository      $config
-	 * @param ThrottleFactory $throttleFactory
 	 */
-    public function __construct(EntityManager $entityManager, ThrottleFactory $throttleFactory)
+    public function __construct(EntityManager $entityManager)
     {
         parent::__construct($entityManager, $entityManager->getClassMetadata(
 	        $this->entityName()

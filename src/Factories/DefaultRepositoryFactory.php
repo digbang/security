@@ -15,6 +15,7 @@ use Digbang\Security\Permissions\PermissionRepository;
 use Digbang\Security\Persistences\DefaultDoctrinePersistenceRepository;
 use Digbang\Security\Reminders\DefaultDoctrineReminderRepository;
 use Digbang\Security\Roles\DefaultDoctrineRoleRepository;
+use Digbang\Security\Throttling\DefaultDoctrineThrottleRepository;
 use Digbang\Security\Users\DefaultDoctrineUserRepository;
 use Doctrine\ORM\EntityManager;
 use Illuminate\Contracts\Container\Container;
@@ -145,10 +146,42 @@ final class DefaultRepositoryFactory implements RepositoryFactory
 	}
 
 	/**
+	 * @param int       $globalInterval
+	 * @param int|array $globalThresholds
+	 * @param int       $ipInterval
+	 * @param int|array $ipThresholds
+	 * @param int       $userInterval
+	 * @param int|array $userThresholds
+	 *
 	 * @return ThrottleRepositoryInterface
 	 */
-	public function createThrottleRepository()
+	public function createThrottleRepository(
+		$globalInterval,
+		$globalThresholds,
+		$ipInterval,
+		$ipThresholds,
+		$userInterval,
+		$userThresholds
+	)
 	{
-		// TODO: Implement createThrottleRepository() method.
+		if (array_key_exists('throttle', $this->instances))
+		{
+			return $this->instances['throttle'];
+		}
+
+		$entityManager = $this->container->make(EntityManager::class);
+
+		$repo = new DefaultDoctrineThrottleRepository(
+			$entityManager
+		);
+
+		$repo->setGlobalInterval($globalInterval);
+		$repo->setGlobalThresholds($globalThresholds);
+		$repo->setIpInterval($ipInterval);
+		$repo->setIpThresholds($ipThresholds);
+		$repo->setUserInterval($userInterval);
+		$repo->setUserThresholds($userThresholds);
+
+		return $this->instances['throttle'] = $repo;
 	}
 }

@@ -7,7 +7,7 @@ use Cartalyst\Sentinel\Reminders\ReminderRepositoryInterface;
 use Cartalyst\Sentinel\Roles\RoleRepositoryInterface;
 use Cartalyst\Sentinel\Users\UserRepositoryInterface;
 use Closure;
-use Digbang\Security\Contracts\Entities\User;
+use Digbang\Security\Users\User;
 
 interface SecurityApi
 {
