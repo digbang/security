@@ -32,12 +32,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
 	abstract protected function entityName();
 
 	/**
-	 * Checks if a valid activation for the given user exists.
-	 *
-	 * @param  \Cartalyst\Sentinel\Users\UserInterface $user
-	 * @param  string                                  $code
-	 *
-	 * @return bool
+	 * {@inheritdoc}
 	 */
 	public function exists(UserInterface $user, $code = null)
 	{
@@ -45,12 +40,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
 	}
 
 	/**
-	 * Completes the activation for the given user.
-	 *
-	 * @param  \Cartalyst\Sentinel\Users\UserInterface $user
-	 * @param  string                                  $code
-	 *
-	 * @return bool
+	 * {@inheritdoc}
 	 */
 	public function complete(UserInterface $user, $code)
 	{
@@ -101,11 +91,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
 	}
 
 	/**
-	 * Remove an existing activation (deactivate).
-	 *
-	 * @param  \Cartalyst\Sentinel\Users\UserInterface $user
-	 *
-	 * @return bool|null
+	 * {@inheritdoc}
 	 */
 	public function remove(UserInterface $user)
 	{
@@ -124,16 +110,15 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
 	}
 
 	/**
-	 * Remove expired activation codes.
-	 *
-	 * @return int
+	 * {@inheritdoc}
 	 */
 	public function removeExpired()
 	{
-		$queryBuilder = $this->createQueryBuilder('a');
+		$queryBuilder = $this->getEntityManager()->createQueryBuilder();
 
 		$queryBuilder
 			->delete()
+			->from($this->entityName(), 'a')
 			->where('completed = :completed')
 			->andWhere('createdAt < :expires');
 

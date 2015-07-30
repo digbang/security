@@ -52,4 +52,25 @@ class DefaultActivation implements Activation
 		$this->completed = true;
 		$this->completedAt = Carbon::now();
 	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function __get($name)
+	{
+		if ($name == 'code')
+		{
+			return $this->code;
+		}
+
+		throw new \BadMethodCallException("Property '$name' does not exist or is inaccessible.");
+	}
+
+	/**
+	 * @return Carbon
+	 */
+	public function getCompletedAt()
+	{
+		return $this->completedAt;
+	}
 }
