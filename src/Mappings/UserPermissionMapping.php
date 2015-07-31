@@ -2,12 +2,12 @@
 
 use Digbang\Doctrine\Metadata\Builder;
 use Digbang\Doctrine\Metadata\EntityMapping;
-use Digbang\Security\Permissions\PermissionCollection;
-use Digbang\Security\Permissions\PermissionCollectionMappingTrait;
+use Digbang\Security\Permissions\DefaultUserPermission;
+use Digbang\Security\Permissions\UserPermissionMappingTrait;
 
-final class PermissionCollectionMapping implements EntityMapping
+final class UserPermissionMapping implements EntityMapping
 {
-	use PermissionCollectionMappingTrait;
+	use UserPermissionMappingTrait;
 
 	/**
 	 * Returns the fully qualified name of the entity that this mapper maps.
@@ -16,7 +16,7 @@ final class PermissionCollectionMapping implements EntityMapping
 	 */
 	public function getEntityName()
 	{
-		return PermissionCollection::class;
+		return DefaultUserPermission::class;
 	}
 
 	/**

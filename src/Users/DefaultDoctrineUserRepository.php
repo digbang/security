@@ -17,7 +17,7 @@ final class DefaultDoctrineUserRepository extends DoctrineUserRepository
 	 *
 	 * @param array $credentials
 	 *
-*@return DefaultUser
+	 * @return DefaultUser
 	 */
 	protected function createUser(array $credentials)
 	{
@@ -27,6 +27,11 @@ final class DefaultDoctrineUserRepository extends DoctrineUserRepository
 		if (! empty($rest))
 		{
 			$user->update($rest);
+		}
+
+		if ($this->permissionsFactory)
+		{
+			$user->makePermissionsInstance($this->permissionsFactory);
 		}
 
 		return $user;

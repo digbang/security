@@ -127,7 +127,7 @@ class SecurityFactory
 	 */
 	private function getUserRepository(SecurityContextConfiguration $configuration, PersistenceRepositoryInterface $persistenceRepository)
 	{
-		return $configuration->getUserRepository() ?: $this->repositoryFactory->createUserRepository($persistenceRepository);
+		return $configuration->getUserRepository() ?: $this->repositoryFactory->createUserRepository($persistenceRepository, $configuration->getPermissionsFactory());
 	}
 
 	/**

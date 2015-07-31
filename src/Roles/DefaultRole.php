@@ -23,4 +23,16 @@ class DefaultRole implements Role
 		return $this->updatedAt;
 	}
 
+	/**
+	 * {@inheritdoc}
+	 */
+	public function is($role)
+	{
+		if ($role instanceof Role)
+		{
+			return $this->getRoleId() == $role->getRoleId();
+		}
+
+		return $this->getRoleSlug() == $role;
+	}
 }

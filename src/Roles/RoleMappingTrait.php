@@ -1,6 +1,8 @@
 <?php namespace Digbang\Security\Mappings;
 
 use Digbang\Doctrine\Metadata\Builder;
+use Digbang\Doctrine\Metadata\Relations\HasMany;
+use Digbang\Security\Permissions\DefaultRolePermission;
 use Digbang\Security\Permissions\PermissionCollection;
 use Digbang\Security\Users\DefaultUser;
 
@@ -16,14 +18,22 @@ trait RoleMappingTrait
 	 * @type array
 	 */
 	protected $relations = [
-		'users' => [DefaultUser::class, 'users']
+		'users'       => [DefaultUser::class, 'users'],
+		'permissions' => [DefaultRolePermission::class, 'permissions'],
 	];
 
 	/**
-	 * Embeddable collection of user-specific permissions
-	 * @type array
+	 * Needed for inverse mapping of hasMany relations.
+	 *
+	 * @type string
 	 */
-	protected $permissions = [PermissionCollection::class, 'permissions'];
+	protected $name = 'role';
+
+	/**
+	 * Enables or disables permissions mapping.
+	 * @type bool
+	 */
+	protected $permissions = true;
 
 	/**
 	 * Adds all mappings: properties and relations
@@ -47,8 +57,16 @@ trait RoleMappingTrait
 			->primary()
 			->uniqueString('slug')
 			->string('name')
-			->embedded($this->permissions[0], $this->permissions[1])
 			->timestamps();
+	}
+
+	/**
+	 * Disable the permissions relation.
+	 * @return void
+	 */
+	public function disablePermissions()
+	{
+		$this->permissions = false;
 	}
 
 	/**
@@ -59,5 +77,15 @@ trait RoleMappingTrait
 	public function addRelations(Builder $builder)
 	{
 		$builder->belongsToMany($this->relations['users'][0], $this->relations['users'][1]);
+
+		if ($this->permissions)
+		{
+			$builder->hasMany($this->relations['permissions'][0], $this->relations['permissions'][1], function(HasMany $hasMany){
+				$hasMany
+					->mappedBy($this->name)
+					->cascadeAll()
+					->orphanRemoval();
+			});
+		}
 	}
 }

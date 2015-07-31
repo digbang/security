@@ -11,12 +11,14 @@ use Cartalyst\Sentinel\Throttling\ThrottleRepositoryInterface;
 use Cartalyst\Sentinel\Users\UserRepositoryInterface;
 use Digbang\Security\Activations\DefaultDoctrineActivationRepository;
 use Digbang\Security\Contracts\Factories\RepositoryFactory;
+use Digbang\Security\Permissions\LazyStandardPermissions;
 use Digbang\Security\Permissions\PermissionRepository;
 use Digbang\Security\Persistences\DefaultDoctrinePersistenceRepository;
 use Digbang\Security\Reminders\DefaultDoctrineReminderRepository;
 use Digbang\Security\Roles\DefaultDoctrineRoleRepository;
 use Digbang\Security\Throttling\DefaultDoctrineThrottleRepository;
 use Digbang\Security\Users\DefaultDoctrineUserRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Cookie\CookieJar;
@@ -69,21 +71,24 @@ final class DefaultRepositoryFactory implements RepositoryFactory
 	}
 
 	/**
-	 * @param PersistenceRepositoryInterface $persistenceRepository
-	 * @return UserRepositoryInterface
+	 * {@inheritdoc]
 	 */
-	public function createUserRepository(PersistenceRepositoryInterface $persistenceRepository)
+	public function createUserRepository(PersistenceRepositoryInterface $persistenceRepository, \Closure $permissionsFactory = null)
 	{
 		if (array_key_exists('user', $this->instances))
 		{
 			return $this->instances['user'];
 		}
 
+		if (! $permissionsFactory)
+		{
+			$permissionsFactory = LazyStandardPermissions::getFactory();
+		}
+
 		$entityManager = $this->container->make(EntityManager::class);
-		$hasher = $this->container->make(HasherInterface::class);
 
 		return $this->instances['user'] = new DefaultDoctrineUserRepository(
-			$entityManager, $hasher, $persistenceRepository
+			$entityManager, $persistenceRepository, $permissionsFactory
 		);
 	}
 

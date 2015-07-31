@@ -1,10 +1,8 @@
 <?php namespace Digbang\Security\Users;
 
-use Cartalyst\Sentinel\Hashing\HasherInterface;
 use Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface;
 use Cartalyst\Sentinel\Users\UserInterface;
 use Cartalyst\Sentinel\Users\UserRepositoryInterface;
-use Closure;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -12,29 +10,29 @@ use InvalidArgumentException;
 
 abstract class DoctrineUserRepository extends EntityRepository implements UserRepositoryInterface
 {
-    /**
-     * @type HasherInterface
-     */
-    private $hasher;
-
 	/**
 	 * @type PersistenceRepositoryInterface
 	 */
-	private $persistenceRepository;
+	protected $persistenceRepository;
+
+	/**
+	 * @type \Closure|null
+	 */
+	protected $permissionsFactory;
 
 	/**
 	 * @param EntityManager                  $entityManager
-	 * @param HasherInterface                $hasher
 	 * @param PersistenceRepositoryInterface $persistenceRepository
+	 * @param \Closure                        $permissionsFactory
 	 */
-    public function __construct(EntityManager $entityManager, HasherInterface $hasher, PersistenceRepositoryInterface $persistenceRepository)
+    public function __construct(EntityManager $entityManager, PersistenceRepositoryInterface $persistenceRepository, \Closure $permissionsFactory = null)
     {
         parent::__construct($entityManager, $entityManager->getClassMetadata(
             $this->entityName()
         ));
 
-        $this->hasher = $hasher;
 	    $this->persistenceRepository = $persistenceRepository;
+	    $this->permissionsFactory    = $permissionsFactory;
     }
 
 	/**
@@ -48,7 +46,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 	 *
 	 * @param array $credentials
 	 *
-*@return DefaultUser
+	 * @return User
 	 */
 	abstract protected function createUser(array $credentials);
 
@@ -57,7 +55,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 	 *
 	 * @param  int $id
 	 *
-*@return DefaultUser|null
+	 * @return User|null
 	 */
 	public function findById($id)
 	{
@@ -99,9 +97,9 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 	/**
 	 * Records a login for the given user.
 	 *
-	 * @param  DefaultUser $user
+	 * @param User $user
 	 *
-*@return UserInterface|bool
+	 * @return UserInterface|bool
 	 */
 	public function recordLogin(UserInterface $user)
 	{
@@ -125,14 +123,14 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 	/**
 	 * Validate the password of the given user.
 	 *
-	 * @param  DefaultUser  $user
-	 * @param  array $credentials
+	 * @param User $user
+	 * @param array $credentials
 	 *
 	 * @return bool
 	 */
 	public function validateCredentials(UserInterface $user, array $credentials)
 	{
-		return $this->hasher->check($credentials['password'], $user->getPassword());
+		return $user->checkPassword($credentials['password']);
 	}
 
 	/**
@@ -165,6 +163,13 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 		return $this->validate($credentials, $user);
 	}
 
+	/**
+	 * @param array $credentials
+	 * @param int   $id
+	 *
+	 * @return bool
+	 * @throws InvalidArgumentException
+	 */
 	protected function validate(array $credentials, $id = null)
 	{
 		if ($id !== null)
@@ -196,9 +201,9 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 	 * @param array    $credentials
 	 * @param \Closure $callback
 	 *
-	 * @return DefaultUser
+	 * @return User
 	 */
-	public function create(array $credentials, Closure $callback = null)
+	public function create(array $credentials, \Closure $callback = null)
 	{
 		$user = $this->createUser($credentials);
 
@@ -220,14 +225,14 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 	/**
 	 * Updates a user.
 	 *
-	 * @param  DefaultUser|int $user
+	 * @param  User|int $user
 	 * @param  array    $credentials
 	 *
-	 * @return DefaultUser
+	 * @return User
 	 */
 	public function update($user, array $credentials)
 	{
-		if (! $user instanceof DefaultUser)
+		if (! $user instanceof User)
 		{
             $user = $this->findById($user);
         }

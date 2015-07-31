@@ -19,9 +19,11 @@ interface RepositoryFactory
 
 	/**
 	 * @param PersistenceRepositoryInterface $persistenceRepository
+	 * @param \Closure                       $permissionsFactory
+	 *
 	 * @return UserRepositoryInterface
 	 */
-	public function createUserRepository(PersistenceRepositoryInterface $persistenceRepository);
+	public function createUserRepository(PersistenceRepositoryInterface $persistenceRepository, \Closure $permissionsFactory = null);
 
 	/**
 	 * @return RoleRepositoryInterface

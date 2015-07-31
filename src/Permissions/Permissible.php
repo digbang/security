@@ -1,7 +1,18 @@
 <?php namespace Digbang\Security\Permissions;
 
-interface Permissible
+use Cartalyst\Sentinel\Permissions\PermissibleInterface;
+use Doctrine\Common\Collections\Collection;
+
+interface Permissible extends PermissibleInterface
 {
+	/**
+	 * Set the Permissions instance factory configured for this context.
+	 *
+	 * @param \Closure $permissionsFactory
+	 * @return void
+	 */
+	public function setPermissionsFactory(\Closure $permissionsFactory);
+
 	/**
 	 * @param string $permission
 	 * @return bool
@@ -13,4 +24,9 @@ interface Permissible
 	 * @return bool
 	 */
 	public function hasAnyAccess($permission);
+
+	/**
+	 * @return Collection
+	 */
+	public function getPermissions();
 }

@@ -1,9 +1,9 @@
-<?php namespace Digbang\Security\Mappings;
+<?php namespace Digbang\Security\Users;
 
 use Digbang\Doctrine\Metadata\Builder;
 use Digbang\Doctrine\Metadata\Relations\HasMany;
 use Digbang\Security\Activations\DefaultActivation;
-use Digbang\Security\Permissions\UserPermission;
+use Digbang\Security\Permissions\DefaultUserPermission;
 use Digbang\Security\Roles\DefaultRole;
 use Digbang\Security\Persistences\DefaultPersistence;
 use Digbang\Security\Reminders\DefaultReminder;
@@ -39,7 +39,7 @@ trait UserMappingTrait
 		'activations'  => [DefaultActivation::class,     'activations'],
 		'reminders'    => [DefaultReminder::class,       'reminders'],
 		'throttles'    => [DefaultThrottle::class,       'throttles'],
-		'permissions'  => [UserPermission::class, 'permissions'],
+		'permissions'  => [DefaultUserPermission::class, 'permissions'],
 	];
 
 	/**
@@ -62,12 +62,14 @@ trait UserMappingTrait
 	{
 		$builder
 			->primary()
-			->uniqueString('email')
 			->string('password')
 			->nullableDatetime('lastLogin')
-			->nullableString('firstName')
-			->nullableString('lastName')
 			->timestamps();
+
+		$builder
+			->embedded(ValueObjects\Email::class,    'email')
+			->embedded(ValueObjects\Name::class,     'name')
+			->embedded(ValueObjects\Password::class, 'password');
 	}
 
 	/**
@@ -94,7 +96,12 @@ trait UserMappingTrait
 
 		if ($this->enabled['permissions'])
 		{
-			$this->hasMany('permissions', $builder);
+			$builder->hasMany($this->relations['permissions'][0], $this->relations['permissions'][0], function(HasMany $hasMany){
+				$hasMany
+					->mappedBy($this->name)
+					->cascadeAll()
+					->orphanRemoval();
+			});
 		}
 	}
 

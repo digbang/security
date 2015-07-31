@@ -2,6 +2,7 @@
 
 use Digbang\Doctrine\Metadata\Builder;
 use Digbang\Security\Users\DefaultUser;
+use Digbang\Security\Users\UserMappingTrait;
 
 final class UserMapping implements SecurityUserMapping
 {

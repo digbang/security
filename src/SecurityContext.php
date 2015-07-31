@@ -125,7 +125,7 @@ final class SecurityContext
 
 		foreach ($mappings as $mapping)
 		{
-			$this->mappingDriver->addMapping($mapping);
+			$this->mappingDriver->addMapping($this->makeMapping($mapping));
 		}
 	}
 

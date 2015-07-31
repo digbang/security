@@ -4,8 +4,6 @@ use Cartalyst\Sentinel\Activations\ActivationRepositoryInterface;
 use Cartalyst\Sentinel\Checkpoints\ActivationCheckpoint;
 use Cartalyst\Sentinel\Checkpoints\CheckpointInterface;
 use Cartalyst\Sentinel\Checkpoints\ThrottleCheckpoint;
-use Cartalyst\Sentinel\Permissions\PermissionsInterface;
-use Cartalyst\Sentinel\Permissions\StandardPermissions;
 use Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface;
 use Cartalyst\Sentinel\Reminders\ReminderRepositoryInterface;
 use Cartalyst\Sentinel\Roles\RoleRepositoryInterface;
@@ -14,26 +12,18 @@ use Cartalyst\Sentinel\Users\UserRepositoryInterface;
 use Digbang\Doctrine\Metadata\EntityMapping;
 use Digbang\Security\Mappings;
 use Digbang\Security\Permissions\InsecurePermissionRepository;
+use Digbang\Security\Permissions\LazyStandardPermissions;
+use Digbang\Security\Permissions\LazyStrictPermissions;
 use Digbang\Security\Permissions\PermissionRepository;
 
 /**
  * Class SecurityContextConfiguration
  *
  * @package Digbang\Security\Configurations
- *
- * @method $this setUserMapping(EntityMapping $entityMapping)
- * @method $this setActivationMapping(EntityMapping $entityMapping)
- * @method $this setPermissionCollectionMapping(EntityMapping $entityMapping)
- * @method $this setPersistenceMapping(EntityMapping $entityMapping)
- * @method $this setReminderMapping(EntityMapping $entityMapping)
- * @method $this setRoleMapping(EntityMapping $entityMapping)
- * @method $this setThrottleMapping(EntityMapping $entityMapping)
- * @method $this setGlobalThrottleMapping(EntityMapping $entityMapping)
- * @method $this setIpThrottleMapping(EntityMapping $entityMapping)
- * @method $this setUserThrottleMapping(EntityMapping $entityMapping)
  * @method EntityMapping getUserMapping()
  * @method EntityMapping getActivationMapping()
- * @method EntityMapping getPermissionCollectionMapping()
+ * @method EntityMapping getUserPermissionMapping()
+ * @method EntityMapping getRolePermissionMapping()
  * @method EntityMapping getPersistenceMapping()
  * @method EntityMapping getReminderMapping()
  * @method EntityMapping getRoleMapping()
@@ -88,6 +78,7 @@ use Digbang\Security\Permissions\PermissionRepository;
  */
 final class SecurityContextConfiguration
 {
+
 	/**
 	 * Mapping of each entity to its EntityMapping class or object.
 	 * @type array
@@ -95,7 +86,8 @@ final class SecurityContextConfiguration
 	private $mappings = [
 		'user'           => Mappings\UserMapping::class,
 		'activation'     => Mappings\ActivationMapping::class,
-		'permission'     => Mappings\PermissionCollectionMapping::class,
+		'userPermission' => Mappings\UserPermissionMapping::class,
+		'rolePermission' => Mappings\RolePermissionMapping::class,
 		'persistence'    => Mappings\PersistenceMapping::class,
 		'reminder'       => Mappings\ReminderMapping::class,
 		'role'           => Mappings\RoleMapping::class,
@@ -146,7 +138,7 @@ final class SecurityContextConfiguration
 	 * @type array
 	 */
 	private $permissions = [
-		'class'      => StandardPermissions::class,
+		'factory'    => null,
 		'repository' => InsecurePermissionRepository::class
 	];
 
@@ -214,6 +206,22 @@ final class SecurityContextConfiguration
 	private $customTables = [];
 
 	/**
+	 * SecurityContextConfiguration constructor.
+	 */
+	public function __construct()
+	{
+		$this->setStandardPermissions();
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getMappings()
+	{
+		return $this->mappings;
+	}
+
+	/**
 	 * Disable the throttling checkpoint
 	 * @return $this
 	 */
@@ -272,21 +280,51 @@ final class SecurityContextConfiguration
 	}
 
 	/**
-	 * @param PermissionsInterface $permissionClass
+	 * Set a custom permissions factory. This closure will receive a Collection
+	 * as first parameter and an array of Collection objects as second parameter,
+	 * corresponding to user and role permissions.
+	 * @param \Closure $factory
+	 *
 	 * @return $this
 	 */
-	public function setPermissionClass(PermissionsInterface $permissionClass)
+	public function setPermissionsFactory(\Closure $factory)
 	{
-		$this->permissions['class'] = $permissionClass;
+		$this->permissions['factory'] = $factory;
 		return $this;
 	}
 
 	/**
-	 * @return PermissionsInterface
+	 * @return \Closure
 	 */
-	public function getPermissionClass()
+	public function getPermissionsFactory()
 	{
-		return $this->permissions['class'];
+		return $this->permissions['factory'];
+	}
+
+	/**
+	 * Set the StandardPermissions mode. This means any user-specific permission will
+	 * override role-based permissions.
+	 *
+	 * @return $this
+	 */
+	public function setStandardPermissions()
+	{
+		$this->permissions['factory'] = LazyStandardPermissions::getFactory();
+
+		return $this;
+	}
+
+	/**
+	 * Set the StrictPermissions mode. This means role-based permissions must allow access,
+	 * even when a specific user-based permission allows it.
+	 *
+	 * @return $this
+	 */
+	public function setLazyPermissions()
+	{
+		$this->permissions['factory'] = LazyStrictPermissions::getFactory();
+
+		return $this;
 	}
 
 	/**
@@ -494,62 +532,93 @@ final class SecurityContextConfiguration
 	}
 
 	/**
-	 * @param UserRepositoryInterface $userRepository
+	 * @param UserRepositoryInterface      $userRepository
+	 * @param Mappings\SecurityUserMapping $userMapping
+	 *
 	 * @return $this
 	 */
-	public function setUserRepository(UserRepositoryInterface $userRepository)
+	public function changeUsers(UserRepositoryInterface $userRepository, Mappings\SecurityUserMapping $userMapping = null)
 	{
 		$this->repositories['user'] = $userRepository;
+		$this->mappings['user']     = $userMapping ?: $this->mappings['user'];
+
 		return $this;
+	}
+
+	public function changePermissions(EntityMapping $userPermissionMapping = null, EntityMapping $rolePermissionMapping = null)
+	{
+
 	}
 
 	/**
 	 * @param ActivationRepositoryInterface $activationRepository
+	 * @param EntityMapping                 $activationMapping
+	 *
 	 * @return $this
 	 */
-	public function setActivationRepository(ActivationRepositoryInterface $activationRepository)
+	public function changeActivations(ActivationRepositoryInterface $activationRepository, EntityMapping $activationMapping = null)
 	{
 		$this->repositories['activation'] = $activationRepository;
+		$this->mappings['activation']     = $activationMapping ?: $this->mappings['activation'];
+
 		return $this;
 	}
 
 	/**
 	 * @param PersistenceRepositoryInterface $persistenceRepository
+	 * @param EntityMapping                  $persistencesMapping
+	 *
 	 * @return $this
 	 */
-	public function setPersistenceRepository(PersistenceRepositoryInterface $persistenceRepository)
+	public function changePersistences(PersistenceRepositoryInterface $persistenceRepository, EntityMapping $persistencesMapping = null)
 	{
 		$this->repositories['persistence'] = $persistenceRepository;
+		$this->mappings['persistence']     = $persistencesMapping ?: $this->mappings['persistence'];
 		return $this;
 	}
 
 	/**
 	 * @param ReminderRepositoryInterface $reminderRepository
+	 * @param EntityMapping               $reminderMappping
+	 *
 	 * @return $this
 	 */
-	public function setReminderRepository(ReminderRepositoryInterface $reminderRepository)
+	public function changeReminders(ReminderRepositoryInterface $reminderRepository, EntityMapping $reminderMappping = null)
 	{
 		$this->repositories['reminder'] = $reminderRepository;
+		$this->mappings['reminder']     = $reminderMappping ?: $this->mappings['reminder'];
 		return $this;
 	}
 
 	/**
 	 * @param RoleRepositoryInterface $roleRepository
+	 * @param EntityMapping           $roleMapping
+	 *
 	 * @return $this
 	 */
-	public function setRoleRepository(RoleRepositoryInterface $roleRepository)
+	public function changeRoles(RoleRepositoryInterface $roleRepository, EntityMapping $roleMapping = null)
 	{
 		$this->repositories['role'] = $roleRepository;
+		$this->mappings['role']     = $roleMapping ?: $this->mappings['role'];
 		return $this;
 	}
 
 	/**
 	 * @param ThrottleRepositoryInterface $throttleRepository
+	 * @param array                       $throttleMappings You may set mappings for the following keys:
+	 *                                                      'throttle', 'ipThrottle', 'globalThrottle', 'userThrottle'
+	 *                                                      if not present, defaults will be used.
+	 *
 	 * @return $this
 	 */
-	public function setThrottleRepository(ThrottleRepositoryInterface $throttleRepository)
+	public function changeThrottles(ThrottleRepositoryInterface $throttleRepository, array $throttleMappings = [])
 	{
 		$this->repositories['throttle'] = $throttleRepository;
+		foreach(['throttle', 'ipThrottle', 'globalThrottle', 'userThrottle'] as $key)
+		{
+			$this->mappings[$key] = array_get($throttleMappings, $key, $this->mappings[$key]);
+		}
+
 		return $this;
 	}
 
@@ -591,14 +660,6 @@ final class SecurityContextConfiguration
 	}
 
 	/**
-	 * @return array
-	 */
-	public function getMappings()
-	{
-		return $this->mappings;
-	}
-
-	/**
 	 * is triggered when invoking inaccessible methods in an object context.
 	 *
 	 * @param $name      string
@@ -609,16 +670,6 @@ final class SecurityContextConfiguration
 	 */
 	public function __call($name, $arguments)
 	{
-		if (preg_match('/^set(.*)Mapping$/', $name, $matches))
-		{
-			if (empty($arguments))
-			{
-				throw new \InvalidArgumentException("$name expects 1 parameter, none given.");
-			}
-
-			return $this->setMapping(lcfirst($matches[1]), array_shift($arguments));
-		}
-
 		if (preg_match('/^set(.*)Table$/', $name, $matches))
 		{
 			if (empty($arguments))
