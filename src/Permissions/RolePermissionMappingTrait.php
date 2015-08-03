@@ -19,12 +19,22 @@ trait RolePermissionMappingTrait
 		'roles' => [DefaultRole::class, 'roles']
 	];
 
+	/**
+	 * Adds all mappings: properties and relations
+	 *
+	 * @param Builder $builder
+	 */
 	public function addMappings(Builder $builder)
 	{
 		$this->addProperties($builder);
 		$this->addRelations($builder);
 	}
 
+	/**
+	 * Adds only properties
+	 *
+	 * @param Builder $builder
+	 */
 	public function addProperties(Builder $builder)
 	{
 		$builder
@@ -33,6 +43,11 @@ trait RolePermissionMappingTrait
 			->boolean('allowed');
 	}
 
+	/**
+	 * Adds only relations
+	 *
+	 * @param Builder $builder
+	 */
 	public function addRelations(Builder $builder)
 	{
 		$builder->belongsToMany($this->relations['roles'][0], $this->relations['roles'][0], function(BelongsToMany $belongsToMany){
