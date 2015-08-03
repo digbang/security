@@ -6,8 +6,6 @@ class InsecurePermissionRepository implements PermissionRepository
 
 	public function getForAction($action) { return null; }
 
-	public function getForPath($path) { return null; }
-
 	public function all()
 	{
 		return [];

@@ -1,6 +1,5 @@
 <?php namespace Digbang\Security\Permissions;
 
-use Illuminate\Contracts\Config\Repository;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 
@@ -17,11 +16,6 @@ class RoutePermissionRepository implements PermissionRepository
 	protected $prefix;
 
 	/**
-	 * @type Repository
-	 */
-	protected $config;
-
-	/**
 	 * Flyweight Pattern
 	 * @type array
 	 */
@@ -34,13 +28,11 @@ class RoutePermissionRepository implements PermissionRepository
 	protected $permissions = [];
 
 	/**
-	 * @param Router     $router
-	 * @param Repository $config
+	 * @param Router $router
 	 */
-	public function __construct(Router $router, Repository $config)
+	public function __construct(Router $router)
 	{
 		$this->router = $router;
-		$this->config = $config;
 	}
 
 	/**
@@ -74,17 +66,8 @@ class RoutePermissionRepository implements PermissionRepository
 				return $this->extractPermissionFrom($route);
 			}
 		}
-	}
 
-	/**
-	 * @param  string $path
-	 *
-	 * @throws PermissionException
-	 * @return string The permission matching the path, if it needs one.
-	 */
-	public function getForPath($path)
-	{
-		throw new PermissionException("Path permissions are not implemented in Route permission mode");
+		return null;
 	}
 
 	/**

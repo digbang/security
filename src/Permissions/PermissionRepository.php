@@ -15,12 +15,6 @@ interface PermissionRepository
 	public function getForAction($action);
 
 	/**
-	 * @param  string $path
-	 * @return string The permission matching the path, if it needs one.
-	 */
-	public function getForPath($path);
-
-	/**
 	 * List all permissions.
 	 * @return array
 	 */
