@@ -145,7 +145,7 @@ class DefaultUser implements User, RoleableInterface, Permissible
 		if (array_key_exists('firstName', $credentials) || array_key_exists('lastName', $credentials))
 		{
 			$firstName = array_get($credentials, 'firstName', $this->name->getFirstName());
-			$lastName = array_get($credentials,  'lastName',  $this->name->getLastName());
+			$lastName  = array_get($credentials, 'lastName',  $this->name->getLastName());
 
 			$this->name = new Name($firstName, $lastName);
 		}

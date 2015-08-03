@@ -21,7 +21,16 @@ final class DefaultDoctrineUserRepository extends DoctrineUserRepository
 	 */
 	protected function createUser(array $credentials)
 	{
-		$user = new DefaultUser($credentials['email'], $credentials['username'], $credentials['password']);
+		if (count(array_only($credentials, ['email', 'password', 'username'])) < 3)
+		{
+			throw new \InvalidArgumentException("Missing arguments.");
+		}
+
+		$user = new DefaultUser(
+			new ValueObjects\Email($credentials['email']),
+			new ValueObjects\Password($credentials['password']),
+			$credentials['username']
+		);
 
 		$rest = array_except($credentials, ['email', 'username', 'password']);
 		if (! empty($rest))
@@ -31,7 +40,7 @@ final class DefaultDoctrineUserRepository extends DoctrineUserRepository
 
 		if ($this->permissionsFactory)
 		{
-			$user->makePermissionsInstance($this->permissionsFactory);
+			$user->setPermissionsFactory($this->permissionsFactory);
 		}
 
 		return $user;

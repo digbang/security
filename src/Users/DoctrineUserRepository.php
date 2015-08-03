@@ -130,7 +130,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 	 */
 	public function validateCredentials(UserInterface $user, array $credentials)
 	{
-		return $user->checkPassword($credentials['password']);
+		return $user->checkPassword(array_get($credentials, 'password'));
 	}
 
 	/**
@@ -177,19 +177,9 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 			return true;
 		}
 
-		if (! array_key_exists('password', $credentials))
+		if (count(array_only($credentials, ['password', 'email', 'username'])) < 3)
 		{
-			throw new InvalidArgumentException('You have not passed a [password].');
-		}
-
-		if (! array_key_exists('email', $credentials))
-		{
-			throw new InvalidArgumentException('You have not passed an [email].');
-		}
-
-		if (! array_key_exists('username', $credentials))
-		{
-			throw new InvalidArgumentException('You have not passed an [username].');
+			return false;
 		}
 
 		return true;
@@ -278,7 +268,14 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 		}
 		else
 		{
-			foreach (array_only($credentials, ['email', 'username']) as $field => $value)
+			$identityFields = array_only($credentials, ['email', 'username']);
+
+			if (empty($identityFields))
+			{
+				throw new \InvalidArgumentException("Invalid credentials given. Credentials must have either a 'login' or 'email' / 'username' keys.");
+			}
+
+			foreach ($identityFields as $field => $value)
 			{
 				$criteria->andWhere($criteria->expr()->eq($field, $value));
 			}
