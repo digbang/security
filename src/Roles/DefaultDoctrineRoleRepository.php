@@ -3,13 +3,18 @@
 class DefaultDoctrineRoleRepository extends DoctrineRoleRepository
 {
 	/**
-	 * Get the entity name for this repository.
-	 * This entity MUST implement \Digbang\Security\Contracts\Entities\Role
-	 *
-	 * @return string
+	 * {@inheritdoc}
 	 */
 	protected function entityName()
 	{
 		return DefaultRole::class;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	protected function createRole($name, $slug = null)
+	{
+		return new DefaultRole($name, $slug);
 	}
 }

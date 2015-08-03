@@ -1,8 +1,6 @@
 <?php namespace Digbang\Security\Roles;
 
 use Cartalyst\Sentinel\Roles\RoleRepositoryInterface;
-use Digbang\Security\Contracts\Entities\Role as RoleInterface;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping;
@@ -27,72 +25,72 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
      */
     abstract protected function entityName();
 
+	/**
+	 * @param string      $name
+	 * @param string|null $slug
+	 *
+	 * @return Role
+	 */
+    abstract protected function createRole($name, $slug = null);
+
     /**
      * Find the role by ID.
      *
      * @param  int $id
      *
-     * @return RoleInterface $role
-     * @throws \InvalidArgumentException
+     * @return Role $role
      */
     public function findById($id)
     {
-        /** @type RoleInterface $role */
-        $role = $this->find($id);
-
-        if (!$role)
-        {
-            throw new \InvalidArgumentException("Group $id not found.");
-        }
-
-        return $role;
+        return $this->find($id);
     }
 
     /**
      * Finds a role by the given slug.
      *
      * @param  string $slug
-     * @return RoleInterface
+     * @return Role
      */
     public function findBySlug($slug)
     {
-        /** @type RoleInterface $role */
-        $role = $this->findOneBy(['slug' => $slug]);
+        return $this->findOneBy(['slug' => $slug]);
 
-        if (!$role)
-        {
-            throw new \InvalidArgumentException("Group $slug not found.");
-        }
-
-        return $role;
     }
-
 
     /**
      * Find the role by name.
      *
      * @param  string $name
      *
-     * @return RoleInterface  $role
-     * @throws \InvalidArgumentException
+     * @return Role  $role
+     * @throws
      */
     public function findByName($name)
     {
-        /** @type RoleInterface $role */
-        $role = $this->findOneBy(['name' => $name]);
-
-        if (!$role)
-        {
-            throw new \InvalidArgumentException("Group $name not found.");
-        }
-
-        return $role;
+        return $this->findOneBy(['name' => $name]);
     }
 
+	/**
+	 * Creates a role and persists it.
+	 *
+	 * @param string      $name
+	 * @param string|null $slug
+	 *
+	 * @return Role
+	 */
+	public function create($name, $slug = null)
+	{
+		$role = $this->createRole($name, $slug);
+
+		$this->save($role);
+
+		return $role;
+	}
+
     /**
-     * @param RoleInterface $role
+     * @param Role $role
      */
-    public function save(RoleInterface $role)
+    public function save(Role $role)
     {
         $entityManager = $this->getEntityManager();
 
@@ -101,55 +99,13 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
     }
 
     /**
-     * @param RoleInterface $role
+     * @param Role $role
      */
-    public function delete(RoleInterface $role)
+    public function delete(Role $role)
     {
         $entityManager = $this->getEntityManager();
 
         $entityManager->remove($role);
         $entityManager->flush();
     }
-
-    public function search($name = null, $permission = null, $orderBy = null, $orderSense = 'asc', $limit = 10, $offset = 0)
-	{
-		$queryBuilder = $this->createQueryBuilder('g');
-		$expressionBuilder = Criteria::expr();
-
-		$filters = [];
-
-		if ($name)
-		{
-			$filters[] = $expressionBuilder->contains('name', $name);
-		}
-
-		$criteria = Criteria::create();
-
-		if (!empty($filters))
-		{
-			$criteria->where($expressionBuilder->andX(...$filters));
-		}
-
-		if ($orderBy && $orderSense)
-		{
-			$criteria->orderBy([$orderBy => $orderSense]);
-		}
-
-		$criteria->setMaxResults($limit);
-		$criteria->setFirstResult($offset);
-
-		$queryBuilder->addCriteria($criteria);
-
-		if ($permission !== null)
-		{
-			$permissionClass = $this->getClassMetadata()->getAssociationMapping('permissions')['targetEntity'];
-			$queryBuilder->andWhere($queryBuilder->expr()->exists(
-				"SELECT 1 FROM $permissionClass p WHERE p.permission LIKE :permission AND p.role = g.id"
-			));
-
-			$queryBuilder->setParameter('permission', "%$permission%");
-		}
-
-		return $queryBuilder->getQuery()->getResult();
-	}
 }
