@@ -1,7 +1,7 @@
 <?php namespace Digbang\Security\Urls;
 
 use Cartalyst\Sentinel\Sentinel;
-use Digbang\Security\Users\User;
+use Digbang\Security\Permissions\Permissible;
 use Digbang\Security\Permissions\PermissionRepository;
 use Digbang\Security\Permissions\PermissionException;
 use Illuminate\Routing\UrlGenerator;
@@ -27,11 +27,16 @@ class SecureUrl
 	 */
 	protected $permissionRepository;
 
+	/**
+	 * @param UrlGenerator         $url
+	 * @param PermissionRepository $permissionRepository
+	 * @param Sentinel             $sentinel
+	 */
 	public function __construct(UrlGenerator $url, PermissionRepository $permissionRepository, Sentinel $sentinel)
 	{
-		$this->url = $url;
+		$this->url                  = $url;
 		$this->permissionRepository = $permissionRepository;
-		$this->sentinel = $sentinel;
+		$this->sentinel             = $sentinel;
 	}
 
 	/**
@@ -73,80 +78,12 @@ class SecureUrl
 	}
 
 	/**
-	 * @param string $path
-	 * @param array  $extra
-	 * @param null   $secure
-	 *
-	 * @return string
-	 * @throws PermissionException
-	 */
-	public function may($path, $extra = array(), $secure = null)
-	{
-		$permission = $this->permissionRepository->getForPath($path);
-
-	    if (! $this->hasPermission($permission))
-	    {
-		    throw new PermissionException("Current user does not have required permission: $permission");
-	    }
-
-	    return $this->url->to($path, $extra, $secure);
-	}
-
-	protected function hasPermission($permission)
-	{
-		if (!$permission)
-		{
-			return true;
-		}
-
-		/** @type User $user */
-		if (! $user = $this->sentinel->getUser())
-		{
-			return false;
-		}
-
-		return $user->hasAccess($permission);
-	}
-
-	/**
 	 * Allow access to the URL object
 	 * @return UrlGenerator
 	 */
 	public function insecure()
 	{
 		return $this->url;
-	}
-
-	/**
-	 * @param string $method
-	 * @param array $routes
-	 *
-	 * @return string|null
-	 * @throws \UnexpectedValueException
-	 */
-	private function best($method, array $routes)
-	{
-		if (!method_exists($this, $method))
-		{
-			throw new \UnexpectedValueException("Method $method does not exist.");
-		}
-
-		foreach ($routes as $route)
-		{
-			if (! is_array($route))
-			{
-				$route = [$route];
-			}
-
-			try
-			{
-				return call_user_func_array([$this, $method], $route);
-			}
-			catch (PermissionException $e)
-			{
-				// Do nothing
-			}
-		}
 	}
 
 	/**
@@ -170,5 +107,64 @@ class SecureUrl
 	public function bestAction(array $actions)
 	{
 		return $this->best('action', $actions);
+	}
+
+	/**
+	 * Check if the logged user has access to the given permission(s).
+	 * Users must implement the Digbang\Security\Permissions\Permissible interface.
+	 *
+	 * @param string|array $permission
+	 * @return bool
+	 */
+	protected function hasPermission($permission)
+	{
+		if (!$permission)
+		{
+			return true;
+		}
+
+		if (! $user = $this->sentinel->getUser())
+		{
+			return false;
+		}
+
+		if ($user instanceof Permissible)
+		{
+			return $user->hasAccess($permission);
+		}
+
+		return false;
+	}
+
+	/**
+	 * @param string $method
+	 * @param array $routes
+	 *
+	 * @return string|null
+	 * @throws \UnexpectedValueException
+	 */
+	protected function best($method, array $routes)
+	{
+		if (!method_exists($this, $method))
+		{
+			throw new \UnexpectedValueException("Method $method does not exist.");
+		}
+
+		foreach ($routes as $route)
+		{
+			if (! is_array($route))
+			{
+				$route = [$route];
+			}
+
+			try
+			{
+				return call_user_func_array([$this, $method], $route);
+			}
+			catch (PermissionException $e)
+			{
+				// Do nothing
+			}
+		}
 	}
 }
