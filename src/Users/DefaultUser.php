@@ -102,7 +102,7 @@ class DefaultUser implements User, Roleable, Permissible
 	 */
 	public function hasAnyAccess($permissions)
 	{
-		return $this->hasAccess($permissions, false);
+		return $this->permissionsInstance->hasAnyAccess($permissions);
 	}
 
 	/**
