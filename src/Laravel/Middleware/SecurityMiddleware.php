@@ -103,16 +103,9 @@ final class SecurityMiddleware
      */
     protected function sweep($repository, $lottery)
     {
-        if ($this->configHitsLottery($lottery))
+        if ($this->hitsLottery($lottery))
         {
-            try
-            {
-                $repository->removeExpired();
-            }
-            catch (\Exception $e)
-            {
-	            // Do nothing
-            }
+            $repository->removeExpired();
         }
     }
 
@@ -122,7 +115,7 @@ final class SecurityMiddleware
      * @param  array  $lottery
      * @return bool
      */
-    protected function configHitsLottery(array $lottery)
+    protected function hitsLottery(array $lottery)
     {
         return mt_rand(1, $lottery[1]) <= $lottery[0];
     }
