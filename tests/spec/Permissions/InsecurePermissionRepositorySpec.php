@@ -20,7 +20,6 @@ class InsecurePermissionRepositorySpec extends ObjectBehavior
 	{
 		$this->getForRoute(  uniqid() )->shouldReturn(null);
 		$this->getForAction( uniqid() )->shouldReturn(null);
-		$this->getForPath(   uniqid() )->shouldReturn(null);
 	}
 
 	function it_should_return_an_empty_array_when_asked_for_all_permissions()
