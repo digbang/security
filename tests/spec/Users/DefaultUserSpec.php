@@ -138,7 +138,6 @@ class DefaultUserSpec extends ObjectBehavior
 
 		$this->hasAccess(['foo', 'bar'])->shouldBe(false);
 		$this->hasAnyAccess(['foo', 'bar'])->shouldBe(true);
-		$this->hasAccess(['foo', 'bar'], false)->shouldBe(true);
 	}
 
 	function it_should_hold_permissions()

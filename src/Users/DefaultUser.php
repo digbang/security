@@ -86,19 +86,14 @@ class DefaultUser implements User, Roleable, Permissible
 	/**
 	 * {@inheritdoc}
 	 */
-	public function hasAccess($permissions, $all = true)
+	public function hasAccess($permissions)
 	{
 		if (! $this->permissionsInstance)
 		{
 			$this->makePermissionsInstance();
 		}
 
-		if ($all)
-		{
-			return $this->permissionsInstance->hasAccess($permissions);
-		}
-
-		return $this->permissionsInstance->hasAnyAccess($permissions);
+		return $this->permissionsInstance->hasAccess($permissions);
 	}
 
 
@@ -327,7 +322,7 @@ class DefaultUser implements User, Roleable, Permissible
 		$this->makePermissionsInstance();
 	}
 
-		/**
+	/**
 	 * {@inheritdoc}
 	 */
 	private function makePermissionsInstance()
