@@ -20,4 +20,12 @@ class DefaultRolePermission extends DefaultPermission
 
 		$this->role = $role;
 	}
+
+	/**
+	 * @return Role
+	 */
+	public function getRole()
+	{
+		return $this->role;
+	}
 }
