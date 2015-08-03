@@ -193,7 +193,7 @@ abstract class DoctrinePersistenceRepository extends EntityRepository implements
 			->where('p.code = :code')
 			->setParameter('code', $code);
 
-		$queryBuilder->getQuery()->execute();
+		return $queryBuilder->getQuery()->execute();
 	}
 
 	/**

@@ -41,4 +41,28 @@ class DefaultPersistence implements Persistence
 	{
 		return $this->user;
 	}
+
+	/**
+	 * @return string
+	 */
+	public function getCode()
+	{
+		return $this->code;
+	}
+
+	/**
+	 * @return \Carbon\Carbon
+	 */
+	public function getCreatedAt()
+	{
+		return $this->createdAt;
+	}
+
+	/**
+	 * @return \Carbon\Carbon
+	 */
+	public function getUpdatedAt()
+	{
+		return $this->updatedAt;
+	}
 }
