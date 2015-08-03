@@ -7,6 +7,7 @@ use Digbang\Security\Mappings\EmailMapping;
 use Digbang\Security\Mappings\NameMapping;
 use Digbang\Security\Mappings\PasswordMapping;
 use Digbang\Security\SecurityContext;
+use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 
 class SecurityServiceProvider extends ServiceProvider
@@ -26,17 +27,31 @@ class SecurityServiceProvider extends ServiceProvider
 	 * Boot the service provider.
 	 *
 	 * @param DecoupledMappingDriver $mappingDriver
+	 * @param Router                 $router
+	 */
+	public function boot(DecoupledMappingDriver $mappingDriver, Router $router)
+	{
+		$this->addMappings($mappingDriver);
+		$this->addMiddleware($router);
+	}
+
+	/**
+	 * @param DecoupledMappingDriver $mappingDriver
+	 *
 	 * @throws \Doctrine\Common\Persistence\Mapping\MappingException
 	 */
-	public function boot(DecoupledMappingDriver $mappingDriver)
+	private function addMappings(DecoupledMappingDriver $mappingDriver)
 	{
-		foreach([
-			new NameMapping,
-			new EmailMapping,
-			new PasswordMapping
-		] as $mapping)
-		{
-			$mappingDriver->addMapping($mapping);
-		}
+		$mappingDriver->addMapping(new NameMapping);
+		$mappingDriver->addMapping(new EmailMapping);
+		$mappingDriver->addMapping(new PasswordMapping);
+	}
+
+	/**
+	 * @param Router $router
+	 */
+	private function addMiddleware(Router $router)
+	{
+		$router->middleware('security', Middleware\SecurityMiddleware::class);
 	}
 }
