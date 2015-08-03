@@ -63,25 +63,28 @@ final class SecurityContext
 	 */
 	public function getSecurity($context)
 	{
-		if (! array_key_exists($context, $this->contexts))
-		{
-			throw new \InvalidArgumentException("Context [$context] is not configured.");
-		}
-
 		if (array_key_exists($context, $this->instances))
 		{
 			return $this->instances[$context];
 		}
 
-		return $this->instances[$context] = $this->securityFactory->create($context ,$this->contexts[$context]);
+		$configuration = $this->getConfigurationFor($context);
+
+		return $this->instances[$context] = $this->securityFactory->create($context, $configuration);
 	}
 
 	/**
-	 * @return array
+	 * @param $context
+	 * @return SecurityContextConfiguration
 	 */
-	public function getConfigurations()
+	public function getConfigurationFor($context)
 	{
-		return $this->contexts;
+		if (! array_key_exists($context, $this->contexts))
+		{
+			throw new \InvalidArgumentException("Context [$context] is not configured.");
+		}
+
+		return $this->contexts[$context];
 	}
 
 	/**

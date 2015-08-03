@@ -62,7 +62,7 @@ final class SecurityMiddleware
 
 	    $this->garbageCollect(
 		    $this->securityContext->getSecurity($context),
-		    $this->securityContext->getConfigurations()
+		    $this->securityContext->getConfigurationFor($context)
 	    );
 
 	    return $response;
@@ -71,22 +71,18 @@ final class SecurityMiddleware
 	/**
 	 * Garbage collect activations and reminders.
 	 *
-	 * @param Security $security
-	 * @param array    $configurations
+	 * @param Security                     $security
+	 * @param SecurityContextConfiguration $configuration
 	 */
-    protected function garbageCollect(Security $security, array $configurations)
+    protected function garbageCollect(Security $security, SecurityContextConfiguration $configuration)
     {
 	    try
 	    {
-		    $activations = $security->getActivationRepository();
-		    $reminders   = $security->getReminderRepository();
+		    $activations = $security->activations();
+		    $reminders   = $security->reminders();
 
-	        foreach ($configurations as $configuration)
-	        {
-	            /** @type SecurityContextConfiguration $configuration */
-	            $this->sweep($activations, $configuration->getActivationsLottery());
-	            $this->sweep($reminders,   $configuration->getRemindersLottery());
-	        }
+            $this->sweep($activations, $configuration->getActivationsLottery());
+            $this->sweep($reminders,   $configuration->getRemindersLottery());
 	    }
 	    catch (\Exception $e)
 	    {
