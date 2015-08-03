@@ -1,9 +1,9 @@
 <?php namespace Digbang\Security\Urls;
 
 use Cartalyst\Sentinel\Sentinel;
-use Digbang\Security\Contracts\User;
+use Digbang\Security\Users\User;
 use Digbang\Security\Permissions\PermissionRepository;
-use Digbang\Security\Exceptions\PermissionException;
+use Digbang\Security\Permissions\PermissionException;
 use Illuminate\Routing\UrlGenerator;
 
 /**

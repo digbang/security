@@ -1,6 +1,5 @@
 <?php namespace Digbang\Security\Permissions;
 
-use Digbang\Security\Exceptions\PermissionException;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;

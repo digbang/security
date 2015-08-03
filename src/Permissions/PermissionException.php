@@ -1,4 +1,4 @@
-<?php namespace Digbang\Security\Exceptions;
+<?php namespace Digbang\Security\Permissions;
 
 use RuntimeException;
 
