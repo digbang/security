@@ -9,33 +9,29 @@
 	],
 	"require": {
 		"php": ">=5.6",
-		"illuminate/support": "~5.1",
+		"digbang/doctrine":     "dev-master",
+		"illuminate/support":   "~5.1",
 		"illuminate/contracts": "~5.1",
-		"cartalyst/sentinel": "~2.0",
-		"doctrine/dbal": "~2.5",
-		"illuminate/events": "~5.1",
-		"illuminate/cookie": "~5.1"
+		"illuminate/events":    "~5.1",
+		"illuminate/cookie":    "~5.1",
+		"illuminate/routing":   "~5.1",
+		"cartalyst/sentinel":   "~2.0",
+		"doctrine/dbal":        "~2.5"
 	},
 	"require-dev": {
-		"phpspec/phpspec": "~2.0",
-		"illuminate/routing": "~5.1",
-		"illuminate/database": "~5.1",
-		"illuminate/console": "~5.1",
-		"illuminate/mail": "~5.1",
-		"illuminate/config": "~5.1",
-        "digbang/doctrine": "dev-master"
+		"phpspec/phpspec":     "~2.0"
 	},
 	"autoload": {
 		"psr-4": {
 			"Digbang\\Security\\": "src/"
 		}
 	},
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:digbang/doctrine.git"
-        }
-    ],
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "git@github.com:digbang/doctrine.git"
+		}
+	],
 	"minimum-stability": "dev",
-    "prefer-stable": true
+	"prefer-stable": true
 }
