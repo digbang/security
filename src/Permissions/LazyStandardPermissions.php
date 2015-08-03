@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 class LazyStandardPermissions implements PermissionsInterface
 {
 	use LazyPermissionsTrait;
+
 	/**
 	 * Create a new permissions instance.
 	 *
