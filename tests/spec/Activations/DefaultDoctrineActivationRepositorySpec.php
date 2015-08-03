@@ -5,6 +5,8 @@ use Digbang\Security\Activations\Activation;
 use Digbang\Security\Activations\DefaultActivation;
 use Digbang\Security\Users\DefaultUser;
 use Digbang\Security\Users\User;
+use Digbang\Security\Users\ValueObjects\Email;
+use Digbang\Security\Users\ValueObjects\Password;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -66,7 +68,7 @@ class DefaultDoctrineActivationRepositorySpec extends ObjectBehavior
 
 	function it_should_find_and_complete_an_existing_activation(User $user, EntityManager $entityManager, QueryBuilder $queryBuilder)
 	{
-		$activation = new DefaultActivation(new DefaultUser('email@example.com', 'a_username', '1234'));
+		$activation = new DefaultActivation(new DefaultUser(new Email('email@example.com'), new Password('1234'), 'a_username'));
 
 		$this->preparePersist($entityManager);
 		$this->prepareQuery($entityManager, $queryBuilder, $activation);
@@ -84,7 +86,7 @@ class DefaultDoctrineActivationRepositorySpec extends ObjectBehavior
 
 	function it_should_check_if_a_complete_activation_exists(User $user, EntityManager $entityManager, QueryBuilder $queryBuilder)
 	{
-		$activation = new DefaultActivation(new DefaultUser('email@example.com', 'a_username', '1234'));
+		$activation = new DefaultActivation(new DefaultUser(new Email('email@example.com'), new Password('1234'), 'a_username'));
 
 		$this->prepareQuery($entityManager, $queryBuilder, $activation);
 
@@ -100,7 +102,7 @@ class DefaultDoctrineActivationRepositorySpec extends ObjectBehavior
 
 	function it_should_remove_an_existing_activation(User $user, EntityManager $entityManager, QueryBuilder $queryBuilder)
 	{
-		$activation = new DefaultActivation(new DefaultUser('email@example.com', 'a_username', '1234'));
+		$activation = new DefaultActivation(new DefaultUser(new Email('email@example.com'), new Password('1234'), 'a_username'));
 
 		$this->prepareRemove($entityManager);
 		$this->prepareQuery($entityManager, $queryBuilder, $activation);
