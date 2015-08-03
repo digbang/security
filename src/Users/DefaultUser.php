@@ -2,17 +2,15 @@
 
 use Carbon\Carbon;
 use Cartalyst\Sentinel\Permissions\PermissionsInterface;
-use Cartalyst\Sentinel\Roles\RoleableInterface;
 use Digbang\Doctrine\TimestampsTrait;
 use Digbang\Security\Permissions\DefaultUserPermission;
+use Digbang\Security\Permissions\NullPermissions;
 use Digbang\Security\Permissions\Permissible;
 use Digbang\Security\Roles\Role;
-use Digbang\Security\Users\ValueObjects\Email;
-use Digbang\Security\Users\ValueObjects\Name;
-use Digbang\Security\Users\ValueObjects\Password;
+use Digbang\Security\Roles\Roleable;
 use Doctrine\Common\Collections\ArrayCollection;
 
-class DefaultUser implements User, RoleableInterface, Permissible
+class DefaultUser implements User, Roleable, Permissible
 {
 	use TimestampsTrait;
 
@@ -80,6 +78,9 @@ class DefaultUser implements User, RoleableInterface, Permissible
 		$this->roles       = new ArrayCollection;
 		$this->permissions = new ArrayCollection;
 		$this->name        = new ValueObjects\Name;
+		$this->permissionsFactory = function(){
+			return new NullPermissions;
+		};
 	}
 
 	/**
@@ -87,6 +88,11 @@ class DefaultUser implements User, RoleableInterface, Permissible
 	 */
 	public function hasAccess($permissions, $all = true)
 	{
+		if (! $this->permissionsInstance)
+		{
+			$this->makePermissionsInstance();
+		}
+
 		if ($all)
 		{
 			return $this->permissionsInstance->hasAccess($permissions);
@@ -129,7 +135,7 @@ class DefaultUser implements User, RoleableInterface, Permissible
 	{
 		if (array_key_exists('email', $credentials))
 		{
-			$this->email = new Email($credentials['email']);
+			$this->email = new ValueObjects\Email($credentials['email']);
 		}
 
 		if (array_key_exists('username', $credentials))
@@ -139,7 +145,7 @@ class DefaultUser implements User, RoleableInterface, Permissible
 
 		if (array_key_exists('password', $credentials))
 		{
-			$this->password = new Password($credentials['password']);
+			$this->password = new ValueObjects\Password($credentials['password']);
 		}
 
 		if (array_key_exists('firstName', $credentials) || array_key_exists('lastName', $credentials))
@@ -147,7 +153,7 @@ class DefaultUser implements User, RoleableInterface, Permissible
 			$firstName = array_get($credentials, 'firstName', $this->name->getFirstName());
 			$lastName  = array_get($credentials, 'lastName',  $this->name->getLastName());
 
-			$this->name = new Name($firstName, $lastName);
+			$this->name = new ValueObjects\Name($firstName, $lastName);
 		}
 	}
 
@@ -164,7 +170,7 @@ class DefaultUser implements User, RoleableInterface, Permissible
 	 */
 	public function getUserLogin()
 	{
-		return $this->email->getAddress();
+		return $this->getEmail();
 	}
 
 	/**
@@ -287,6 +293,14 @@ class DefaultUser implements User, RoleableInterface, Permissible
 	}
 
 	/**
+	 * @return Carbon
+	 */
+	public function getLastLogin()
+	{
+		return $this->lastLogin;
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function getPermissions()
@@ -318,9 +332,9 @@ class DefaultUser implements User, RoleableInterface, Permissible
 	 */
 	private function makePermissionsInstance()
 	{
-		if (! $this->permissionsFactory)
+		if (! is_callable($this->permissionsFactory))
 		{
-			throw new \InvalidArgumentException("No PermissionFactory callable given. PermissionFactory callable is set by the DoctrineUserRepository on instance creation.");
+			throw new \InvalidArgumentException("No PermissionFactory callable given. PermissionFactory callable should be set by the DoctrineUserRepository on instance creation. New instances will use a NullPermissions implementation until persisted.");
 		}
 
 		$permissionsFactory = $this->permissionsFactory;
@@ -330,5 +344,57 @@ class DefaultUser implements User, RoleableInterface, Permissible
 		});
 
 		$this->permissionsInstance = $permissionsFactory($this->permissions, $secondary->getValues());
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function addRole(Role $role)
+	{
+		$this->roles->add($role);
+
+		$this->makePermissionsInstance();
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function removeRole(Role $role)
+	{
+		$this->roles->removeElement($role);
+
+		$this->makePermissionsInstance();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getEmail()
+	{
+		return $this->email->getAddress();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getUsername()
+	{
+		return $this->username;
+	}
+
+	/**
+	 * @return \Carbon\Carbon
+	 */
+	public function getCreatedAt()
+	{
+		return $this->createdAt;
+	}
+
+	/**
+	 * @return \Carbon\Carbon
+	 */
+	public function getUpdatedAt()
+	{
+		return $this->updatedAt;
 	}
 }

@@ -1,9 +1,13 @@
 <?php namespace Digbang\Security\Roles;
 
 use Cartalyst\Sentinel\Roles\RoleInterface;
+use Doctrine\Common\Collections\Collection;
 
 interface Role extends RoleInterface
 {
+	/**
+	 * @return Collection
+	 */
 	public function getPermissions();
 
 	/**
