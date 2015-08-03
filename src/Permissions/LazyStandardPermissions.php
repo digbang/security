@@ -16,8 +16,9 @@ class LazyStandardPermissions implements PermissionsInterface
 	 */
 	public function __construct(Collection $permissions = null, array $secondaryPermissions = [])
 	{
-		$this->permissions = new ArrayCollection;
-		$this->mergePermissions($permissions ?: new ArrayCollection, $secondaryPermissions);
+		$this->permissions     = new ArrayCollection;
+		$this->userPermissions = $permissions ?: new ArrayCollection;
+		$this->rolePermissions = $secondaryPermissions;
 	}
 
 	/**

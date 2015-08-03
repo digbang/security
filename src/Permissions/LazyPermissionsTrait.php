@@ -10,6 +10,16 @@ trait LazyPermissionsTrait
 	protected $permissions;
 
 	/**
+	 * @type Collection
+	 */
+	protected $userPermissions;
+
+	/**
+	 * @type array
+	 */
+	protected $rolePermissions;
+
+	/**
 	 * @param Collection $permissions
 	 * @param array      $secondaryPermissions
 	 */
@@ -24,6 +34,11 @@ trait LazyPermissionsTrait
 	 */
 	public function hasAccess($permissions)
 	{
+		if ($this->permissions->isEmpty())
+		{
+			$this->mergePermissions($this->userPermissions, $this->rolePermissions);
+		}
+
 		if (func_num_args() > 1)
 		{
 			$permissions = func_get_args();
@@ -49,6 +64,11 @@ trait LazyPermissionsTrait
 	 */
 	public function hasAnyAccess($permissions)
 	{
+		if ($this->permissions->isEmpty())
+		{
+			$this->mergePermissions($this->userPermissions, $this->rolePermissions);
+		}
+
 		if (func_num_args() > 1)
 		{
 			$permissions = func_get_args();
