@@ -16,4 +16,12 @@ class DefaultIpThrottle extends DefaultThrottle
 	{
 		$this->ip = $ip;
 	}
+
+	/**
+	 * @return string
+	 */
+	public function getIp()
+	{
+		return $this->ip;
+	}
 }
