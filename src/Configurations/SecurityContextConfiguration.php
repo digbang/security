@@ -547,7 +547,8 @@ final class SecurityContextConfiguration
 
 	public function changePermissions(EntityMapping $userPermissionMapping = null, EntityMapping $rolePermissionMapping = null)
 	{
-
+		$this->mappings['userPermission'] = $userPermissionMapping ?: $this->mappings['userPermission'];
+		$this->mappings['rolePermission'] = $rolePermissionMapping ?: $this->mappings['rolePermission'];
 	}
 
 	/**
