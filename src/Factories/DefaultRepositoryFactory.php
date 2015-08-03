@@ -125,10 +125,12 @@ final class DefaultRepositoryFactory implements RepositoryFactory
 	}
 
 	/**
-	 * @param int $expires
+	 * @param UserRepositoryInterface $userRepository
+	 * @param int                     $expires
+	 *
 	 * @return ReminderRepositoryInterface
 	 */
-	public function createReminderRepository($expires)
+	public function createReminderRepository(UserRepositoryInterface $userRepository, $expires)
 	{
 		if (array_key_exists('reminder', $this->instances))
 		{
@@ -138,6 +140,7 @@ final class DefaultRepositoryFactory implements RepositoryFactory
 		$entityManager = $this->container->make(EntityManager::class);
 		return $this->instances['reminder'] = new DefaultDoctrineReminderRepository(
 			$entityManager,
+			$userRepository,
 			$expires
 		);
 	}

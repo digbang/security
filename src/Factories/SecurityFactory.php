@@ -5,6 +5,7 @@ use Cartalyst\Sentinel\Checkpoints\CheckpointInterface;
 use Cartalyst\Sentinel\Checkpoints\ThrottleCheckpoint;
 use Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface;
 use Cartalyst\Sentinel\Sentinel;
+use Cartalyst\Sentinel\Users\UserRepositoryInterface;
 use Digbang\Security\Configurations\SecurityContextConfiguration;
 use Digbang\Security\Contracts\Factories\RepositoryFactory;
 use Digbang\Security\Roles\NullRoleRepository;
@@ -43,10 +44,11 @@ class SecurityFactory
 	public function create($context, SecurityContextConfiguration $configuration)
 	{
 		$persistenceRepository = $this->getPersistenceRepository($context, $configuration);
+		$userRepository = $this->getUserRepository($configuration, $persistenceRepository);
 
 		$sentinel = new Sentinel(
 			$persistenceRepository,
-			$this->getUserRepository($configuration, $persistenceRepository),
+			$userRepository,
 			$this->getRoleRepository($configuration),
 			$this->getActivationRepository($configuration),
 			$this->container->make(Dispatcher::class)
@@ -58,7 +60,7 @@ class SecurityFactory
 		}
 
 		$sentinel->setReminderRepository(
-			$this->getReminderRepository($configuration)
+			$this->getReminderRepository($configuration, $userRepository)
 		);
 
 		$sentinel->setRequestCredentials(function(){
@@ -144,11 +146,14 @@ class SecurityFactory
 
 	/**
 	 * @param SecurityContextConfiguration $configuration
+	 * @param UserRepositoryInterface      $userRepository
+	 *
 	 * @return \Cartalyst\Sentinel\Reminders\ReminderRepositoryInterface
 	 */
-	private function getReminderRepository(SecurityContextConfiguration $configuration)
+	private function getReminderRepository(SecurityContextConfiguration $configuration, UserRepositoryInterface $userRepository)
 	{
 		return $configuration->getReminderRepository() ?: $this->repositoryFactory->createReminderRepository(
+			$userRepository,
 			$configuration->getRemindersExpiration()
 		);
 	}

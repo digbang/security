@@ -37,10 +37,12 @@ interface RepositoryFactory
 	public function createActivationRepository($expires);
 
 	/**
-	 * @param int $expires
+	 * @param UserRepositoryInterface $userRepository
+	 * @param int                     $expires
+	 *
 	 * @return ReminderRepositoryInterface
 	 */
-	public function createReminderRepository($expires);
+	public function createReminderRepository(UserRepositoryInterface $userRepository, $expires);
 
 	/**
 	 * @return PermissionRepository

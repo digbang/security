@@ -3,6 +3,8 @@
 use Carbon\Carbon;
 use Cartalyst\Sentinel\Reminders\ReminderRepositoryInterface;
 use Cartalyst\Sentinel\Users\UserInterface;
+use Cartalyst\Sentinel\Users\UserRepositoryInterface;
+use Digbang\Security\Users\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping;
@@ -16,14 +18,21 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
 	private $expires;
 
 	/**
-	 * @param EntityManager $entityManager
-	 * @param int           $expires
+	 * @type UserRepositoryInterface
 	 */
-	public function __construct(EntityManager $entityManager, $expires = 259200)
+	private $userRepository;
+
+	/**
+	 * @param EntityManager           $entityManager
+	 * @param UserRepositoryInterface $userRepository
+	 * @param int                     $expires
+	 */
+	public function __construct(EntityManager $entityManager, UserRepositoryInterface $userRepository, $expires = 259200)
 	{
 		parent::__construct($entityManager, $entityManager->getClassMetadata($this->entityName()));
 
-		$this->expires = $expires;
+		$this->expires        = $expires;
+		$this->userRepository = $userRepository;
 	}
 
 	/**
@@ -48,15 +57,14 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
 	/**
 	 * Complete reminder for the given user.
 	 *
-	 * @param  \Cartalyst\Sentinel\Users\UserInterface $user
-	 * @param  string                                  $code
-	 * @param  string                                  $password
+	 * @param  User   $user
+	 * @param  string $code
+	 * @param  string $password
 	 *
 	 * @return bool
 	 */
 	public function complete(UserInterface $user, $code, $password)
 	{
-		/** @type DefaultReminder $reminder */
         $reminder = $this->findIncomplete($user, $code);
 
         if ($reminder === null)
@@ -64,11 +72,32 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
             return false;
         }
 
-		$reminder->complete();
+		$credentials = ['password' => $password];
 
-		$this->save($reminder);
+		if (! $this->userRepository->validForUpdate($user, $credentials))
+		{
+			return false;
+		}
 
-        return true;
+		$entityManager = $this->getEntityManager();
+		$entityManager->beginTransaction();
+
+		try
+		{
+			$this->userRepository->update($user, $credentials);
+
+			$reminder->complete();
+			$this->save($reminder);
+
+			$entityManager->commit();
+	        return true;
+		}
+		catch (\Exception $e)
+		{
+			$entityManager->rollback();
+
+			return false;
+		}
 	}
 
 	/**
@@ -78,12 +107,13 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
 	 */
 	public function removeExpired()
 	{
-		$queryBuilder = $this->createQueryBuilder('r');
+		$queryBuilder = $this->getEntityManager()->createQueryBuilder();
 
 		$queryBuilder
 			->delete()
-			->where('completed = :completed')
-			->andWhere('createdAt < :expires');
+			->from($this->entityName(), 'r')
+			->where('r.completed = :completed')
+			->andWhere('r.createdAt < :expires');
 
 		$queryBuilder->setParameters([
 			'completed' => false,
@@ -101,9 +131,9 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
 	}
 
 	/**
-	 * @param DefaultReminder $reminder
+	 * @param Reminder $reminder
 	 */
-	protected function save(DefaultReminder $reminder)
+	protected function save(Reminder $reminder)
 	{
 		$entityManager = $this->getEntityManager();
 
@@ -123,7 +153,7 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
 	 * @param UserInterface $user
 	 * @param string|null   $code
 	 *
-	 * @return DefaultReminder|null
+	 * @return Reminder|null
 	 *
 	 * @throws \Doctrine\ORM\NonUniqueResultException
 	 */
