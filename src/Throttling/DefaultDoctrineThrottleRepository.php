@@ -4,17 +4,8 @@ use Digbang\Security\Users\User;
 
 class DefaultDoctrineThrottleRepository extends DoctrineThrottleRepository
 {
-
 	/**
-	 * Get the FQCN of each Throttle type:
-	 *   - null: Base throttle type (eg: Digbang\Security\Throttling\DefaultThrottle)
-	 *   - 'global': Global throttle type (eg: Digbang\Security\Throttling\DefaultGlobalThrottle)
-	 *   - 'ip': Ip throttle type (eg: Digbang\Security\Throttling\DefaultIpThrottle)
-	 *   - 'user': User throttle type (eg: Digbang\Security\Throttling\DefaultUserThrottle)
-	 *
-	 * @param string|null $type
-	 *
-	 * @return string
+	 * {@inheritdoc}
 	 */
 	protected function entityName($type = null)
 	{
@@ -37,9 +28,7 @@ class DefaultDoctrineThrottleRepository extends DoctrineThrottleRepository
 	}
 
 	/**
-	 * Create a GlobalThrottle object
-	 *
-	 * @return Throttle
+	 * {@inheritdoc}
 	 */
 	protected function createGlobalThrottle()
 	{
@@ -47,11 +36,7 @@ class DefaultDoctrineThrottleRepository extends DoctrineThrottleRepository
 	}
 
 	/**
-	 * Create an IpThrottle object
-	 *
-	 * @param string $ipAddress
-	 *
-	 * @return Throttle
+	 * {@inheritdoc}
 	 */
 	protected function createIpThrottle($ipAddress)
 	{
@@ -59,11 +44,7 @@ class DefaultDoctrineThrottleRepository extends DoctrineThrottleRepository
 	}
 
 	/**
-	 * Create a UserThrottle object
-	 *
-	 * @param User $user
-	 *
-	 * @return Throttle
+	 * {@inheritdoc}
 	 */
 	protected function createUserThrottle(User $user)
 	{
