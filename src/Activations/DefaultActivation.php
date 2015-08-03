@@ -73,4 +73,36 @@ class DefaultActivation implements Activation
 	{
 		return $this->completedAt;
 	}
+
+	/**
+	 * @return User
+	 */
+	public function getUser()
+	{
+		return $this->user;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isCompleted()
+	{
+		return $this->completed;
+	}
+
+	/**
+	 * @return \Carbon\Carbon
+	 */
+	public function getUpdatedAt()
+	{
+		return $this->updatedAt;
+	}
+
+	/**
+	 * @return \Carbon\Carbon
+	 */
+	public function getCreatedAt()
+	{
+		return $this->createdAt;
+	}
 }
