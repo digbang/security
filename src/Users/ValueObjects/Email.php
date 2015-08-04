@@ -36,7 +36,7 @@ class Email
 	 * @return string
 	 * @link http://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.tostring
 	 */
-	function __toString()
+	public function __toString()
 	{
 		return $this->getAddress();
 	}
