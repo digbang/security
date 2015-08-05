@@ -4,6 +4,7 @@ use Digbang\Doctrine\Metadata\DecoupledMappingDriver;
 use Digbang\Doctrine\Metadata\EntityMapping;
 use Digbang\Security\Configurations\SecurityContextConfiguration;
 use Digbang\Security\Factories\SecurityFactory;
+use Illuminate\Contracts\Container\Container;
 
 final class SecurityContext
 {
@@ -24,6 +25,11 @@ final class SecurityContext
 	private $contexts = [];
 
 	/**
+	 * @type Container
+	 */
+	private $container;
+
+	/**
 	 * Flyweight Security instances.
 	 * @type array
 	 */
@@ -34,11 +40,13 @@ final class SecurityContext
 	 *
 	 * @param SecurityFactory        $securityFactory
 	 * @param DecoupledMappingDriver $mappingDriver
+	 * @param Container              $container
 	 */
-	public function __construct(SecurityFactory $securityFactory, DecoupledMappingDriver $mappingDriver)
+	public function __construct(SecurityFactory $securityFactory, DecoupledMappingDriver $mappingDriver, Container $container)
 	{
 		$this->securityFactory = $securityFactory;
 		$this->mappingDriver   = $mappingDriver;
+		$this->container       = $container;
 	}
 
 	/**
@@ -139,7 +147,7 @@ final class SecurityContext
 			return $mapping;
 		}
 
-		return new $mapping;
+		return $this->container->make($mapping);
 	}
 
 	/**

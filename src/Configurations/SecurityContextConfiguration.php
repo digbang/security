@@ -1,36 +1,27 @@
 <?php namespace Digbang\Security\Configurations;
 
-use Cartalyst\Sentinel\Activations\ActivationRepositoryInterface;
 use Cartalyst\Sentinel\Checkpoints\ActivationCheckpoint;
-use Cartalyst\Sentinel\Checkpoints\CheckpointInterface;
 use Cartalyst\Sentinel\Checkpoints\ThrottleCheckpoint;
-use Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface;
-use Cartalyst\Sentinel\Reminders\ReminderRepositoryInterface;
-use Cartalyst\Sentinel\Roles\RoleRepositoryInterface;
-use Cartalyst\Sentinel\Throttling\ThrottleRepositoryInterface;
-use Cartalyst\Sentinel\Users\UserRepositoryInterface;
-use Digbang\Doctrine\Metadata\EntityMapping;
 use Digbang\Security\Mappings;
 use Digbang\Security\Permissions\InsecurePermissionRepository;
 use Digbang\Security\Permissions\LazyStandardPermissions;
 use Digbang\Security\Permissions\LazyStrictPermissions;
-use Digbang\Security\Permissions\PermissionRepository;
 
 /**
  * Class SecurityContextConfiguration
  *
  * @package Digbang\Security\Configurations
- * @method EntityMapping getUserMapping()
- * @method EntityMapping getActivationMapping()
- * @method EntityMapping getUserPermissionMapping()
- * @method EntityMapping getRolePermissionMapping()
- * @method EntityMapping getPersistenceMapping()
- * @method EntityMapping getReminderMapping()
- * @method EntityMapping getRoleMapping()
- * @method EntityMapping getThrottleMapping()
- * @method EntityMapping getGlobalThrottleMapping()
- * @method EntityMapping getIpThrottleMapping()
- * @method EntityMapping getUserThrottleMapping()
+ * @method string getUserMapping()
+ * @method string getActivationMapping()
+ * @method string getUserPermissionMapping()
+ * @method string getRolePermissionMapping()
+ * @method string getPersistenceMapping()
+ * @method string getReminderMapping()
+ * @method string getRoleMapping()
+ * @method string getThrottleMapping()
+ * @method string getGlobalThrottleMapping()
+ * @method string getIpThrottleMapping()
+ * @method string getUserThrottleMapping()
  * @method $this enableRoles()
  * @method $this enablePermissions()
  * @method $this disableRoles()
@@ -57,12 +48,12 @@ use Digbang\Security\Permissions\PermissionRepository;
  * @method array getRemindersLottery()
  * @method int getActivationsExpiration()
  * @method array getActivationsLottery()
- * @method null|UserRepositoryInterface getUserRepository()
- * @method null|ActivationRepositoryInterface getActivationRepository()
- * @method null|PersistenceRepositoryInterface getPersistenceRepository()
- * @method null|ReminderRepositoryInterface getReminderRepository()
- * @method null|RoleRepositoryInterface getRoleRepository()
- * @method null|ThrottleRepositoryInterface getThrottleRepository()
+ * @method null|string getUserRepository()
+ * @method null|string getActivationRepository()
+ * @method null|string getPersistenceRepository()
+ * @method null|string getReminderRepository()
+ * @method null|string getRoleRepository()
+ * @method null|string getThrottleRepository()
  * @method $this setUserTable(string $table)
  * @method $this setActivationTable(string $table)
  * @method $this setPersistenceTable(string $table)
@@ -78,7 +69,6 @@ use Digbang\Security\Permissions\PermissionRepository;
  */
 final class SecurityContextConfiguration
 {
-
 	/**
 	 * Mapping of each entity to its EntityMapping class or object.
 	 * @type array
@@ -249,11 +239,11 @@ final class SecurityContextConfiguration
 	}
 
 	/**
-	 * @param string              $key
-	 * @param CheckpointInterface $checkpoint
+	 * @param string $key
+	 * @param string $checkpoint Must implement \Cartalyst\Sentinel\Checkpoints\CheckpointInterface
 	 * @return $this
 	 */
-	public function addCheckpoint($key, CheckpointInterface $checkpoint)
+	public function addCheckpoint($key, $checkpoint)
 	{
 		$this->checkpoints[$key] = $checkpoint;
 
@@ -328,17 +318,17 @@ final class SecurityContextConfiguration
 	}
 
 	/**
-	 * @param PermissionRepository $permissionRepository
+	 * @param string $permissionRepository Must implement \Digbang\Security\Permissions\PermissionRepository
 	 * @return $this
 	 */
-	public function setPermissionRepository(PermissionRepository $permissionRepository)
+	public function setPermissionRepository($permissionRepository)
 	{
 		$this->permissions['repository'] = $permissionRepository;
 		return $this;
 	}
 
 	/**
-	 * @return PermissionRepository
+	 * @return string An FQCN that implements \Digbang\Security\Permissions\PermissionRepository
 	 */
 	public function getPermissionRepository()
 	{
@@ -377,24 +367,6 @@ final class SecurityContextConfiguration
 	public function isMultiplePersistence()
 	{
 		return ! $this->singlePersistence;
-	}
-
-	/**
-	 * @param string        $entity
-	 * @param EntityMapping $entityMapping
-	 *
-	 * @return $this
-	 * @throws \InvalidArgumentException
-	 */
-	private function setMapping($entity, EntityMapping $entityMapping)
-	{
-		if (! array_key_exists($entity, $this->mappings))
-		{
-			throw new \InvalidArgumentException("'$entity' is not a valid mapping key. One of [" . implode(', ', array_keys($this->mappings)) . '] is expected.');
-		}
-
-		$this->mappings[$entity] = $entityMapping;
-		return $this;
 	}
 
 	/**
@@ -449,7 +421,7 @@ final class SecurityContextConfiguration
 	/**
 	 * @param string $entity
 	 *
-	 * @return EntityMapping|string
+	 * @return string An FQCN that implements \Digbang\Doctrine\Metadata\EntityMapping
 	 * @throws \InvalidArgumentException
 	 */
 	private function getMapping($entity)
@@ -532,12 +504,13 @@ final class SecurityContextConfiguration
 	}
 
 	/**
-	 * @param UserRepositoryInterface      $userRepository
-	 * @param Mappings\SecurityUserMapping $userMapping
+	 * @param string      $userRepository Must implement \Cartalyst\Sentinel\Users\UserRepositoryInterface
+	 * @param string|null $userMapping Must implement \Digbang\Security\Mappings\SecurityUserMapping, null if
+	 *                                 you want to keep the default user mapping.
 	 *
 	 * @return $this
 	 */
-	public function changeUsers(UserRepositoryInterface $userRepository, Mappings\SecurityUserMapping $userMapping = null)
+	public function changeUsers($userRepository, $userMapping = null)
 	{
 		$this->repositories['user'] = $userRepository;
 		$this->mappings['user']     = $userMapping ?: $this->mappings['user'];
@@ -545,19 +518,23 @@ final class SecurityContextConfiguration
 		return $this;
 	}
 
-	public function changePermissions(EntityMapping $userPermissionMapping = null, EntityMapping $rolePermissionMapping = null)
+	/**
+	 * @param string|null $userPermissionMapping Must implement \Digbang\Doctrine\Metadata\EntityMapping
+	 * @param string|null $rolePermissionMapping Must implement \Digbang\Doctrine\Metadata\EntityMapping
+	 */
+	public function changePermissions($userPermissionMapping = null, $rolePermissionMapping = null)
 	{
 		$this->mappings['userPermission'] = $userPermissionMapping ?: $this->mappings['userPermission'];
 		$this->mappings['rolePermission'] = $rolePermissionMapping ?: $this->mappings['rolePermission'];
 	}
 
 	/**
-	 * @param ActivationRepositoryInterface $activationRepository
-	 * @param EntityMapping                 $activationMapping
+	 * @param string $activationRepository Must implement \Cartalyst\Sentinel\Activations\ActivationRepositoryInterface
+	 * @param string|null $activationMapping Must implement \Digbang\Doctrine\Metadata\EntityMapping
 	 *
 	 * @return $this
 	 */
-	public function changeActivations(ActivationRepositoryInterface $activationRepository, EntityMapping $activationMapping = null)
+	public function changeActivations($activationRepository, $activationMapping = null)
 	{
 		$this->repositories['activation'] = $activationRepository;
 		$this->mappings['activation']     = $activationMapping ?: $this->mappings['activation'];
@@ -566,12 +543,12 @@ final class SecurityContextConfiguration
 	}
 
 	/**
-	 * @param PersistenceRepositoryInterface $persistenceRepository
-	 * @param EntityMapping                  $persistencesMapping
+	 * @param string $persistenceRepository Must implement \Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface
+	 * @param string|null $persistencesMapping Must implement \Digbang\Doctrine\Metadata\EntityMapping
 	 *
 	 * @return $this
 	 */
-	public function changePersistences(PersistenceRepositoryInterface $persistenceRepository, EntityMapping $persistencesMapping = null)
+	public function changePersistences($persistenceRepository, $persistencesMapping = null)
 	{
 		$this->repositories['persistence'] = $persistenceRepository;
 		$this->mappings['persistence']     = $persistencesMapping ?: $this->mappings['persistence'];
@@ -579,12 +556,12 @@ final class SecurityContextConfiguration
 	}
 
 	/**
-	 * @param ReminderRepositoryInterface $reminderRepository
-	 * @param EntityMapping               $reminderMappping
+	 * @param string $reminderRepository Must implement \Cartalyst\Sentinel\Reminders\ReminderRepositoryInterface
+	 * @param string $reminderMappping Must implement \Digbang\Doctrine\Metadata\EntityMapping
 	 *
 	 * @return $this
 	 */
-	public function changeReminders(ReminderRepositoryInterface $reminderRepository, EntityMapping $reminderMappping = null)
+	public function changeReminders($reminderRepository, $reminderMappping = null)
 	{
 		$this->repositories['reminder'] = $reminderRepository;
 		$this->mappings['reminder']     = $reminderMappping ?: $this->mappings['reminder'];
@@ -592,12 +569,12 @@ final class SecurityContextConfiguration
 	}
 
 	/**
-	 * @param RoleRepositoryInterface $roleRepository
-	 * @param EntityMapping           $roleMapping
+	 * @param string $roleRepository Must implement \Cartalyst\Sentinel\Roles\RoleRepositoryInterface
+	 * @param string $roleMapping Must implement \Digbang\Doctrine\Metadata\EntityMapping
 	 *
 	 * @return $this
 	 */
-	public function changeRoles(RoleRepositoryInterface $roleRepository, EntityMapping $roleMapping = null)
+	public function changeRoles($roleRepository, $roleMapping = null)
 	{
 		$this->repositories['role'] = $roleRepository;
 		$this->mappings['role']     = $roleMapping ?: $this->mappings['role'];
@@ -605,14 +582,14 @@ final class SecurityContextConfiguration
 	}
 
 	/**
-	 * @param ThrottleRepositoryInterface $throttleRepository
-	 * @param array                       $throttleMappings You may set mappings for the following keys:
-	 *                                                      'throttle', 'ipThrottle', 'globalThrottle', 'userThrottle'
-	 *                                                      if not present, defaults will be used.
+	 * @param string $throttleRepository Must implement \Cartalyst\Sentinel\Throttling\ThrottleRepositoryInterface
+	 * @param array  $throttleMappings You may set mappings for the following keys:
+	 *                                 'throttle', 'ipThrottle', 'globalThrottle', 'userThrottle'
+	 *                                 if not present, defaults will be used.
 	 *
 	 * @return $this
 	 */
-	public function changeThrottles(ThrottleRepositoryInterface $throttleRepository, array $throttleMappings = [])
+	public function changeThrottles($throttleRepository, array $throttleMappings = [])
 	{
 		$this->repositories['throttle'] = $throttleRepository;
 		foreach(['throttle', 'ipThrottle', 'globalThrottle', 'userThrottle'] as $key)

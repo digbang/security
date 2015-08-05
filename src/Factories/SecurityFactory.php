@@ -99,11 +99,15 @@ class SecurityFactory
 	 */
 	private function getPersistenceRepository($context, SecurityContextConfiguration $configuration)
 	{
-		return $configuration->getPersistenceRepository() ?:
-			$this->repositoryFactory->createPersistenceRepository(
-				$context,
-				$configuration->isSinglePersistence()
-			);
+		if ($configuration->getPersistenceRepository())
+		{
+			return $this->container->make($configuration->getPersistenceRepository());
+		}
+
+		return $this->repositoryFactory->createPersistenceRepository(
+			$context,
+			$configuration->isSinglePersistence()
+		);
 	}
 
 	/**
@@ -118,7 +122,12 @@ class SecurityFactory
 			return new NullRoleRepository;
 		}
 
-		return $configuration->getRoleRepository() ?: $this->repositoryFactory->createRoleRepository();
+		if ($configuration->getRoleRepository())
+		{
+			return $this->container->make($configuration->getRoleRepository());
+		}
+
+		return $this->repositoryFactory->createRoleRepository();
 	}
 
 	/**
@@ -129,7 +138,12 @@ class SecurityFactory
 	 */
 	private function getUserRepository(SecurityContextConfiguration $configuration, PersistenceRepositoryInterface $persistenceRepository)
 	{
-		return $configuration->getUserRepository() ?: $this->repositoryFactory->createUserRepository($persistenceRepository, $configuration->getPermissionsFactory());
+		if ($configuration->getUserRepository())
+		{
+			return $this->container->make($configuration->getUserRepository());
+		}
+
+		return $this->repositoryFactory->createUserRepository($persistenceRepository, $configuration->getPermissionsFactory());
 	}
 
 	/**
@@ -139,7 +153,12 @@ class SecurityFactory
 	 */
 	private function getActivationRepository(SecurityContextConfiguration $configuration)
 	{
-		return $configuration->getActivationRepository() ?: $this->repositoryFactory->createActivationRepository(
+		if ($configuration->getActivationRepository())
+		{
+			return $this->container->make($configuration->getActivationRepository());
+		}
+
+		return $this->repositoryFactory->createActivationRepository(
 			$configuration->getActivationsExpiration()
 		);
 	}
@@ -152,7 +171,12 @@ class SecurityFactory
 	 */
 	private function getReminderRepository(SecurityContextConfiguration $configuration, UserRepositoryInterface $userRepository)
 	{
-		return $configuration->getReminderRepository() ?: $this->repositoryFactory->createReminderRepository(
+		if ($configuration->getReminderRepository())
+		{
+			return $this->container->make($configuration->getReminderRepository());
+		}
+
+		return $this->repositoryFactory->createReminderRepository(
 			$userRepository,
 			$configuration->getRemindersExpiration()
 		);
@@ -166,32 +190,34 @@ class SecurityFactory
 	 */
 	private function makeCheckpoint($checkpoint, SecurityContextConfiguration $configuration)
 	{
-		if ($checkpoint instanceof CheckpointInterface)
-		{
-			return $checkpoint;
-		}
-
 		switch ($checkpoint)
 		{
 			case ThrottleCheckpoint::class:
 				return $this->makeThrottleCheckpoint($configuration);
 			case ActivationCheckpoint::class:
 				return $this->makeActivationCheckpoint($configuration);
+			default:
+				return $this->container->make($checkpoint);
 		}
-
-		throw new \InvalidArgumentException("Unable to create checkpoint [$checkpoint].");
 	}
 
 	private function makeThrottleCheckpoint(SecurityContextConfiguration $configuration)
 	{
-		$throttleRepository = $configuration->getThrottleRepository() ?: $this->repositoryFactory->createThrottleRepository(
-			$configuration->getGlobalThrottleInterval(),
-			$configuration->getGlobalThrottleThresholds(),
-			$configuration->getIpThrottleInterval(),
-			$configuration->getIpThrottleThresholds(),
-			$configuration->getUserThrottleInterval(),
-			$configuration->getUserThrottleThresholds()
-		);
+		if ($configuration->getThrottleRepository())
+		{
+			$throttleRepository = $this->container->make($configuration->getThrottleRepository());
+		}
+		else
+		{
+			$throttleRepository = $this->repositoryFactory->createThrottleRepository(
+				$configuration->getGlobalThrottleInterval(),
+				$configuration->getGlobalThrottleThresholds(),
+				$configuration->getIpThrottleInterval(),
+				$configuration->getIpThrottleThresholds(),
+				$configuration->getUserThrottleInterval(),
+				$configuration->getUserThrottleThresholds()
+			);
+		}
 
 		/** @type \Illuminate\Http\Request $request */
 		$request = $this->container->make('request');
@@ -201,8 +227,17 @@ class SecurityFactory
 
 	private function makeActivationCheckpoint(SecurityContextConfiguration $configuration)
 	{
-		return new ActivationCheckpoint($configuration->getActivationRepository() ?: $this->repositoryFactory->createActivationRepository(
-			$configuration->getActivationsExpiration()
-		));
+		if ($configuration->getActivationRepository())
+		{
+			$activationRepository = $this->container->make($configuration->getActivationRepository());
+		}
+		else
+		{
+			$activationRepository = $this->repositoryFactory->createActivationRepository(
+				$configuration->getActivationsExpiration()
+			);
+		}
+
+		return new ActivationCheckpoint($activationRepository);
 	}
 }
