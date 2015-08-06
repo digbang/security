@@ -165,7 +165,7 @@ final class SecurityContext
 				}
 			}
 
-			$this->mappingDriver->addMapping($this->makeMapping($mapping));
+			$this->mappingDriver->addMapping($entityMapping);
 		}
 	}
 
