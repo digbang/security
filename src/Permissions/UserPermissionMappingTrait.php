@@ -5,7 +5,7 @@ use Digbang\Security\Users\DefaultUser;
 
 trait UserPermissionMappingTrait
 {
-		/**
+	/**
 	 * Relations mapping. Override this with your custom objects if needed.
 	 * Each relation value needs a FQCN in position 0 and a field name in position 1.
 	 *
