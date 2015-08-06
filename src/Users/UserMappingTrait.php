@@ -1,6 +1,7 @@
 <?php namespace Digbang\Security\Users;
 
 use Digbang\Doctrine\Metadata\Builder;
+use Digbang\Doctrine\Metadata\Relations\BelongsToMany;
 use Digbang\Doctrine\Metadata\Relations\HasMany;
 use Digbang\Security\Activations\DefaultActivation;
 use Digbang\Security\Permissions\DefaultUserPermission;
@@ -34,7 +35,7 @@ trait UserMappingTrait
 	 * @type array
 	 */
 	protected $relations = [
-		'roles'        => [DefaultRole::class,           'roles'],
+		'roles'        => [DefaultRole::class,           'roles', 'users'],
 		'persistences' => [DefaultPersistence::class,    'persistences'],
 		'activations'  => [DefaultActivation::class,     'activations'],
 		'reminders'    => [DefaultReminder::class,       'reminders'],
@@ -91,7 +92,9 @@ trait UserMappingTrait
 
 		if ($this->enabled['roles'])
 		{
-			$builder->belongsToMany($this->relations['roles'][0], $this->relations['roles'][1]);
+			$builder->belongsToMany($this->relations['roles'][0], $this->relations['roles'][1], function(BelongsToMany $belongsToMany){
+				$belongsToMany->mappedBy($this->relations['roles'][2]);
+			});
 		}
 
 		if ($this->enabled['permissions'])
