@@ -1,7 +1,6 @@
 <?php namespace Digbang\Security\Permissions;
 
 use Digbang\Doctrine\Metadata\Builder;
-use Digbang\Doctrine\Metadata\Relations\BelongsTo;
 use Digbang\Security\Roles\DefaultRole;
 
 trait RolePermissionMappingTrait
@@ -50,6 +49,6 @@ trait RolePermissionMappingTrait
 	 */
 	public function addRelations(Builder $builder)
 	{
-		$builder->belongsTo($this->relations['roles'][0], $this->relations['roles'][1]);
+		$builder->belongsTo($this->relations['role'][0], $this->relations['role'][1]);
 	}
 }

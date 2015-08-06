@@ -1,7 +1,6 @@
 <?php namespace Digbang\Security\Permissions;
 
 use Digbang\Doctrine\Metadata\Builder;
-use Digbang\Doctrine\Metadata\Relations\BelongsTo;
 use Digbang\Security\Users\DefaultUser;
 
 trait UserPermissionMappingTrait
