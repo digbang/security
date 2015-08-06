@@ -1,16 +1,18 @@
 <?php namespace Digbang\Security\Roles;
 
-use Cartalyst\Sentinel\Permissions\PermissionsInterface;
 use Digbang\Doctrine\TimestampsTrait;
 use Digbang\Security\Permissions\DefaultRolePermission;
 use Digbang\Security\Permissions\NullPermissions;
 use Digbang\Security\Permissions\Permissible;
+use Digbang\Security\Permissions\PermissibleTrait;
 use Digbang\Security\Users\DefaultUser;
 use Doctrine\Common\Collections\ArrayCollection;
+use Illuminate\Support\Str;
 
 class DefaultRole implements Role, Permissible
 {
 	use TimestampsTrait;
+	use PermissibleTrait;
 
 	/**
 	 * Probably unused, but part of the sentinel interface...
@@ -37,22 +39,7 @@ class DefaultRole implements Role, Permissible
 	/**
 	 * @type ArrayCollection
 	 */
-	private $permissions;
-
-	/**
-	 * @type ArrayCollection
-	 */
 	private $users;
-
-	/**
-	 * @type PermissionsInterface
-	 */
-	private $permissionsInstance;
-
-	/**
-	 * @type \Closure
-	 */
-	private $permissionsFactory;
 
 	/**
 	 * DefaultRole constructor.
@@ -63,7 +50,7 @@ class DefaultRole implements Role, Permissible
 	public function __construct($name, $slug = null)
 	{
 		$this->name = $name;
-		$this->slug = $slug ?: str_slug($name);
+		$this->slug = $slug ?: Str::slug($name);
 
 		$this->permissions = new ArrayCollection;
 		$this->users       = new ArrayCollection;
@@ -85,14 +72,6 @@ class DefaultRole implements Role, Permissible
 	 * {@inheritdoc}
 	 */
 	public function getRoleSlug()
-	{
-		return $this->getSlug();
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getSlug()
 	{
 		return $this->slug;
 	}
@@ -145,14 +124,6 @@ class DefaultRole implements Role, Permissible
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getPermissions()
-	{
-		return $this->permissions;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public static function getUsersModel()
 	{
 		return static::$usersModel;
@@ -169,117 +140,23 @@ class DefaultRole implements Role, Permissible
 	/**
 	 * {@inheritdoc}
 	 */
-	public function setPermissionsFactory(\Closure $permissionsFactory)
+	protected function createPermission($permission, $value)
 	{
-		$this->permissionsFactory = $permissionsFactory;
-
-		$this->makePermissionsInstance();
-	}
-
-	/**
-	 * @param string $permission
-	 *
-	 * @return bool
-	 */
-	public function hasAccess($permission)
-	{
-		if (! $this->permissionsInstance)
-		{
-			$this->makePermissionsInstance();
-		}
-
-		return $this->permissionsInstance->hasAccess($permission);
-	}
-
-	/**
-	 * @param string $permission
-	 *
-	 * @return bool
-	 */
-	public function hasAnyAccess($permission)
-	{
-		if (! $this->permissionsInstance)
-		{
-			$this->makePermissionsInstance();
-		}
-
-		return $this->permissionsInstance->hasAnyAccess($permission);
-	}
-
-	/**
-	 * Returns the permissions instance.
-	 *
-	 * @return \Cartalyst\Sentinel\Permissions\PermissionsInterface
-	 */
-	public function getPermissionsInstance()
-	{
-		return $this->permissionsInstance;
-	}
-
-	/**
-	 * Adds a permission.
-	 *
-	 * @param  string $permission
-	 * @param  bool   $value
-	 *
-	 * @return \Cartalyst\Sentinel\Permissions\PermissibleInterface
-	 */
-	public function addPermission($permission, $value = true)
-	{
-		return $this->updatePermission($permission, $value, true);
-	}
-
-	/**
-	 * Updates a permission.
-	 *
-	 * @param  string $permission
-	 * @param  bool   $value
-	 * @param  bool   $create
-	 *
-	 * @return \Cartalyst\Sentinel\Permissions\PermissibleInterface
-	 */
-	public function updatePermission($permission, $value = true, $create = false)
-	{
-		if ($create || $this->permissions->containsKey($permission))
-		{
-			$this->permissions->set($permission, new DefaultRolePermission($this, $permission, $value));
-
-			// Rebuild the permissions instance
-			$this->makePermissionsInstance();
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Removes a permission.
-	 *
-	 * @param  string $permission
-	 *
-	 * @return \Cartalyst\Sentinel\Permissions\PermissibleInterface
-	 */
-	public function removePermission($permission)
-	{
-		$this->permissions->remove($permission);
-
-		// Rebuild the permissions instance
-		$this->makePermissionsInstance();
-
-		return $this;
+		return new DefaultRolePermission($this, $permission, $value);
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	private function makePermissionsInstance()
+	protected function makePermissionsInstance()
 	{
-		if (! is_callable($this->permissionsFactory))
+		$permissionsFactory = $this->getPermissionsFactory();
+
+		if (! is_callable($permissionsFactory))
 		{
-			throw new \InvalidArgumentException("No PermissionFactory callable given. PermissionFactory callable should be set by the DoctrineUserRepository on instance creation. New instances will use a NullPermissions implementation until persisted.");
+			throw new \InvalidArgumentException("No PermissionsFactory callable given. PermissionFactory callable should be set by the DoctrineRoleRepository on instance creation. New instances will use a NullPermissions implementation until persisted.");
 		}
 
-		$permissionsFactory = $this->permissionsFactory;
-
-		$this->permissionsInstance = $permissionsFactory(null, [$this->permissions]);
+		return $permissionsFactory(null, [$this->permissions]);
 	}
 }

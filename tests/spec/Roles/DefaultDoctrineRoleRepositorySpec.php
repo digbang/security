@@ -93,13 +93,11 @@ class DefaultDoctrineRoleRepositorySpec extends ObjectBehavior
 
 	    $ninjas->shouldBeAnInstanceOf(Role::class);
         $ninjas->getName()->shouldBe('Ninja devs');
-	    $ninjas->getSlug()->shouldBe('ninja-devs');
 	    $ninjas->getRoleSlug()->shouldBe('ninja-devs');
 
         $ops = $this->create('Operators', 'ops');
 	    $ops->shouldBeAnInstanceOf(Role::class);
 	    $ops->getName()->shouldBe('Operators');
-	    $ops->getSlug()->shouldBe('ops');
 	    $ops->getRoleSlug()->shouldBe('ops');
     }
 

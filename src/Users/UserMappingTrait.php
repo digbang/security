@@ -62,6 +62,7 @@ trait UserMappingTrait
 	{
 		$builder
 			->primary()
+			->string('username')
 			->nullableDatetime('lastLogin')
 			->timestamps();
 
