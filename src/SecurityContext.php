@@ -125,7 +125,8 @@ final class SecurityContext
 
 		if (! $configuration->isPermissionsEnabled())
 		{
-			unset($mappings['permission']);
+			unset($mappings['userPermission']);
+			unset($mappings['rolePermission']);
 
 			$this->validateAndCall($mappings['user'], 'disablePermissions');
 
