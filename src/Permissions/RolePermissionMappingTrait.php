@@ -1,7 +1,7 @@
 <?php namespace Digbang\Security\Permissions;
 
 use Digbang\Doctrine\Metadata\Builder;
-use Digbang\Doctrine\Metadata\Relations\BelongsToMany;
+use Digbang\Doctrine\Metadata\Relations\BelongsTo;
 use Digbang\Security\Roles\DefaultRole;
 
 trait RolePermissionMappingTrait
@@ -16,7 +16,7 @@ trait RolePermissionMappingTrait
 	 * @type array
 	 */
 	protected $relations = [
-		'roles' => [DefaultRole::class, 'roles']
+		'role' => [DefaultRole::class, 'role']
 	];
 
 	/**
@@ -50,8 +50,8 @@ trait RolePermissionMappingTrait
 	 */
 	public function addRelations(Builder $builder)
 	{
-		$builder->belongsToMany($this->relations['roles'][0], $this->relations['roles'][1], function(BelongsToMany $belongsToMany){
-			$belongsToMany->orphanRemoval();
+		$builder->belongsTo($this->relations['roles'][0], $this->relations['roles'][1], function(BelongsTo $belongsTo){
+			$belongsTo->orphanRemoval();
 		});
 	}
 }

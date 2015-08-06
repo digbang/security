@@ -96,11 +96,10 @@ trait UserMappingTrait
 
 		if ($this->enabled['permissions'])
 		{
-			$builder->hasMany($this->relations['permissions'][0], $this->relations['permissions'][0], function(HasMany $hasMany){
+			$builder->hasMany($this->relations['permissions'][0], $this->relations['permissions'][1], function(HasMany $hasMany){
 				$hasMany
 					->mappedBy($this->name)
-					->cascadeAll()
-					->orphanRemoval();
+					->cascadeAll();
 			});
 		}
 	}
