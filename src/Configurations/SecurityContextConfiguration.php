@@ -196,7 +196,17 @@ final class SecurityContextConfiguration
 	 *
 	 * @type array
 	 */
-	private $customTables = [];
+	private $customTables = [
+		'usersRoles'     => 'user_role',
+		'user'           => 'users',
+		'userPermission' => 'user_permissions',
+		'rolePermission' => 'role_permissions',
+		'activation'     => 'activations',
+		'persistence'    => 'persistences',
+		'reminder'       => 'reminders',
+		'role'           => 'roles',
+		'throttle'       => 'throttles',
+	];
 
 	/**
 	 * SecurityContextConfiguration constructor.
