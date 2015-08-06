@@ -3,6 +3,7 @@
 use Digbang\Doctrine\Metadata\Builder;
 use Digbang\Doctrine\Metadata\EntityMapping;
 use Digbang\Security\Roles\DefaultRole;
+use Digbang\Security\Roles\RoleMappingTrait;
 
 final class RoleMapping implements EntityMapping, CustomTableMapping, PermissibleMapping
 {

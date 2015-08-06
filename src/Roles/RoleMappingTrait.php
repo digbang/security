@@ -1,9 +1,8 @@
-<?php namespace Digbang\Security\Mappings;
+<?php namespace Digbang\Security\Roles;
 
 use Digbang\Doctrine\Metadata\Builder;
 use Digbang\Doctrine\Metadata\Relations\HasMany;
 use Digbang\Security\Permissions\DefaultRolePermission;
-use Digbang\Security\Permissions\PermissionCollection;
 use Digbang\Security\Users\DefaultUser;
 
 trait RoleMappingTrait

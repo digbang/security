@@ -106,6 +106,7 @@ final class SecurityContext
 		if (! $configuration->isRolesEnabled())
 		{
 			unset($mappings['role']);
+			unset($mappings['rolePermission']);
 
 			$this->validateAndCall($mappings['user'], 'disableRoles');
 		}
