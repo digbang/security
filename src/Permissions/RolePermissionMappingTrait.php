@@ -50,8 +50,6 @@ trait RolePermissionMappingTrait
 	 */
 	public function addRelations(Builder $builder)
 	{
-		$builder->belongsTo($this->relations['roles'][0], $this->relations['roles'][1], function(BelongsTo $belongsTo){
-			$belongsTo->orphanRemoval();
-		});
+		$builder->belongsTo($this->relations['roles'][0], $this->relations['roles'][1]);
 	}
 }
