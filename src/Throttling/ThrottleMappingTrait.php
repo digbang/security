@@ -9,7 +9,6 @@ trait ThrottleMappingTrait
 		$builder
 			->primary()
 			->inheritance('type')
-			->nullableString('ip')
 			->timestamps();
 	}
 }
