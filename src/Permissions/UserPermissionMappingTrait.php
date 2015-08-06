@@ -50,7 +50,7 @@ trait UserPermissionMappingTrait
 	 */
 	public function addRelations(Builder $builder)
 	{
-		$builder->belongsToMany($this->relations['users'][0], $this->relations['users'][0], function(BelongsToMany $belongsToMany){
+		$builder->belongsToMany($this->relations['users'][0], $this->relations['users'][1], function(BelongsToMany $belongsToMany){
 			$belongsToMany->orphanRemoval();
 		});
 	}
