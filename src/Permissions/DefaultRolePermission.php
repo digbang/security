@@ -7,7 +7,7 @@ class DefaultRolePermission extends DefaultPermission
 	/**
 	 * @type Role
 	 */
-	protected $role;
+	private $role;
 
 	/**
 	 * @param Role   $role

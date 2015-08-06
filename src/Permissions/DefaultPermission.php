@@ -3,6 +3,11 @@
 abstract class DefaultPermission implements Permission
 {
 	/**
+	 * @type int
+	 */
+	protected $id;
+
+	/**
 	 * @type string
 	 */
 	protected $name;
