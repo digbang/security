@@ -142,14 +142,11 @@ final class SecurityContext
 		if ($table = $configuration->getTable('usersRoles'))
 		{
 			/** @type SecurityUserMapping $userMapping */
-			$userMapping = $this->makeMapping($mappings['user']);
-			$userMapping->changeRolesJoinTable($table);
+			$this->validateAndCall($mappings['user'], 'changeRolesJoinTable', $table);
 
 			if (isset($mappings['role']))
 			{
-				/** @type SecurityRoleMapping $roleMapping */
-				$roleMapping = $this->makeMapping($mappings['role']);
-				$roleMapping->changeRolesJoinTable($table);
+				$this->validateAndCall($mappings['role'], 'changeRolesJoinTable', $table);
 			}
 		}
 
@@ -157,12 +154,9 @@ final class SecurityContext
 		{
 			$entityMapping = $this->makeMapping($mapping);
 
-			if ($entityMapping instanceof CustomTableMapping)
+			if ($entityMapping instanceof CustomTableMapping && $table = $configuration->getTable($key))
 			{
-				if ($table = $configuration->getTable($key))
-				{
-					$entityMapping->setTable($table);
-				}
+				$entityMapping->setTable($table);
 			}
 
 			$this->mappingDriver->addMapping($entityMapping);
