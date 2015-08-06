@@ -56,6 +56,8 @@ use Digbang\Security\Permissions\LazyStrictPermissions;
  * @method null|string getThrottleRepository()
  * @method $this setUserTable(string $table)
  * @method $this setUsersRolesTable(string $table)
+ * @method $this setUserPermissionTable(string $table)
+ * @method $this setRolePermissionTable(string $table)
  * @method $this setActivationTable(string $table)
  * @method $this setPersistenceTable(string $table)
  * @method $this setReminderTable(string $table)
