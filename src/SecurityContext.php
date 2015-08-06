@@ -4,6 +4,9 @@ use Digbang\Doctrine\Metadata\DecoupledMappingDriver;
 use Digbang\Doctrine\Metadata\EntityMapping;
 use Digbang\Security\Configurations\SecurityContextConfiguration;
 use Digbang\Security\Factories\SecurityFactory;
+use Digbang\Security\Mappings\CustomTableMapping;
+use Digbang\Security\Mappings\SecurityRoleMapping;
+use Digbang\Security\Mappings\SecurityUserMapping;
 use Illuminate\Contracts\Container\Container;
 
 final class SecurityContext
@@ -136,8 +139,32 @@ final class SecurityContext
 			}
 		}
 
-		foreach ($mappings as $mapping)
+		if ($table = $configuration->getTable('usersRoles'))
 		{
+			/** @type SecurityUserMapping $userMapping */
+			$userMapping = $this->makeMapping($mappings['user']);
+			$userMapping->changeRolesJoinTable($table);
+
+			if (isset($mappings['role']))
+			{
+				/** @type SecurityRoleMapping $roleMapping */
+				$roleMapping = $this->makeMapping($mappings['role']);
+				$roleMapping->changeRolesJoinTable($table);
+			}
+		}
+
+		foreach ($mappings as $key => $mapping)
+		{
+			$entityMapping = $this->makeMapping($mapping);
+
+			if ($entityMapping instanceof CustomTableMapping)
+			{
+				if ($table = $configuration->getTable($key))
+				{
+					$entityMapping->setTable($table);
+				}
+			}
+
 			$this->mappingDriver->addMapping($this->makeMapping($mapping));
 		}
 	}

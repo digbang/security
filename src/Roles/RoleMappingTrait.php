@@ -9,6 +9,11 @@ use Digbang\Security\Users\DefaultUser;
 trait RoleMappingTrait
 {
 	/**
+	 * @type string
+	 */
+	protected $joinTable;
+
+	/**
 	 * Relations mapping. Override this with your custom objects if needed.
 	 * Each relation value needs a FQCN in position 0 and a field name in position 1.
 	 *
@@ -78,6 +83,11 @@ trait RoleMappingTrait
 	{
 		$builder->belongsToMany($this->relations['users'][0], $this->relations['users'][1], function(BelongsToMany $belongsToMany){
 			$belongsToMany->inversedBy($this->relations['users'][2]);
+
+			if ($this->joinTable)
+			{
+				$belongsToMany->tableName($this->joinTable);
+			}
 		});
 
 		if ($this->permissions)
@@ -89,5 +99,15 @@ trait RoleMappingTrait
 					->orphanRemoval();
 			});
 		}
+	}
+
+	/**
+	 * Change the roles join table name.
+	 *
+	 * @param string $table
+	 */
+	public function changeRolesJoinTable($table)
+	{
+		$this->joinTable = $table;
 	}
 }

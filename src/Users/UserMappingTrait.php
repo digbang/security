@@ -12,6 +12,11 @@ use Digbang\Security\Throttling\DefaultThrottle;
 
 trait UserMappingTrait
 {
+	/**
+	 * @type string
+	 */
+	protected $joinTable;
+
 	protected $enabled = [
 		'roles' => true,
 		'throttles' => true,
@@ -94,6 +99,11 @@ trait UserMappingTrait
 		{
 			$builder->belongsToMany($this->relations['roles'][0], $this->relations['roles'][1], function(BelongsToMany $belongsToMany){
 				$belongsToMany->mappedBy($this->relations['roles'][2]);
+
+				if ($this->joinTable)
+				{
+					$belongsToMany->tableName($this->joinTable);
+				}
 			});
 		}
 
@@ -146,5 +156,15 @@ trait UserMappingTrait
 		});
 
 		return $this;
+	}
+
+	/**
+	 * Change the roles join table name.
+	 *
+	 * @param string $table
+	 */
+	public function changeRolesJoinTable($table)
+	{
+		$this->joinTable = $table;
 	}
 }

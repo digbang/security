@@ -1,11 +1,10 @@
 <?php namespace Digbang\Security\Mappings;
 
 use Digbang\Doctrine\Metadata\Builder;
-use Digbang\Doctrine\Metadata\EntityMapping;
 use Digbang\Security\Roles\DefaultRole;
 use Digbang\Security\Roles\RoleMappingTrait;
 
-final class RoleMapping implements EntityMapping, CustomTableMapping, PermissibleMapping
+final class RoleMapping implements SecurityRoleMapping
 {
 	use RoleMappingTrait;
 

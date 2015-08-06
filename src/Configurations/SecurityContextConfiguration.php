@@ -55,6 +55,7 @@ use Digbang\Security\Permissions\LazyStrictPermissions;
  * @method null|string getRoleRepository()
  * @method null|string getThrottleRepository()
  * @method $this setUserTable(string $table)
+ * @method $this setUsersRolesTable(string $table)
  * @method $this setActivationTable(string $table)
  * @method $this setPersistenceTable(string $table)
  * @method $this setReminderTable(string $table)
@@ -625,6 +626,16 @@ final class SecurityContextConfiguration
 		$this->customTables[$entity] = $table;
 
 		return $this;
+	}
+
+	/**
+	 * @param string $entity
+	 *
+	 * @return string|null
+	 */
+	public function getTable($entity)
+	{
+		return array_get($this->customTables, $entity);
 	}
 
 	/**

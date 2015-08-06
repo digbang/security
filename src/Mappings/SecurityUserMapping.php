@@ -16,4 +16,11 @@ interface SecurityUserMapping extends EntityMapping, CustomTableMapping, Permiss
 	 * @return void
 	 */
 	public function disableThrottles();
+
+	/**
+	 * Change the roles join table name.
+	 *
+	 * @param string $table
+	 */
+	public function changeRolesJoinTable($table);
 }
