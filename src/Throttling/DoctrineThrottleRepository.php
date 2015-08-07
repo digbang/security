@@ -386,15 +386,11 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
      */
     protected function loadGlobalThrottles()
     {
-        $interval = Carbon::now()
-            ->subSeconds($this->globalInterval);
-
-        $globalRepository = $this->getEntityManager()->getRepository($this->entityName('global'));
-
-        $queryBuilder = $globalRepository->createQueryBuilder('t');
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
         $queryBuilder
-            ->where('createdAt > :interval')
-            ->setParameter('interval', $interval);
+            ->from($this->entityName('global'), 't')
+            ->where('t.createdAt > :interval')
+            ->setParameter('interval', Carbon::now()->subSeconds($this->globalInterval));
 
         return new Collection($queryBuilder->getQuery()->getResult());
     }
@@ -423,17 +419,14 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
      */
     protected function loadIpThrottles($ipAddress)
     {
-        $interval = Carbon::now()
-            ->subSeconds($this->ipInterval);
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
 
-        $ipRepository = $this->getEntityManager()->getRepository($this->entityName('ip'));
-
-        $queryBuilder = $ipRepository->createQueryBuilder('t');
         $queryBuilder
-            ->where('createdAt > :interval')
-            ->andWhere('ip = :ip')
+	        ->from($this->entityName('ip'), 't')
+            ->where('t.createdAt > :interval')
+            ->andWhere('t.ip = :ip')
             ->setParameters([
-                'interval' => $interval,
+                'interval' => Carbon::now()->subSeconds($this->ipInterval),
                 'ip'  => $ipAddress
             ]);
 
@@ -464,17 +457,13 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
      */
     protected function loadUserThrottles(UserInterface $user)
     {
-        $interval = Carbon::now()
-            ->subSeconds($this->userInterval);
-
-        $ipRepository = $this->getEntityManager()->getRepository($this->entityName('user'));
-
-        $queryBuilder = $ipRepository->createQueryBuilder('t');
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
         $queryBuilder
-            ->where('createdAt > :interval')
-            ->andWhere('user = :user')
+	        ->from($this->entityName('user'), 't')
+            ->where('t.createdAt > :interval')
+            ->andWhere('t.user = :user')
             ->setParameters([
-                'interval' => $interval,
+                'interval' => Carbon::now()->subSeconds($this->userInterval),
                 'user'     => $user
             ]);
 

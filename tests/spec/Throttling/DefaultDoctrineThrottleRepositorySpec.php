@@ -34,18 +34,11 @@ class DefaultDoctrineThrottleRepositorySpec extends ObjectBehavior
         EntityPersister $ep,
 		QueryBuilder $queryBuilder,
 	    AbstractQuery $query,
-		EntityRepository $repository,
 		User $user
     )
     {
 	    $cm->name = DefaultThrottle::class;
 	    $entityManager->getClassMetadata(DefaultThrottle::class)->willReturn($cm);
-
-	    $entityManager->getRepository(DefaultGlobalThrottle::class)->willReturn($repository);
-	    $entityManager->getRepository(DefaultUserThrottle::class)->willReturn($repository);
-	    $entityManager->getRepository(DefaultIpThrottle::class)->willReturn($repository);
-
-	    $repository->createQueryBuilder(Argument::cetera())->willReturn($queryBuilder);
 
         $throttle = new DefaultUserThrottle($user->getWrappedObject());
 
@@ -100,7 +93,7 @@ class DefaultDoctrineThrottleRepositorySpec extends ObjectBehavior
 
     function it_should_give_me_zero_for_empty_cases_of_global_delay(QueryBuilder $queryBuilder, AbstractQuery $query)
     {
-        $queryBuilder->where('createdAt > :interval')->shouldBeCalled()->willReturn($queryBuilder);
+        $queryBuilder->where('t.createdAt > :interval')->shouldBeCalled()->willReturn($queryBuilder);
 
 	    $query->getResult()->willReturn([]);
 
@@ -164,7 +157,7 @@ class DefaultDoctrineThrottleRepositorySpec extends ObjectBehavior
     {
 	    Carbon::setTestNow($now = Carbon::now());
 
-        $queryBuilder->where('createdAt > :interval')->shouldBeCalled()->willReturn($queryBuilder);
+        $queryBuilder->where('t.createdAt > :interval')->shouldBeCalled()->willReturn($queryBuilder);
 
 	    $rubbish = range(0, 60);
 	    $rubbish[] = $globalThrottle;
@@ -182,8 +175,8 @@ class DefaultDoctrineThrottleRepositorySpec extends ObjectBehavior
 	    Carbon::setTestNow($now = Carbon::now());
 	    $this->setIpInterval($interval = mt_rand(10, 999));
 
-        $queryBuilder->where('createdAt > :interval')->shouldBeCalled()->willReturn($queryBuilder);
-        $queryBuilder->andWhere('ip = :ip')->shouldBeCalled()->willReturn($queryBuilder);
+        $queryBuilder->where('t.createdAt > :interval')->shouldBeCalled()->willReturn($queryBuilder);
+        $queryBuilder->andWhere('t.ip = :ip')->shouldBeCalled()->willReturn($queryBuilder);
 
 	    $rubbish = range(0, 30);
 	    array_unshift($rubbish, $ipThrottle);
@@ -202,8 +195,8 @@ class DefaultDoctrineThrottleRepositorySpec extends ObjectBehavior
 	    $this->setUserInterval($interval = mt_rand(10, 999));
 
 	    $user->getUserId()->shouldBeCalled()->willReturn(42);
-        $queryBuilder->where('createdAt > :interval')->shouldBeCalled()->willReturn($queryBuilder);
-        $queryBuilder->andWhere('user = :user')->shouldBeCalled()->willReturn($queryBuilder);
+        $queryBuilder->where('t.createdAt > :interval')->shouldBeCalled()->willReturn($queryBuilder);
+        $queryBuilder->andWhere('t.user = :user')->shouldBeCalled()->willReturn($queryBuilder);
 
 	    $rubbish = range(0, 30);
 	    array_unshift($rubbish, $userThrottle);
