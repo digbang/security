@@ -218,7 +218,7 @@ abstract class DoctrinePersistenceRepository extends EntityRepository implements
 
 		$queryBuilder
 			->delete($this->entityName(), 'p')
-			->where('p.' . get_class($persistable) . ' = :persistable')
+			->where('p.user = :persistable')
 			->andWhere('p.code != :code');
 
 		$queryBuilder->setParameters([

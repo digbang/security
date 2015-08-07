@@ -164,7 +164,7 @@ class DefaultDoctrinePersistenceRepositorySpec extends ObjectBehavior
 
 		$queryBuilder->delete(Argument::exact(DefaultPersistence::class), Argument::any())->shouldBeCalled()->willReturn($queryBuilder);
 		$queryBuilder->where('p.code = :code')->shouldBeCalled()->willReturn($queryBuilder);
-		$queryBuilder->where('p.' . get_class($user->getWrappedObject()) . ' = :persistable')->shouldBeCalled()->willReturn($queryBuilder);
+		$queryBuilder->where('p.user = :persistable')->shouldBeCalled()->willReturn($queryBuilder);
 		$queryBuilder->andWhere('p.code != :code')->shouldBeCalled()->willReturn($queryBuilder);
 		$queryBuilder->setParameter('code', $code)->shouldBeCalled()->willReturn($queryBuilder);
 		$queryBuilder->setParameters([
