@@ -108,29 +108,16 @@ final class SecurityContext
 
 		if (! $configuration->isRolesEnabled())
 		{
-			unset($mappings['role']);
-			unset($mappings['rolePermission']);
-
 			$this->validateAndCall($mappings['user'], 'disableRoles');
 		}
 
 		if (! $configuration->isThrottlesEnabled())
 		{
-			unset(
-				$mappings['throttle'],
-				$mappings['ipThrottle'],
-				$mappings['globalThrottle'],
-				$mappings['userThrottle']
-			);
-
 			$this->validateAndCall($mappings['user'], 'disableThrottles');
 		}
 
 		if (! $configuration->isPermissionsEnabled())
 		{
-			unset($mappings['userPermission']);
-			unset($mappings['rolePermission']);
-
 			$this->validateAndCall($mappings['user'], 'disablePermissions');
 
 			if (isset($mappings['role']))
@@ -141,7 +128,6 @@ final class SecurityContext
 
 		if ($table = $configuration->getTable('usersRoles'))
 		{
-			/** @type SecurityUserMapping $userMapping */
 			$this->validateAndCall($mappings['user'], 'changeRolesJoinTable', $table);
 
 			if (isset($mappings['role']))
@@ -150,11 +136,11 @@ final class SecurityContext
 			}
 		}
 
-		foreach ($mappings as $key => $mapping)
+		foreach ($mappings as $entity => $mapping)
 		{
 			$entityMapping = $this->makeMapping($mapping);
 
-			if ($entityMapping instanceof CustomTableMapping && $table = $configuration->getTable($key))
+			if ($entityMapping instanceof CustomTableMapping && $table = $configuration->getTable($entity))
 			{
 				$entityMapping->setTable($table);
 			}

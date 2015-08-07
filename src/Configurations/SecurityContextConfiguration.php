@@ -221,7 +221,31 @@ final class SecurityContextConfiguration
 	 */
 	public function getMappings()
 	{
-		return $this->mappings;
+		$mappings = $this->mappings;
+
+		if (! $this->isRolesEnabled())
+		{
+			unset($mappings['role']);
+			unset($mappings['rolePermission']);
+		}
+
+		if (! $this->isThrottlesEnabled())
+		{
+			unset(
+				$mappings['throttle'],
+				$mappings['ipThrottle'],
+				$mappings['globalThrottle'],
+				$mappings['userThrottle']
+			);
+		}
+
+		if (! $this->isPermissionsEnabled())
+		{
+			unset($mappings['userPermission']);
+			unset($mappings['rolePermission']);
+		}
+
+		return $mappings;
 	}
 
 	/**
