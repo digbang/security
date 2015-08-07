@@ -772,11 +772,6 @@ final class SecurityContextConfiguration
 
 		if (preg_match('/^get(.*)Expiration$/', $name, $matches))
 		{
-			if (empty($arguments))
-			{
-				throw new \InvalidArgumentException("$name expects 1 parameter, none given.");
-			}
-
 			return $this->getExpiring(lcfirst($matches[1]), 'expires');
 		}
 
