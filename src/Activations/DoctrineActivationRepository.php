@@ -72,7 +72,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
 
 		$queryBuilder
 			->where('a.' . get_class($user) . ' = :user')
-			->andWhere('completed = :completed');
+			->andWhere('a.completed = :completed');
 
 		$queryBuilder
 			->setParameters([
@@ -118,8 +118,8 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
 
 		$queryBuilder
 			->delete($this->entityName(), 'a')
-			->where('completed = :completed')
-			->andWhere('createdAt < :expires');
+			->where('a.completed = :completed')
+			->andWhere('a.createdAt < :expires');
 
 		$queryBuilder->setParameters([
 			'completed' => false,
@@ -158,8 +158,8 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
 
 		$queryBuilder
 			->where('a.' . get_class($user) . ' = :user')
-			->andWhere('completed = :completed')
-			->andWhere('createdAt > :expires');
+			->andWhere('a.completed = :completed')
+			->andWhere('a.createdAt > :expires');
 
 		$queryBuilder
 			->setParameter('user', $user)
@@ -169,7 +169,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
         if ($code)
         {
             $queryBuilder
-	            ->andWhere('code = :code')
+	            ->andWhere('a.code = :code')
 	            ->setParameter('code', $code);
         }
 
