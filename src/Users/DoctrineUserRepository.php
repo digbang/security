@@ -262,11 +262,11 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 		if (array_key_exists('login', $credentials))
 		{
 			$criteria->andWhere($criteria->expr()->orX(
-				$criteria->expr()->eq('email.address', ':login'),
-				$criteria->expr()->eq('username', ':login')
+				$criteria->expr()->eq('email.address', '?0'),
+				$criteria->expr()->eq('username', '?0')
 			));
 
-			$parameters['login'] = $credentials['login'];
+			$parameters[] = $credentials['login'];
 		}
 		else
 		{
