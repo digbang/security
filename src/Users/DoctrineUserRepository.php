@@ -6,7 +6,6 @@ use Cartalyst\Sentinel\Users\UserRepositoryInterface;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
 use InvalidArgumentException;
 
 abstract class DoctrineUserRepository extends EntityRepository implements UserRepositoryInterface
@@ -74,7 +73,9 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 	{
 		$queryBuilder = $this->createQueryBuilder('u');
 
-		$this->addCredentialsCriteria($credentials, $queryBuilder);
+		$queryBuilder->addCriteria(
+			$this->createCredentialsCriteria($credentials)
+		);
 
 		$queryBuilder->setMaxResults(1);
 
@@ -254,20 +255,16 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 		}
 	}
 
-	protected function addCredentialsCriteria(array $credentials, QueryBuilder $queryBuilder)
+	protected function createCredentialsCriteria(array $credentials)
 	{
 		$criteria = Criteria::create();
-		$parameters = [];
 
 		if (array_key_exists('login', $credentials))
 		{
 			$criteria->andWhere($criteria->expr()->orX(
-				$criteria->expr()->eq('email.address', ':email'),
-				$criteria->expr()->eq('username', ':username')
+				$criteria->expr()->eq('email.address', $credentials['login']),
+				$criteria->expr()->eq('username', $credentials['login'])
 			));
-
-			$parameters['email'] = $credentials['login'];
-			$parameters['username'] = $credentials['login'];
 		}
 		else
 		{
@@ -278,20 +275,15 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 
 			if (isset($credentials['email']))
 			{
-				$criteria->andWhere($criteria->expr()->eq('email.address', ':email'));
-
-				$parameters['email'] = $credentials['email'];
+				$criteria->andWhere($criteria->expr()->eq('email.address', $credentials['email']));
 			}
 
 			if (isset($credentials['username']))
 			{
-				$criteria->andWhere($criteria->expr()->eq('username', ':username'));
-
-				$parameters['username'] = $credentials['username'];
+				$criteria->andWhere($criteria->expr()->eq('username', $credentials['username']));
 			}
 		}
 
-		$queryBuilder->addCriteria($criteria);
-		$queryBuilder->setParameters($parameters);
+		return $criteria;
 	}
 }
