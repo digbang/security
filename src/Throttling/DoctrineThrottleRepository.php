@@ -388,6 +388,7 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
     {
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
         $queryBuilder
+	        ->select('t')
             ->from($this->entityName('global'), 't')
             ->where('t.createdAt > :interval')
             ->setParameter('interval', Carbon::now()->subSeconds($this->globalInterval));
@@ -422,6 +423,7 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
 
         $queryBuilder
+	        ->select('t')
 	        ->from($this->entityName('ip'), 't')
             ->where('t.createdAt > :interval')
             ->andWhere('t.ip = :ip')
@@ -459,6 +461,7 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
     {
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
         $queryBuilder
+	        ->select('t')
 	        ->from($this->entityName('user'), 't')
             ->where('t.createdAt > :interval')
             ->andWhere('t.user = :user')
