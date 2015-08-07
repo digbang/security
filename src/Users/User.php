@@ -21,4 +21,9 @@ interface User extends UserInterface, PersistableInterface
 	 * @return void
 	 */
 	public function recordLogin();
+
+	/**
+	 * @return string
+	 */
+	public function getEmail();
 }
