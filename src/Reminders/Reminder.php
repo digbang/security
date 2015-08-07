@@ -8,4 +8,11 @@ interface Reminder
 	 * @return void
 	 */
 	public function complete();
+
+	/**
+	 * Get the unique code for this reminder.
+	 *
+	 * @return string
+	 */
+	public function getCode();
 }

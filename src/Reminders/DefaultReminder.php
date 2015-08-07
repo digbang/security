@@ -91,4 +91,12 @@ class DefaultReminder implements Reminder
 	{
 		return $this->updatedAt;
 	}
+
+	/**
+	 * @return string
+	 */
+	public function getCode()
+	{
+		return $this->code;
+	}
 }
