@@ -16,9 +16,9 @@ class DefaultDoctrineReminderRepository extends DoctrineReminderRepository
 	/**
 	 * Create a new reminder record and code.
 	 *
-	 * @param  \Digbang\Security\Users\User $user
+	 * @param \Digbang\Security\Users\User $user
 	 *
-	 * @return string
+	 * @return Reminder
 	 */
 	public function create(UserInterface $user)
 	{
