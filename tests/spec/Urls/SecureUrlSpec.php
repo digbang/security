@@ -1,6 +1,6 @@
 <?php namespace spec\Digbang\Security\Urls;
 
-use Cartalyst\Sentinel\Sentinel;
+use Digbang\Security\Contracts\SecurityApi;
 use Digbang\Security\Permissions\Permissible;
 use Digbang\Security\Permissions\PermissionException;
 use Digbang\Security\Permissions\PermissionRepository;
@@ -51,7 +51,7 @@ class SecureUrlSpec extends ObjectBehavior
 		$permissionRepo->getForAction(Argument::not($this->secureAction))->willReturn('an.invalid.permission');
 	}
 
-	protected function withUser(UrlGenerator $url, PermissionRepository $permissionRepo, Sentinel $sentinel)
+	protected function withUser(UrlGenerator $url, PermissionRepository $permissionRepo, SecurityApi $securityApi)
 	{
 		$this->withoutUser($url, $permissionRepo);
 
@@ -61,123 +61,123 @@ class SecureUrlSpec extends ObjectBehavior
 		$user->hasAccess(Argument::exact($this->validPermission))->willReturn(true);
 		$user->hasAccess(Argument::not(  $this->validPermission))->willReturn(false);
 
-		$sentinel->getUser()->willReturn($user);
+		$securityApi->getUser()->willReturn($user);
 	}
 
-	protected function beConstructedWithUser(UrlGenerator $url, PermissionRepository $permissionRepo, Sentinel $sentinel)
+	protected function beConstructedWithUser(UrlGenerator $url, PermissionRepository $permissionRepo, SecurityApi $securityApi)
 	{
-		$this->withUser($url, $permissionRepo, $sentinel);
+		$this->withUser($url, $permissionRepo, $securityApi);
 
-		$this->beConstructedWith($url, $permissionRepo, $sentinel);
+		$this->beConstructedWith($url, $permissionRepo, $securityApi);
 	}
 
-	protected function beConstructedWithoutUser(UrlGenerator $url, PermissionRepository $permissionRepo, Sentinel $sentinel)
+	protected function beConstructedWithoutUser(UrlGenerator $url, PermissionRepository $permissionRepo, SecurityApi $securityApi)
 	{
 		$this->withoutUser($url, $permissionRepo);
 
-		$this->beConstructedWith($url, $permissionRepo, $sentinel);
+		$this->beConstructedWith($url, $permissionRepo, $securityApi);
 	}
 
-	function it_is_initializable_with_user(UrlGenerator $url, PermissionRepository $permissionRepo, Sentinel $sentinel)
+	function it_is_initializable_with_user(UrlGenerator $url, PermissionRepository $permissionRepo, SecurityApi $securityApi)
 	{
-		$this->beConstructedWithUser($url, $permissionRepo, $sentinel);
+		$this->beConstructedWithUser($url, $permissionRepo, $securityApi);
 
 	    $this->shouldHaveType('Digbang\Security\Urls\SecureUrl');
 	}
 
-	function it_is_initializable_without_user(UrlGenerator $url, PermissionRepository $permissionRepo, Sentinel $sentinel)
+	function it_is_initializable_without_user(UrlGenerator $url, PermissionRepository $permissionRepo, SecurityApi $securityApi)
 	{
-		$this->beConstructedWithoutUser($url, $permissionRepo, $sentinel);
+		$this->beConstructedWithoutUser($url, $permissionRepo, $securityApi);
 
 	    $this->shouldHaveType('Digbang\Security\Urls\SecureUrl');
 	}
 
-	function it_should_make_urls_by_route_if_the_user_has_a_permission(UrlGenerator $url, PermissionRepository $permissionRepo, Sentinel $sentinel)
+	function it_should_make_urls_by_route_if_the_user_has_a_permission(UrlGenerator $url, PermissionRepository $permissionRepo, SecurityApi $securityApi)
 	{
-		$this->beConstructedWithUser($url, $permissionRepo, $sentinel);
+		$this->beConstructedWithUser($url, $permissionRepo, $securityApi);
 
 		$this->route($this->secureRoute)->shouldReturn($this->url);
 	}
 
-	function it_should_squeak_when_trying_to_build_a_route_url_and_user_doesnt_have_permissions(UrlGenerator $url, PermissionRepository $permissionRepo, Sentinel $sentinel)
+	function it_should_squeak_when_trying_to_build_a_route_url_and_user_doesnt_have_permissions(UrlGenerator $url, PermissionRepository $permissionRepo, SecurityApi $securityApi)
 	{
-		$this->beConstructedWithUser($url, $permissionRepo, $sentinel);
+		$this->beConstructedWithUser($url, $permissionRepo, $securityApi);
 
 		$this->shouldThrow(PermissionException::class)
 			->duringRoute('any.invalid.route');
 	}
 
-	function it_should_make_urls_by_action_if_the_user_has_a_permission(UrlGenerator $url, PermissionRepository $permissionRepo, Sentinel $sentinel)
+	function it_should_make_urls_by_action_if_the_user_has_a_permission(UrlGenerator $url, PermissionRepository $permissionRepo, SecurityApi $securityApi)
 	{
-		$this->beConstructedWithUser($url, $permissionRepo, $sentinel);
+		$this->beConstructedWithUser($url, $permissionRepo, $securityApi);
 
 		$this->action($this->secureAction)->shouldReturn($this->url);
 	}
 
-	function it_should_squeak_when_trying_to_build_an_action_url_and_user_doesnt_have_permissions(UrlGenerator $url, PermissionRepository $permissionRepo, Sentinel $sentinel)
+	function it_should_squeak_when_trying_to_build_an_action_url_and_user_doesnt_have_permissions(UrlGenerator $url, PermissionRepository $permissionRepo, SecurityApi $securityApi)
 	{
-		$this->beConstructedWithUser($url, $permissionRepo, $sentinel);
+		$this->beConstructedWithUser($url, $permissionRepo, $securityApi);
 
 		$this->shouldThrow(PermissionException::class)
 			->duringAction('Any\Invalid\Controller@action');
 	}
 
-	function it_should_make_insecure_urls_by_route_without_user(UrlGenerator $url, PermissionRepository $permissionRepo, Sentinel $sentinel)
+	function it_should_make_insecure_urls_by_route_without_user(UrlGenerator $url, PermissionRepository $permissionRepo, SecurityApi $securityApi)
 	{
-		$this->beConstructedWithoutUser($url, $permissionRepo, $sentinel);
+		$this->beConstructedWithoutUser($url, $permissionRepo, $securityApi);
 
 		$this->route($this->insecureRoute)->shouldReturn($this->url);
 	}
 
-	function it_should_make_insecure_urls_by_action_without_user(UrlGenerator $url, PermissionRepository $permissionRepo, Sentinel $sentinel)
+	function it_should_make_insecure_urls_by_action_without_user(UrlGenerator $url, PermissionRepository $permissionRepo, SecurityApi $securityApi)
 	{
-		$this->beConstructedWithoutUser($url, $permissionRepo, $sentinel);
+		$this->beConstructedWithoutUser($url, $permissionRepo, $securityApi);
 
 		$this->action($this->insecureAction)->shouldReturn($this->url);
 	}
 
-	function it_should_squeak_when_requested_secure_urls_by_route_without_user(UrlGenerator $url, PermissionRepository $permissionRepo, Sentinel $sentinel)
+	function it_should_squeak_when_requested_secure_urls_by_route_without_user(UrlGenerator $url, PermissionRepository $permissionRepo, SecurityApi $securityApi)
 	{
-		$this->beConstructedWithoutUser($url, $permissionRepo, $sentinel);
+		$this->beConstructedWithoutUser($url, $permissionRepo, $securityApi);
 
 		$this->shouldThrow(PermissionException::class)
 			->duringRoute($this->secureRoute);
 	}
 
-	function it_should_squeak_when_requested_secure_urls_by_action_without_user(UrlGenerator $url, PermissionRepository $permissionRepo, Sentinel $sentinel)
+	function it_should_squeak_when_requested_secure_urls_by_action_without_user(UrlGenerator $url, PermissionRepository $permissionRepo, SecurityApi $securityApi)
 	{
-		$this->beConstructedWithoutUser($url, $permissionRepo, $sentinel);
+		$this->beConstructedWithoutUser($url, $permissionRepo, $securityApi);
 
 		$this->shouldThrow(PermissionException::class)
 			->duringAction($this->secureAction);
 	}
 
-	function it_should_give_me_the_best_allowed_route_based_on_the_current_users_permissions(UrlGenerator $url, PermissionRepository $permissionRepo, Sentinel $sentinel)
+	function it_should_give_me_the_best_allowed_route_based_on_the_current_users_permissions(UrlGenerator $url, PermissionRepository $permissionRepo, SecurityApi $securityApi)
 	{
-		$this->beConstructedWithUser($url, $permissionRepo, $sentinel);
+		$this->beConstructedWithUser($url, $permissionRepo, $securityApi);
 
 		$this->bestRoute([$this->secureRoute])->shouldReturn($this->url);
 		$this->bestRoute([$this->insecureRoute])->shouldReturn($this->url);
 	}
 
-	function it_should_give_me_null_with_no_user_permissions(UrlGenerator $url, PermissionRepository $permissionRepo, Sentinel $sentinel)
+	function it_should_give_me_null_with_no_user_permissions(UrlGenerator $url, PermissionRepository $permissionRepo, SecurityApi $securityApi)
 	{
-		$this->beConstructedWithoutUser($url, $permissionRepo, $sentinel);
+		$this->beConstructedWithoutUser($url, $permissionRepo, $securityApi);
 
 		$this->bestRoute([$this->secureRoute])->shouldReturn(null);
 	}
 
-	function it_should_give_me_the_best_allowed_action_based_on_the_current_users_permissions(UrlGenerator $url, PermissionRepository $permissionRepo, Sentinel $sentinel)
+	function it_should_give_me_the_best_allowed_action_based_on_the_current_users_permissions(UrlGenerator $url, PermissionRepository $permissionRepo, SecurityApi $securityApi)
 	{
-		$this->beConstructedWithUser($url, $permissionRepo, $sentinel);
+		$this->beConstructedWithUser($url, $permissionRepo, $securityApi);
 
 		$this->bestAction([$this->secureAction])->shouldReturn($this->url);
 		$this->bestAction([$this->insecureAction])->shouldReturn($this->url);
 	}
 
-	function it_should_give_me_null_on_an_action_with_no_user_permissions(UrlGenerator $url, PermissionRepository $permissionRepo, Sentinel $sentinel)
+	function it_should_give_me_null_on_an_action_with_no_user_permissions(UrlGenerator $url, PermissionRepository $permissionRepo, SecurityApi $securityApi)
 	{
-		$this->beConstructedWithoutUser($url, $permissionRepo, $sentinel);
+		$this->beConstructedWithoutUser($url, $permissionRepo, $securityApi);
 
 		$this->bestAction([$this->secureAction])->shouldReturn(null);
 	}

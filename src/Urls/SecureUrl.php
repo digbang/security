@@ -1,6 +1,6 @@
 <?php namespace Digbang\Security\Urls;
 
-use Cartalyst\Sentinel\Sentinel;
+use Digbang\Security\Contracts\SecurityApi;
 use Digbang\Security\Permissions\Permissible;
 use Digbang\Security\Permissions\PermissionRepository;
 use Digbang\Security\Permissions\PermissionException;
@@ -13,11 +13,6 @@ use Illuminate\Routing\UrlGenerator;
 class SecureUrl
 {
 	/**
-	 * @type Sentinel
-	 */
-	protected $sentinel;
-
-	/**
 	 * @type UrlGenerator
 	 */
 	protected $url;
@@ -26,17 +21,21 @@ class SecureUrl
 	 * @type PermissionRepository
 	 */
 	protected $permissionRepository;
+	/**
+	 * @type SecurityApi
+	 */
+	private $securityApi;
 
 	/**
 	 * @param UrlGenerator         $url
 	 * @param PermissionRepository $permissionRepository
-	 * @param Sentinel             $sentinel
+	 * @param SecurityApi          $securityApi
 	 */
-	public function __construct(UrlGenerator $url, PermissionRepository $permissionRepository, Sentinel $sentinel)
+	public function __construct(UrlGenerator $url, PermissionRepository $permissionRepository, SecurityApi $securityApi)
 	{
 		$this->url                  = $url;
 		$this->permissionRepository = $permissionRepository;
-		$this->sentinel             = $sentinel;
+		$this->securityApi          = $securityApi;
 	}
 
 	/**
@@ -123,7 +122,7 @@ class SecureUrl
 			return true;
 		}
 
-		if (! $user = $this->sentinel->getUser())
+		if (! $user = $this->securityApi->getUser())
 		{
 			return false;
 		}
