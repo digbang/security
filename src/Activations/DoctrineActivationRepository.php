@@ -32,11 +32,15 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
 	abstract protected function entityName();
 
 	/**
-	 * {@inheritdoc}
-	 */
+     * Checks if a valid activation for the given user exists.
+     *
+     * @param  UserInterface  $user
+     * @param  string         $code
+     * @return Activation|false
+     */
 	public function exists(UserInterface $user, $code = null)
 	{
-		return $this->findIncomplete($user, $code) !== null;
+		return $this->findIncomplete($user, $code) ?: false;
 	}
 
 	/**

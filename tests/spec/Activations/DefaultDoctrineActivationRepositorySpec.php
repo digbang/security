@@ -52,11 +52,11 @@ class DefaultDoctrineActivationRepositorySpec extends ObjectBehavior
         $activation->shouldBeAnActivation();
     }
 
-	function it_should_return_true_if_it_exists(User $user, EntityManager $entityManager, QueryBuilder $queryBuilder, Activation $activation)
+	function it_should_return_the_activation_if_it_exists(User $user, EntityManager $entityManager, QueryBuilder $queryBuilder, Activation $activation)
 	{
-		$this->prepareQuery($entityManager, $queryBuilder, $activation);
+		$this->prepareQuery($entityManager, $queryBuilder, $activation->getWrappedObject());
 
-		$this->exists($user)->shouldBe(true);
+		$this->exists($user)->shouldBe($activation);
 	}
 
 	function it_should_return_false_if_it_does_not_exist(User $user, EntityManager $entityManager, QueryBuilder $queryBuilder)
