@@ -15,4 +15,11 @@ interface Activation
 	 * @return string
 	 */
 	public function __get($name);
+
+	/**
+	 * Get the unique code associated with this activation.
+	 *
+	 * @return string
+	 */
+	public function getCode();
 }

@@ -105,4 +105,12 @@ class DefaultActivation implements Activation
 	{
 		return $this->createdAt;
 	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getCode()
+	{
+		return $this->code;
+	}
 }
