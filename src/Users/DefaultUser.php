@@ -2,6 +2,7 @@
 
 use Carbon\Carbon;
 use Digbang\Doctrine\TimestampsTrait;
+use Digbang\Security\Activations\Activation;
 use Digbang\Security\Permissions\DefaultUserPermission;
 use Digbang\Security\Permissions\NullPermissions;
 use Digbang\Security\Permissions\Permissible;
@@ -290,5 +291,32 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
 	public function getReminders()
 	{
 		return $this->reminders;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function isActivated()
+	{
+		return $this->activations->exists(function(Activation $activation){
+			return $activation->isCompleted();
+		});
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getActivatedAt()
+	{
+		$completed = $this->activations->filter(function(Activation $activation){
+			return $activation->isCompleted();
+		});
+
+		if ($completed->isEmpty())
+		{
+			return null;
+		}
+
+		return $completed->first()->getCompletedAt();
 	}
 }

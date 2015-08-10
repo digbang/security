@@ -36,4 +36,29 @@ interface User extends UserInterface, PersistableInterface
 	 * @return string
 	 */
 	public function getUsername();
+
+	/**
+	 * @return bool
+	 */
+	public function isActivated();
+
+	/**
+	 * @return \Carbon\Carbon
+	 */
+	public function getLastLogin();
+
+	/**
+	 * @return \Carbon\Carbon
+	 */
+	public function getCreatedAt();
+
+	/**
+	 * @return \Carbon\Carbon
+	 */
+	public function getUpdatedAt();
+
+	/**
+	 * @return \Carbon\Carbon|null
+	 */
+	public function getActivatedAt();
 }

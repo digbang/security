@@ -1,5 +1,11 @@
 <?php namespace Digbang\Security\Activations;
 
+/**
+ * Interface Activation
+ *
+ * @package Digbang\Security\Activations
+ * @property-read string $code
+ */
 interface Activation
 {
 	/**
@@ -22,4 +28,19 @@ interface Activation
 	 * @return string
 	 */
 	public function getCode();
+
+	/**
+	 * @return \Carbon\Carbon
+	 */
+	public function getCreatedAt();
+
+	/**
+	 * @return bool
+	 */
+	public function isCompleted();
+
+	/**
+	 * @return \Carbon\Carbon
+	 */
+	public function getCompletedAt();
 }

@@ -87,8 +87,14 @@ trait UserMappingTrait
 	{
 		$this
 			->hasMany('persistences', $builder)
-			->hasMany('activations',  $builder)
 			->hasMany('reminders',    $builder);
+
+		$builder->hasMany($this->relations['activations'][0], $this->relations['activations'][1], function(HasMany $hasMany){
+			$hasMany
+				->mappedBy($this->name)
+				->orderBy('createdAt', 'desc');
+
+		});
 
 		if ($this->enabled['throttles'])
 		{
