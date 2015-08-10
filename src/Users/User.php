@@ -26,4 +26,14 @@ interface User extends UserInterface, PersistableInterface
 	 * @return string
 	 */
 	public function getEmail();
+
+	/**
+	 * @return \Digbang\Security\Users\ValueObjects\Name|string
+	 */
+	public function getName();
+
+	/**
+	 * @return string
+	 */
+	public function getUsername();
 }
