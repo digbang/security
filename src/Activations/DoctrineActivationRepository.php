@@ -161,7 +161,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
 		$queryBuilder = $this->createQueryBuilder('a');
 
 		$queryBuilder
-			->where('a.use = :user')
+			->where('a.user = :user')
 			->andWhere('a.completed = :completed')
 			->andWhere('a.createdAt > :expires');
 
