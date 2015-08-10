@@ -6,6 +6,11 @@ use Doctrine\Common\Collections\Collection;
 interface Role extends RoleInterface
 {
 	/**
+	 * @return string
+	 */
+	public function getName();
+
+	/**
 	 * @return Collection
 	 */
 	public function getPermissions();
