@@ -91,7 +91,7 @@ types of attempts, and reacts to each of them differently:
 * `IP` attempts: Attempts coming from the same IP will be logged to recognize possible attackers.
 * `User` attempts: Multiple failed logins to the same user account will be logged to identify a possible victim.
 
-Each type of attempts has two configurations:
+Each type of attempt has two configurations:
 
 * **Thresholds** (`int` or `array`): Represents the amount of attempts needed before the system is blocked. An array of `qty_attempts => block_time` can be used to block access for a given time based on the amount of failed attempts. 
 * **Interval** (`int`): Represents the time (in seconds) that the system will block further attempts on this type.
@@ -145,8 +145,15 @@ Permissions may also be disabled through the `SecurityContextConfiguration` obje
 
 To access the permissions functionality, use the `PermissionRepository` with `$securityApi->permissions()`.
 
+### Generating URLs
+The `PermissibleUrlGenerator` is an extension of Laravel's `UrlGeneratorInterface` interface. The default
+implementation, `PermissionAwareUrlGenerator`, will check if the currently logged-in user has access to the
+requested url and throw a `Digbang\Security\Permissions\PermissionException` if he or she does not.
+ 
+You may access this functionality through the `$securityApi->urls()` method. 
+
 ## Custom objects
-The Security package extends the `Cartalyst\Sentinel` interfaces with more functionalty. By default,
+The Security package extends the `Cartalyst\Sentinel` interfaces with more functionality. By default,
 an implementation of each interface (eg.: `Digbang\Security\Users\User`) can be found in the same namespace
  (eg.:`Digbang\Security\Users\DefaultUser`.)
 
