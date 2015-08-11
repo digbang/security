@@ -159,8 +159,9 @@ an implementation of each interface (eg.: `Digbang\Security\Users\User`) can be 
 
 If you wish to use a custom implementation of any `Entity`, these are the steps you have to follow:
 
-* you **must** extend the repository implementation (eg.: `Digbang\Security\Users\DoctrineUserRepository`) with one of your own, *OR*
-* you **may** decide to implement the repository interface (eg.: `Digbang\Security\Users\UserRepository`) by yourself.
+* you **must either**:
+   * extend the repository implementation (eg.: `Digbang\Security\Users\DoctrineUserRepository`) with one of your own
+   * **or** you may decide to implement the repository interface (eg.: `Digbang\Security\Users\UserRepository`) by yourself.
 * you **must** implement all the methods in the corresponding interface (eg.: `Digbang\Security\Users\User`.)
 * you **must** configure this in the `SecurityContextConfiguration` object, as shown above.
 * you **may** reuse the entity trait (eg.: `Digbang\Security\Users\UserTrait`.) 
