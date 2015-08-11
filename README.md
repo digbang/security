@@ -16,9 +16,9 @@ Add the `SecurityServiceProvider` to your `config/app.php` file:
 	];
 ```
 
-To use this package, you need to define a *Context* which you need to secure. URLs inside this
-*Context* will have access to the `SecurityApi` configured for them.
-This way, you may have multiple *Contexts* running on a single application.
+To use this package, you need to define a **Context** which you need to secure. URLs inside this
+**Context** will have access to the `SecurityApi` configured for them.
+This way, you may have multiple **Contexts** running on a single application.
 
 Add as many contexts as you need in a `ServiceProvider :: boot()` of your own:
 
@@ -41,7 +41,7 @@ Add as many contexts as you need in a `ServiceProvider :: boot()` of your own:
 	}
 ```
 
-And then refer to this context in your routing (as a *route middleware*):
+And then refer to this context in your routing (as a **route middleware**):
 
 ```php
 	<?php
@@ -75,7 +75,7 @@ To access the persistences functionality, use the `PersistenceRepository` with `
 
 ## Checkpoints
 Checkpoints are custom logic to be executed every time a login attempt happens. The Security package
-comes with *two* checkpoints: `Activations` and `Throttles`.
+comes with **two** checkpoints: `Activations` and `Throttles`.
 
 ### Activations
 The Activation checkpoint checks if a user has already activated his account every time he or she logs in.
@@ -93,8 +93,8 @@ types of attempts, and reacts to each of them differently:
 
 Each type of attempts has two configurations:
 
-* *Thresholds* (`int` or `array`): Represents the amount of attempts needed before the system is blocked. An array of `qty_attempts => block_time` can be used to block access for a given time based on the amount of failed attempts. 
-* *Interval* (`int`): Represents the time (in seconds) that the system will block further attempts on this type.
+* **Thresholds** (`int` or `array`): Represents the amount of attempts needed before the system is blocked. An array of `qty_attempts => block_time` can be used to block access for a given time based on the amount of failed attempts. 
+* **Interval** (`int`): Represents the time (in seconds) that the system will block further attempts on this type.
 
 You may change this configurations through the `SecurityContextConfiguration` object. The defaults are:
 
@@ -152,9 +152,9 @@ an implementation of each interface (eg.: `Digbang\Security\Users\User`) can be 
 
 If you wish to use a custom implementation of any `Entity`, these are the steps you have to follow:
 
-* you *must* extend the repository implementation (eg.: `Digbang\Security\Users\DoctrineUserRepository`) with one of your own, *OR*
-* you *may* decide to implement the repository interface (eg.: `Digbang\Security\Users\UserRepository`) by yourself.
-* you *must* implement all the methods in the corresponding interface (eg.: `Digbang\Security\Users\User`.)
-* you *must* configure this in the `SecurityContextConfiguration` object, as shown above.
-* you *may* reuse the entity trait (eg.: `Digbang\Security\Users\UserTrait`.) 
-* you *may* reuse the mapping trait (eg.: `Digbang\Security\Users\UserMappingTrait`.)
+* you **must** extend the repository implementation (eg.: `Digbang\Security\Users\DoctrineUserRepository`) with one of your own, *OR*
+* you **may** decide to implement the repository interface (eg.: `Digbang\Security\Users\UserRepository`) by yourself.
+* you **must** implement all the methods in the corresponding interface (eg.: `Digbang\Security\Users\User`.)
+* you **must** configure this in the `SecurityContextConfiguration` object, as shown above.
+* you **may** reuse the entity trait (eg.: `Digbang\Security\Users\UserTrait`.) 
+* you **may** reuse the mapping trait (eg.: `Digbang\Security\Users\UserMappingTrait`.)
