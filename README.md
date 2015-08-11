@@ -146,7 +146,7 @@ Permissions may also be disabled through the `SecurityContextConfiguration` obje
 To access the permissions functionality, use the `PermissionRepository` with `$securityApi->permissions()`.
 
 ### Generating URLs
-The `PermissibleUrlGenerator` is an extension of Laravel's `UrlGeneratorInterface` interface. The default
+The `PermissibleUrlGenerator` is an extension of Laravel's `UrlGenerator` interface. The default
 implementation, `PermissionAwareUrlGenerator`, will check if the currently logged-in user has access to the
 requested url and throw a `Digbang\Security\Permissions\PermissionException` if he or she does not.
  
