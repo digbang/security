@@ -53,7 +53,7 @@ And then refer to this context in your routing (as a *route middleware*):
 	});
 ```
 
-The Digbang\Security\Contracts\SecurityApi interface gives access to all of this package's
-functionality. In most cases, it works as a wrapper of the Cartalyst\Sentinel\Sentinel object.
+The `Digbang\Security\Contracts\SecurityApi` interface gives access to all of this package's
+functionality. In most cases, it works as a wrapper of the `Cartalyst\Sentinel\Sentinel` object.
 
 Refer to the documentation in each method to understand its uses.
