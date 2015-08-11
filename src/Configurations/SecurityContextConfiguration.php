@@ -3,7 +3,6 @@
 use Cartalyst\Sentinel\Checkpoints\ActivationCheckpoint;
 use Cartalyst\Sentinel\Checkpoints\ThrottleCheckpoint;
 use Digbang\Security\Mappings;
-use Digbang\Security\Permissions\InsecurePermissionRepository;
 use Digbang\Security\Permissions\LazyStandardPermissions;
 use Digbang\Security\Permissions\LazyStrictPermissions;
 
@@ -132,7 +131,7 @@ final class SecurityContextConfiguration
 	 */
 	private $permissions = [
 		'factory'    => null,
-		'repository' => InsecurePermissionRepository::class
+		'repository' => null
 	];
 
 	/**

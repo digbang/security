@@ -1,5 +1,6 @@
 <?php namespace Digbang\Security\Permissions;
 
+use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 
@@ -83,6 +84,22 @@ final class RoutePermissionRepository implements PermissionRepository
 		if (isset($parameters['permission']))
 		{
 			return $parameters['permission'];
+		}
+
+		return null;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getForPath($path)
+	{
+		/** @type Request $request */
+		$request = Request::create($path);
+
+		if ($route = $this->router->getRoutes()->match($request))
+		{
+			return $this->extractPermissionFrom($route);
 		}
 
 		return null;

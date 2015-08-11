@@ -25,4 +25,12 @@ class InsecurePermissionRepository implements PermissionRepository
 	{
 		return [];
 	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getForPath($path)
+	{
+		return null;
+	}
 }

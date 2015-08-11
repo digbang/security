@@ -1,13 +1,14 @@
 <?php namespace Digbang\Security\Contracts;
 
-use Cartalyst\Sentinel\Activations\ActivationRepositoryInterface;
 use Cartalyst\Sentinel\Checkpoints\CheckpointInterface;
-use Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface;
-use Cartalyst\Sentinel\Reminders\ReminderRepositoryInterface;
-use Cartalyst\Sentinel\Roles\RoleRepositoryInterface;
-use Cartalyst\Sentinel\Users\UserRepositoryInterface;
-use Closure;
+use Digbang\Security\Activations\ActivationRepository;
+use Digbang\Security\Permissions\PermissionRepository;
+use Digbang\Security\Persistences\PersistenceRepository;
+use Digbang\Security\Reminders\ReminderRepository;
+use Digbang\Security\Roles\RoleRepository;
+use Digbang\Security\Urls\PermissibleUrlGenerator;
 use Digbang\Security\Users\User;
+use Digbang\Security\Users\UserRepository;
 
 interface SecurityApi
 {
@@ -132,7 +133,7 @@ interface SecurityApi
 	 *
 	 * @return void
 	 */
-	public function setRequestCredentials(Closure $requestCredentials);
+	public function setRequestCredentials(\Closure $requestCredentials);
 
 	/**
 	 * Sends a response when HTTP basic authentication fails.
@@ -145,10 +146,10 @@ interface SecurityApi
 	/**
 	 * Sets the callback which creates a basic response.
 	 *
-	 * @param Closure $basicResponse
+	 * @param \Closure $basicResponse
 	 * @return void
 	 */
-	public function creatingBasicResponse(Closure $basicResponse);
+	public function creatingBasicResponse(\Closure $basicResponse);
 
 	/**
 	 * Persists a login for the given user.
@@ -181,12 +182,12 @@ interface SecurityApi
 	/**
 	 * Pass a closure to Sentinel to bypass checkpoints.
 	 *
-	 * @param  Closure $callback
+	 * @param  \Closure $callback
 	 * @param  array   $checkpoints
 	 *
 	 * @return mixed
 	 */
-	public function bypassCheckpoints(Closure $callback, $checkpoints = []);
+	public function bypassCheckpoints(\Closure $callback, $checkpoints = []);
 
 	/**
 	 * Checks if checkpoints are enabled.
@@ -249,35 +250,49 @@ interface SecurityApi
 	/**
 	 * Returns the user repository.
 	 *
-	 * @return UserRepositoryInterface
+	 * @return UserRepository
 	 */
 	public function users();
 
 	/**
 	 * Returns the role repository.
 	 *
-	 * @return RoleRepositoryInterface
+	 * @return RoleRepository
 	 */
 	public function roles();
 
 	/**
 	 * Returns the persistences repository.
 	 *
-	 * @return PersistenceRepositoryInterface
+	 * @return PersistenceRepository
 	 */
 	public function persistences();
 
 	/**
 	 * Returns the reminders repository.
 	 *
-	 * @return ReminderRepositoryInterface
+	 * @return ReminderRepository
 	 */
 	public function reminders();
 
 	/**
 	 * Returns the activations repository.
 	 *
-	 * @return ActivationRepositoryInterface
+	 * @return ActivationRepository
 	 */
 	public function activations();
+
+	/**
+	 * Returns the permissions repository.
+	 *
+	 * @return PermissionRepository
+	 */
+	public function permissions();
+
+	/**
+	 * Returns the Url generator.
+	 *
+	 * @return PermissibleUrlGenerator
+	 */
+	public function urls();
 }

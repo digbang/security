@@ -6,15 +6,18 @@ use Cartalyst\Sentinel\Checkpoints\ThrottleCheckpoint;
 use Cartalyst\Sentinel\Sentinel;
 use Digbang\Security\Activations\ActivationRepository;
 use Digbang\Security\Configurations\SecurityContextConfiguration;
+use Digbang\Security\Permissions\InsecurePermissionRepository;
 use Digbang\Security\Persistences\PersistenceRepository;
 use Digbang\Security\Reminders\ReminderRepository;
 use Digbang\Security\Roles\NullRoleRepository;
 use Digbang\Security\Roles\RoleRepository;
 use Digbang\Security\Security;
+use Digbang\Security\Urls\PermissionAwareUrlGenerator;
 use Digbang\Security\Users\UserRepository;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Http\Response;
+use Illuminate\Routing\UrlGenerator;
 
 class SecurityFactory
 {
@@ -84,11 +87,15 @@ class SecurityFactory
             return new Response('Invalid credentials.', 401, $headers);
         });
 
-		$security = new Security(
-			$sentinel,
-			$configuration->isRolesEnabled(),
-			$configuration->isPermissionsEnabled()
-		);
+		$permissions = $this->getPermissionRepository($configuration);
+
+		$security = new Security($sentinel, $permissions);
+
+		$security->setUrlGenerator(new PermissionAwareUrlGenerator(
+			$this->container->make(UrlGenerator::class),
+			$permissions,
+			$security
+		));
 
 		return $security;
 	}
@@ -241,5 +248,20 @@ class SecurityFactory
 		}
 
 		return new ActivationCheckpoint($activationRepository);
+	}
+
+	/**
+	 * @param SecurityContextConfiguration $configuration
+	 *
+	 * @return \Digbang\Security\Permissions\PermissionRepository
+	 */
+	private function getPermissionRepository(SecurityContextConfiguration $configuration)
+	{
+		if ($permissionRepository = $configuration->getPermissionRepository())
+		{
+			return $this->container->make($permissionRepository);
+		}
+
+		return $this->repositoryFactory->createPermissionRepository($configuration->isPermissionsEnabled());
 	}
 }

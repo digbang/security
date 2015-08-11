@@ -45,9 +45,11 @@ interface RepositoryFactory
 	public function createReminderRepository(UserRepository $userRepository, $expires);
 
 	/**
+	 * @param bool $enabled
+	 *
 	 * @return PermissionRepository
 	 */
-	public function createPermissionRepository();
+	public function createPermissionRepository($enabled = true);
 
 	/**
 	 * @param int       $globalInterval

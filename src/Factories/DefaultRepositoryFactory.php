@@ -3,7 +3,9 @@
 use Cartalyst\Sentinel\Cookies\IlluminateCookie;
 use Cartalyst\Sentinel\Sessions\IlluminateSession;
 use Digbang\Security\Activations\DefaultDoctrineActivationRepository;
+use Digbang\Security\Permissions\InsecurePermissionRepository;
 use Digbang\Security\Permissions\LazyStandardPermissions;
+use Digbang\Security\Permissions\RoutePermissionRepository;
 use Digbang\Security\Persistences\DefaultDoctrinePersistenceRepository;
 use Digbang\Security\Persistences\PersistenceRepository;
 use Digbang\Security\Reminders\DefaultDoctrineReminderRepository;
@@ -15,6 +17,7 @@ use Doctrine\ORM\EntityManager;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Cookie\CookieJar;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Session\Store;
 
 final class DefaultRepositoryFactory implements RepositoryFactory
@@ -133,9 +136,14 @@ final class DefaultRepositoryFactory implements RepositoryFactory
 	/**
 	 * {@inheritdoc}
 	 */
-	public function createPermissionRepository()
+	public function createPermissionRepository($enabled = true)
 	{
+		if ($enabled)
+		{
+			return new RoutePermissionRepository($this->container->make(Router::class));
+		}
 
+		return new InsecurePermissionRepository;
 	}
 
 	/**

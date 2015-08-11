@@ -3,10 +3,13 @@
 use Cartalyst\Sentinel\Checkpoints\CheckpointInterface;
 use Cartalyst\Sentinel\Sentinel;
 use Digbang\Security\Activations\ActivationRepository;
+use Digbang\Security\Permissions\InsecurePermissionRepository;
+use Digbang\Security\Permissions\PermissionRepository;
 use Digbang\Security\Persistences\PersistenceRepository;
 use Digbang\Security\Reminders\ReminderRepository;
 use Digbang\Security\Roles\Role;
 use Digbang\Security\Roles\RoleRepository;
+use Digbang\Security\Urls\PermissibleUrlGenerator;
 use Digbang\Security\Users\User;
 use Digbang\Security\Contracts\SecurityApi;
 use Digbang\Security\Users\UserRepository;
@@ -41,20 +44,33 @@ final class Security implements SecurityApi
 	private $sentinel;
 
 	/**
-	 * @type bool
+	 * @type PermissionRepository
 	 */
-	private $hasPermissions;
+	private $permissions;
+
+	/**
+	 * @type PermissibleUrlGenerator
+	 */
+	private $urls;
 
 	/**
 	 * Security constructor.
 	 *
-	 * @param Sentinel $sentinel
-	 * @param bool     $hasPermissions
+	 * @param Sentinel             $sentinel
+	 * @param PermissionRepository $permissions
 	 */
-	public function __construct(Sentinel $sentinel, $hasPermissions = true)
+	public function __construct(Sentinel $sentinel, PermissionRepository $permissions)
 	{
 		$this->sentinel = $sentinel;
-		$this->hasPermissions = (bool) $hasPermissions;
+		$this->permissions = $permissions;
+	}
+
+	/**
+	 * @param PermissibleUrlGenerator $secureUrl
+	 */
+	public function setUrlGenerator(PermissibleUrlGenerator $secureUrl)
+	{
+		$this->urls = $secureUrl;
 	}
 
 	/**
@@ -426,6 +442,26 @@ final class Security implements SecurityApi
 	}
 
 	/**
+	 * Returns the permissions repository.
+	 *
+	 * @return PermissionRepository
+	 */
+	public function permissions()
+	{
+		return $this->permissions;
+	}
+
+	/**
+	 * Returns the Url generator.
+	 *
+	 * @return PermissibleUrlGenerator
+	 */
+	public function urls()
+	{
+		return $this->urls;
+	}
+
+	/**
      * Dynamically pass missing methods to Sentinel.
      *
      * @param  string $method
@@ -445,7 +481,7 @@ final class Security implements SecurityApi
 	 */
 	public function hasAccess($permissions)
 	{
-		if (! $this->hasPermissions)
+		if ($this->permissions instanceof InsecurePermissionRepository)
 		{
 			return true;
 		}
@@ -460,7 +496,7 @@ final class Security implements SecurityApi
 	 */
 	public function hasAnyAccess($permissions)
 	{
-		if (! $this->hasPermissions)
+		if ($this->permissions instanceof InsecurePermissionRepository)
 		{
 			return true;
 		}
