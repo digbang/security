@@ -1,77 +1,87 @@
 <?php namespace spec\Digbang\Security\Permissions;
 
+use Digbang\Security\Permissions\PermissionRepository;
+use Digbang\Security\Permissions\RoutePermissionRepository;
 use Illuminate\Routing\Route;
+use Illuminate\Routing\RouteCollection;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Collection;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 /**
  * Class RoutePermissionRepositorySpec
  * @package spec\Digbang\Security\Permissions
- * @mixin \Digbang\Security\Permissions\RoutePermissionRepository
+ * @mixin RoutePermissionRepository
  */
 class RoutePermissionRepositorySpec extends ObjectBehavior
 {
-	function let(Router $router)
+	const VALID_NAME       = 'the.valid.route';
+	const VALID_ACTION     = 'A\\Valid\\Action@name';
+	const VALID_PERMISSION = 'a.valid.permission';
+
+	function let(Router $router, Route $route, RouteCollection $routeCollection)
 	{
+		$router->getRoutes()->willReturn($routeCollection);
+		$route->getAction()->willReturn(['permission' => self::VALID_PERMISSION]);
+
+		$routeCollection->getByName(self::VALID_NAME)->willReturn($route);
+		$routeCollection->getByAction(self::VALID_ACTION)->willReturn($route);
+
+		$routeCollection->getByName(Argument::not(self::VALID_NAME))->willReturn(null);
+		$routeCollection->getByAction(Argument::not(self::VALID_ACTION))->willReturn(null);
+
 		$this->beConstructedWith($router);
 	}
 
     function it_is_initializable()
     {
-        $this->shouldHaveType('Digbang\Security\Permissions\RoutePermissionRepository');
+        $this->shouldHaveType(RoutePermissionRepository::class);
     }
 
-	function it_should_return_the_same_route_for_route_permissions(Router $router, Route $routeA, Route $routeB, Route $routeC)
+    function it_is_a_permissions_repository_instance()
+    {
+        $this->shouldHaveType(PermissionRepository::class);
+    }
+
+	function it_should_return_a_valid_permission_for_a_valid_route(Router $router, RouteCollection $routeCollection)
 	{
-		$aValidRoute = 'the.valid.route';
+		$router->getRoutes()->shouldBeCalled();
+		$routeCollection->getByName(self::VALID_NAME)->shouldBeCalled();
 
-		$routeA->getName()->shouldBeCalled()->willReturn('the.invalid.route');
-		$routeB->getName()->shouldBeCalled()->willReturn('an.invalid.route');
-		$routeC->getName()->shouldBeCalled()->willReturn($aValidRoute);
-		$routeC->getAction()->shouldBeCalled()->willReturn(['permission' => $aValidRoute]);
-
-		$router->getRoutes()->shouldBeCalled()->willReturn([$routeA, $routeB, $routeC]);
-
-		$this->getForRoute($aValidRoute)->shouldReturn($aValidRoute);
+		$this->getForRoute(self::VALID_NAME)->shouldReturn(self::VALID_PERMISSION);
 	}
 
-	function it_should_return_a_route_given_a_valid_action(Router $router, Route $routeA, Route $routeB, Route $routeC)
+	function it_should_return_a_valid_permission_for_a_valid_action(Router $router, RouteCollection $routeCollection)
 	{
-		$aValidAction = 'A\\Valid\\Action@name';
-		$aValidRoute = 'the.valid.route';
+		$router->getRoutes()->shouldBeCalled();
+		$routeCollection->getByAction(self::VALID_ACTION)->shouldBeCalled();
 
-		$router->getRoutes()->shouldBeCalled()->willReturn([$routeA, $routeB, $routeC]);
-
-		$routeA->getActionName()->shouldBeCalled()->willReturn('Some\\Action@name');
-		$routeB->getActionName()->shouldBeCalled()->willReturn('Some\\OtherAction@name');
-		$routeC->getActionName()->shouldBeCalled()->willReturn($aValidAction);
-
-		$routeA->getName()->shouldNotBeCalled();
-		$routeB->getName()->shouldNotBeCalled();
-		$routeC->getName()->willReturn($aValidRoute);
-
-		$routeC->getAction()->shouldBeCalled()->willReturn(['permission' => $aValidRoute]);
-
-		$this->getForAction($aValidAction)->shouldReturn($aValidRoute);
+		$this->getForAction(self::VALID_ACTION)->shouldReturn(self::VALID_PERMISSION);
 	}
 
-	function it_should_return_all_permissions(Router $router, Route $routeA, Route $routeB, Route $routeC)
+	function it_should_return_null_for_an_invalid_route(Router $router, RouteCollection $routeCollection)
 	{
-		$routeA->getAction()->shouldBeCalled()->willReturn(['permission' => 'a.given.route']);
-		$routeB->getAction()->shouldBeCalled()->willReturn(['permission' => 'another.permission']);
-		$routeC->getAction()->shouldBeCalled()->willReturn([]);
-		$router->getRoutes()->shouldBeCalled()->willReturn([$routeA, $routeB, $routeC]);
+		$router->getRoutes()->shouldBeCalled();
+		$routeCollection->getByName('invalid.route.name')->shouldBeCalled();
 
-		$this->all()->shouldReturn(['a.given.route', 'another.permission']);
+		$this->getForRoute('invalid.route.name')->shouldReturn(null);
 	}
 
-	function it_should_extract_permissions_from_routes(Route $route)
+	function it_should_return_null_for_an_invalid_action(Router $router, RouteCollection $routeCollection)
 	{
-		$aValidRoute = 'the.valid.route';
+		$router->getRoutes()->shouldBeCalled();
+		$routeCollection->getByAction('An\\Invalid@action')->shouldBeCalled();
 
-		$route->getAction()->shouldBeCalled()->willReturn(['permission' => $aValidRoute]);
+		$this->getForAction('An\\Invalid@action')->shouldReturn(null);
+	}
 
-		$this->extractPermissionFrom($route)->shouldReturn($aValidRoute);
+	function it_should_return_all_permissions(Router $router, RouteCollection $routeCollection, Route $route)
+	{
+		$router->getRoutes()->shouldBeCalled();
+		$routeCollection->getIterator()->shouldBeCalled()
+			->willReturn(new Collection([$route->getWrappedObject()]));
+
+		$this->all()->shouldReturn([self::VALID_PERMISSION]);
 	}
 }
