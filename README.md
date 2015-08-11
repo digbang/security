@@ -1,19 +1,14 @@
-Security
-========
+# Security
+
 Security package for new laravel projects.
 
 ## Usage
 Add the `SecurityServiceProvider` to your `config/app.php` file:
 
 ```php
-	<?php
-	return [
-	    // ...
-	    'providers' => [
-	        // ...
-	        Digbang\Security\Laravel\SecurityServiceProvider::class,
-	    ],
-	];
+'providers' => [
+    Digbang\Security\Laravel\SecurityServiceProvider::class,
+];
 ```
 
 To use this package, you need to define a **Context** which you need to secure. URLs inside this
@@ -23,34 +18,35 @@ This way, you may have multiple **Contexts** running on a single application.
 Add as many contexts as you need in a `ServiceProvider :: boot()` of your own:
 
 ```php
-	<?php namespace App\Providers;
-	
-	use Digbang\Security\SecurityContext;
-	use Digbang\Security\Configurations\SecurityContextConfiguration;
-	
-	class MyServiceProvider extends \Illuminate\Support\ServiceProvider
-	{
-	    public function boot(SecurityContext $securityContext)
-	    {
-	        $configuration = new SecurityContextConfiguration('ecommerce');
-	        
-	        // customize the configuration object as needed...
-	        
-	        $securityContext->add($configuration);
-	    }
-	}
+<?php namespace App\Providers;
+
+use Digbang\Security\SecurityContext;
+use Digbang\Security\Configurations\SecurityContextConfiguration;
+
+class MyServiceProvider extends \Illuminate\Support\ServiceProvider
+{
+    public function boot(SecurityContext $securityContext)
+    {
+        $configuration = new SecurityContextConfiguration('ecommerce');
+        
+        // customize the configuration object as needed...
+        
+        $securityContext->add($configuration);
+    }
+}
 ```
 
 And then refer to this context in your routing (as a **route middleware**):
 
 ```php
-	<?php
-	/** @type \Illuminate\Routing\Router $router */
-	$router->group(['middleware' => 'security:ecommerce'], function(Router $router){
-	    // Controllers inside this routing group will be able to ask for an instance
-	    // of the Digbang\Security\Contracts\SecurityApi interface.
-	    $router->get('/', ['as' => 'foo', 'uses' => 'FooController@index']);
-	});
+<?php
+$router->group(['middleware' => 'security:ecommerce'], function(Router $router){
+    
+    // Controllers inside this routing group will be able to ask for an instance
+    // of the Digbang\Security\Contracts\SecurityApi interface.
+    
+    $router->get('/', ['as' => 'foo', 'uses' => 'FooController@index']);
+});
 ```
 
 The `Digbang\Security\Contracts\SecurityApi` interface gives access to all of this package's
@@ -99,27 +95,25 @@ Each type of attempt has two configurations:
 You may change this configurations through the `SecurityContextConfiguration` object. The defaults are:
 
 ```php
-<?php return [
-	'global' => [
-		'interval' => 900,
-		'thresholds' => [
-			10 => 1,
-	        20 => 2,
-	        30 => 4,
-	        40 => 8,
-	        50 => 16,
-	        60 => 12
-		]
-	],
-	'ip'     => [
-		'interval' => 900,
-		'thresholds' => 5
-	],
-	'user'   => [
-		'interval' => 900,
-		'thresholds' => 5
-	]
-];
+'global' => [
+    'interval' => 900,
+    'thresholds' => [
+        10 => 1,
+        20 => 2,
+        30 => 4,
+        40 => 8,
+        50 => 16,
+        60 => 12
+    ]
+],
+'ip' => [
+    'interval' => 900,
+    'thresholds' => 5
+],
+'user' => [
+    'interval' => 900,
+    'thresholds' => 5
+]
 ```
 
 To access the throttling functionality, use the `ThrottleRepository` with `$securityApi->throttles()`.
