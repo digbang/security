@@ -1,7 +1,7 @@
 <?php namespace Digbang\Security\Laravel;
 
 use Digbang\Doctrine\Metadata\DecoupledMappingDriver;
-use Digbang\Security\Contracts\Factories\RepositoryFactory;
+use Digbang\Security\Factories\RepositoryFactory;
 use Digbang\Security\Factories\DefaultRepositoryFactory;
 use Digbang\Security\Mappings\EmailMapping;
 use Digbang\Security\Mappings\NameMapping;
