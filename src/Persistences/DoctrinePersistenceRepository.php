@@ -2,14 +2,13 @@
 
 use Cartalyst\Sentinel\Cookies\CookieInterface;
 use Cartalyst\Sentinel\Persistences\PersistableInterface;
-use Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface;
 use Cartalyst\Sentinel\Sessions\SessionInterface;
 use Digbang\Security\Users\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping;
 
-abstract class DoctrinePersistenceRepository extends EntityRepository implements PersistenceRepositoryInterface
+abstract class DoctrinePersistenceRepository extends EntityRepository implements PersistenceRepository
 {
 	/**
 	 * @type SessionInterface

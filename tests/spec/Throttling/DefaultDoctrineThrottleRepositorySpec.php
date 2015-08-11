@@ -6,6 +6,7 @@ use Digbang\Security\Throttling\DefaultGlobalThrottle;
 use Digbang\Security\Throttling\DefaultIpThrottle;
 use Digbang\Security\Throttling\DefaultThrottle;
 use Digbang\Security\Throttling\DefaultUserThrottle;
+use Digbang\Security\Throttling\ThrottleRepository;
 use Digbang\Security\Users\User;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Expr\CompositeExpression;
@@ -89,6 +90,7 @@ class DefaultDoctrineThrottleRepositorySpec extends ObjectBehavior
     function it_should_implement_sentinels_throttle_repository_interface()
     {
         $this->shouldHaveType(ThrottleRepositoryInterface::class);
+        $this->shouldHaveType(ThrottleRepository::class);
     }
 
     function it_should_give_me_zero_for_empty_cases_of_global_delay(QueryBuilder $queryBuilder, AbstractQuery $query)

@@ -2,6 +2,7 @@
 
 use Cartalyst\Sentinel\Activations\ActivationRepositoryInterface;
 use Digbang\Security\Activations\Activation;
+use Digbang\Security\Activations\ActivationRepository;
 use Digbang\Security\Activations\DefaultActivation;
 use Digbang\Security\Users\DefaultUser;
 use Digbang\Security\Users\User;
@@ -41,6 +42,7 @@ class DefaultDoctrineActivationRepositorySpec extends ObjectBehavior
     function it_is_a_sentinel_repository()
     {
         $this->shouldHaveType(ActivationRepositoryInterface::class);
+        $this->shouldHaveType(ActivationRepository::class);
     }
 
     function it_should_create_default_activations(User $user, EntityManager $entityManager)

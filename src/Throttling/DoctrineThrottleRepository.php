@@ -1,7 +1,6 @@
 <?php namespace Digbang\Security\Throttling;
 
 use Carbon\Carbon;
-use Cartalyst\Sentinel\Throttling\ThrottleRepositoryInterface;
 use Cartalyst\Sentinel\Users\UserInterface;
 use Digbang\Security\Users\User;
 use Doctrine\ORM\EntityManager;
@@ -9,7 +8,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping;
 use Illuminate\Support\Collection;
 
-abstract class DoctrineThrottleRepository extends EntityRepository implements ThrottleRepositoryInterface
+abstract class DoctrineThrottleRepository extends EntityRepository implements ThrottleRepository
 {
     /**
      * The interval which failed logins are checked, to prevent brute force.

@@ -3,13 +3,15 @@
 use Cartalyst\Sentinel\Checkpoints\ActivationCheckpoint;
 use Cartalyst\Sentinel\Checkpoints\CheckpointInterface;
 use Cartalyst\Sentinel\Checkpoints\ThrottleCheckpoint;
-use Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface;
 use Cartalyst\Sentinel\Sentinel;
-use Cartalyst\Sentinel\Users\UserRepositoryInterface;
+use Digbang\Security\Activations\ActivationRepository;
 use Digbang\Security\Configurations\SecurityContextConfiguration;
-use Digbang\Security\Contracts\Factories\RepositoryFactory;
+use Digbang\Security\Persistences\PersistenceRepository;
+use Digbang\Security\Reminders\ReminderRepository;
 use Digbang\Security\Roles\NullRoleRepository;
+use Digbang\Security\Roles\RoleRepository;
 use Digbang\Security\Security;
+use Digbang\Security\Users\UserRepository;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Http\Response;
@@ -95,7 +97,7 @@ class SecurityFactory
 	 * @param string                       $context
 	 * @param SecurityContextConfiguration $configuration
 	 *
-	 * @return \Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface
+	 * @return PersistenceRepository
 	 */
 	private function getPersistenceRepository($context, SecurityContextConfiguration $configuration)
 	{
@@ -113,7 +115,7 @@ class SecurityFactory
 	/**
 	 * @param SecurityContextConfiguration $configuration
 	 *
-	 * @return \Cartalyst\Sentinel\Roles\RoleRepositoryInterface|NullRoleRepository
+	 * @return RoleRepository
 	 */
 	private function getRoleRepository(SecurityContextConfiguration $configuration)
 	{
@@ -131,12 +133,12 @@ class SecurityFactory
 	}
 
 	/**
-	 * @param SecurityContextConfiguration   $configuration
-	 * @param PersistenceRepositoryInterface $persistenceRepository
+	 * @param SecurityContextConfiguration $configuration
+	 * @param PersistenceRepository        $persistenceRepository
 	 *
-	 * @return \Cartalyst\Sentinel\Users\UserRepositoryInterface
+	 * @return UserRepository
 	 */
-	private function getUserRepository(SecurityContextConfiguration $configuration, PersistenceRepositoryInterface $persistenceRepository)
+	private function getUserRepository(SecurityContextConfiguration $configuration, PersistenceRepository $persistenceRepository)
 	{
 		if ($configuration->getUserRepository())
 		{
@@ -149,7 +151,7 @@ class SecurityFactory
 	/**
 	 * @param SecurityContextConfiguration $configuration
 	 *
-	 * @return \Cartalyst\Sentinel\Activations\ActivationRepositoryInterface
+	 * @return ActivationRepository
 	 */
 	private function getActivationRepository(SecurityContextConfiguration $configuration)
 	{
@@ -165,11 +167,11 @@ class SecurityFactory
 
 	/**
 	 * @param SecurityContextConfiguration $configuration
-	 * @param UserRepositoryInterface      $userRepository
+	 * @param UserRepository               $userRepository
 	 *
-	 * @return \Cartalyst\Sentinel\Reminders\ReminderRepositoryInterface
+	 * @return ReminderRepository
 	 */
-	private function getReminderRepository(SecurityContextConfiguration $configuration, UserRepositoryInterface $userRepository)
+	private function getReminderRepository(SecurityContextConfiguration $configuration, UserRepository $userRepository)
 	{
 		if ($configuration->getReminderRepository())
 		{

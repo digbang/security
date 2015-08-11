@@ -6,6 +6,7 @@ use Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface;
 use Cartalyst\Sentinel\Sessions\SessionInterface;
 use Digbang\Security\Persistences\DefaultPersistence;
 use Digbang\Security\Persistences\Persistence;
+use Digbang\Security\Persistences\PersistenceRepository;
 use Digbang\Security\Users\User;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
@@ -41,6 +42,7 @@ class DefaultDoctrinePersistenceRepositorySpec extends ObjectBehavior
 	function it_is_an_implementation_of_sentinels_persistence_repository()
 	{
 		$this->shouldHaveType(PersistenceRepositoryInterface::class);
+		$this->shouldHaveType(PersistenceRepository::class);
 	}
 
 	function it_should_check_for_persistences_in_session(SessionInterface $session, CookieInterface $cookie)

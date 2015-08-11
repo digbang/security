@@ -1,24 +1,16 @@
 <?php namespace Digbang\Security\Factories;
 
-use Cartalyst\Sentinel\Activations\ActivationRepositoryInterface;
 use Cartalyst\Sentinel\Cookies\IlluminateCookie;
-use Cartalyst\Sentinel\Hashing\HasherInterface;
-use Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface;
-use Cartalyst\Sentinel\Reminders\ReminderRepositoryInterface;
-use Cartalyst\Sentinel\Roles\RoleRepositoryInterface;
 use Cartalyst\Sentinel\Sessions\IlluminateSession;
-use Cartalyst\Sentinel\Throttling\ThrottleRepositoryInterface;
-use Cartalyst\Sentinel\Users\UserRepositoryInterface;
 use Digbang\Security\Activations\DefaultDoctrineActivationRepository;
-use Digbang\Security\Contracts\Factories\RepositoryFactory;
 use Digbang\Security\Permissions\LazyStandardPermissions;
-use Digbang\Security\Permissions\PermissionRepository;
 use Digbang\Security\Persistences\DefaultDoctrinePersistenceRepository;
+use Digbang\Security\Persistences\PersistenceRepository;
 use Digbang\Security\Reminders\DefaultDoctrineReminderRepository;
 use Digbang\Security\Roles\DefaultDoctrineRoleRepository;
 use Digbang\Security\Throttling\DefaultDoctrineThrottleRepository;
 use Digbang\Security\Users\DefaultDoctrineUserRepository;
-use Doctrine\Common\Collections\Collection;
+use Digbang\Security\Users\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Cookie\CookieJar;
@@ -47,10 +39,7 @@ final class DefaultRepositoryFactory implements RepositoryFactory
 	}
 
 	/**
-	 * @param string $context
-	 * @param bool $single
-	 *
-	 * @return PersistenceRepositoryInterface
+	 * {@inheritdoc}
 	 */
 	public function createPersistenceRepository($context, $single = false)
 	{
@@ -73,7 +62,7 @@ final class DefaultRepositoryFactory implements RepositoryFactory
 	/**
 	 * {@inheritdoc]
 	 */
-	public function createUserRepository(PersistenceRepositoryInterface $persistenceRepository, \Closure $permissionsFactory = null)
+	public function createUserRepository(PersistenceRepository $persistenceRepository, \Closure $permissionsFactory = null)
 	{
 		if (array_key_exists('user', $this->instances))
 		{
@@ -93,7 +82,7 @@ final class DefaultRepositoryFactory implements RepositoryFactory
 	}
 
 	/**
-	 * @return RoleRepositoryInterface
+	 * {@inheritdoc}
 	 */
 	public function createRoleRepository()
 	{
@@ -107,8 +96,7 @@ final class DefaultRepositoryFactory implements RepositoryFactory
 	}
 
 	/**
-	 * @param int $expires
-	 * @return ActivationRepositoryInterface
+	 * {@inheritdoc}
 	 */
 	public function createActivationRepository($expires)
 	{
@@ -125,12 +113,9 @@ final class DefaultRepositoryFactory implements RepositoryFactory
 	}
 
 	/**
-	 * @param UserRepositoryInterface $userRepository
-	 * @param int                     $expires
-	 *
-	 * @return ReminderRepositoryInterface
+	 * {@inheritdoc}
 	 */
-	public function createReminderRepository(UserRepositoryInterface $userRepository, $expires)
+	public function createReminderRepository(UserRepository $userRepository, $expires)
 	{
 		if (array_key_exists('reminder', $this->instances))
 		{
@@ -146,31 +131,17 @@ final class DefaultRepositoryFactory implements RepositoryFactory
 	}
 
 	/**
-	 * @return PermissionRepository
+	 * {@inheritdoc}
 	 */
 	public function createPermissionRepository()
 	{
-		// TODO: Implement createPermissionRepository() method.
+
 	}
 
 	/**
-	 * @param int       $globalInterval
-	 * @param int|array $globalThresholds
-	 * @param int       $ipInterval
-	 * @param int|array $ipThresholds
-	 * @param int       $userInterval
-	 * @param int|array $userThresholds
-	 *
-	 * @return ThrottleRepositoryInterface
+	 * {@inheritdoc}
 	 */
-	public function createThrottleRepository(
-		$globalInterval,
-		$globalThresholds,
-		$ipInterval,
-		$ipThresholds,
-		$userInterval,
-		$userThresholds
-	)
+	public function createThrottleRepository($globalInterval, $globalThresholds, $ipInterval, $ipThresholds, $userInterval, $userThresholds)
 	{
 		if (array_key_exists('throttle', $this->instances))
 		{
@@ -179,17 +150,15 @@ final class DefaultRepositoryFactory implements RepositoryFactory
 
 		$entityManager = $this->container->make(EntityManager::class);
 
-		$repo = new DefaultDoctrineThrottleRepository(
-			$entityManager
-		);
+		$throttles = new DefaultDoctrineThrottleRepository($entityManager);
 
-		$repo->setGlobalInterval($globalInterval);
-		$repo->setGlobalThresholds($globalThresholds);
-		$repo->setIpInterval($ipInterval);
-		$repo->setIpThresholds($ipThresholds);
-		$repo->setUserInterval($userInterval);
-		$repo->setUserThresholds($userThresholds);
+		$throttles->setGlobalInterval($globalInterval);
+		$throttles->setGlobalThresholds($globalThresholds);
+		$throttles->setIpInterval($ipInterval);
+		$throttles->setIpThresholds($ipThresholds);
+		$throttles->setUserInterval($userInterval);
+		$throttles->setUserThresholds($userThresholds);
 
-		return $this->instances['throttle'] = $repo;
+		return $this->instances['throttle'] = $throttles;
 	}
 }

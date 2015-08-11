@@ -1,12 +1,11 @@
 <?php namespace Digbang\Security\Roles;
 
-use Cartalyst\Sentinel\Roles\RoleRepositoryInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping;
 use Illuminate\Support\Collection;
 
-abstract class DoctrineRoleRepository extends EntityRepository implements RoleRepositoryInterface
+abstract class DoctrineRoleRepository extends EntityRepository implements RoleRepository
 {
 	/**
 	 * @param EntityManager $entityManager

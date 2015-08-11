@@ -1,17 +1,15 @@
 <?php namespace Digbang\Security;
 
-use Cartalyst\Sentinel\Activations\ActivationRepositoryInterface;
 use Cartalyst\Sentinel\Checkpoints\CheckpointInterface;
-use Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface;
-use Cartalyst\Sentinel\Reminders\ReminderRepositoryInterface;
-use Cartalyst\Sentinel\Roles\RoleRepositoryInterface;
 use Cartalyst\Sentinel\Sentinel;
-use Cartalyst\Sentinel\Users\UserRepositoryInterface;
-use Closure;
+use Digbang\Security\Activations\ActivationRepository;
+use Digbang\Security\Persistences\PersistenceRepository;
+use Digbang\Security\Reminders\ReminderRepository;
 use Digbang\Security\Roles\Role;
+use Digbang\Security\Roles\RoleRepository;
 use Digbang\Security\Users\User;
 use Digbang\Security\Contracts\SecurityApi;
-use Illuminate\Support\Collection;
+use Digbang\Security\Users\UserRepository;
 
 /**
  * Class Security
@@ -26,7 +24,7 @@ use Illuminate\Support\Collection;
  * @method bool validateCredentials(User $user, array $credentials)
  * @method bool validForCreation(array $credentials)
  * @method bool validForUpdate($user, array $credentials)
- * @method User create(array $credentials, Closure $callback = null)
+ * @method User create(array $credentials, \Closure $callback = null)
  * @method User update($user, array $credentials)
  * @method User findUserById(int $id)
  * @method User findUserByCredentials(array $credentials)
@@ -45,24 +43,17 @@ final class Security implements SecurityApi
 	/**
 	 * @type bool
 	 */
-	private $hasRoles;
-
-	/**
-	 * @type bool
-	 */
 	private $hasPermissions;
 
 	/**
 	 * Security constructor.
 	 *
 	 * @param Sentinel $sentinel
-	 * @param bool     $hasRoles
 	 * @param bool     $hasPermissions
 	 */
-	public function __construct(Sentinel $sentinel, $hasRoles = true, $hasPermissions = true)
+	public function __construct(Sentinel $sentinel, $hasPermissions = true)
 	{
 		$this->sentinel = $sentinel;
-		$this->hasRoles       = (bool) $hasRoles;
 		$this->hasPermissions = (bool) $hasPermissions;
 	}
 
@@ -226,7 +217,7 @@ final class Security implements SecurityApi
 	 *
 	 * @return void
 	 */
-	public function setRequestCredentials(Closure $requestCredentials)
+	public function setRequestCredentials(\Closure $requestCredentials)
 	{
 		$this->sentinel->setRequestCredentials($requestCredentials);
 	}
@@ -245,11 +236,11 @@ final class Security implements SecurityApi
 	/**
 	 * Sets the callback which creates a basic response.
 	 *
-	 * @param Closure $basicResponse
+	 * @param \Closure $basicResponse
 	 *
 	 * @return void
 	 */
-	public function creatingBasicResponse(Closure $basicResponse)
+	public function creatingBasicResponse(\Closure $basicResponse)
 	{
 		$this->sentinel->creatingBasicResponse($basicResponse);
 	}
@@ -295,12 +286,12 @@ final class Security implements SecurityApi
 	/**
 	 * Pass a closure to Sentinel to bypass checkpoints.
 	 *
-	 * @param  Closure $callback
+	 * @param  \Closure $callback
 	 * @param  array   $checkpoints
 	 *
 	 * @return mixed
 	 */
-	public function bypassCheckpoints(Closure $callback, $checkpoints = [])
+	public function bypassCheckpoints(\Closure $callback, $checkpoints = [])
 	{
 		return $this->sentinel->bypassCheckpoints($callback, $checkpoints);
 	}
@@ -387,7 +378,7 @@ final class Security implements SecurityApi
 	/**
 	 * Returns the user repository.
 	 *
-	 * @return UserRepositoryInterface
+	 * @return UserRepository
 	 */
 	public function users()
 	{
@@ -397,7 +388,7 @@ final class Security implements SecurityApi
 	/**
 	 * Returns the role repository.
 	 *
-	 * @return RoleRepositoryInterface
+	 * @return RoleRepository
 	 */
 	public function roles()
 	{
@@ -407,7 +398,7 @@ final class Security implements SecurityApi
 	/**
 	 * Returns the persistences repository.
 	 *
-	 * @return PersistenceRepositoryInterface
+	 * @return PersistenceRepository
 	 */
 	public function persistences()
 	{
@@ -417,7 +408,7 @@ final class Security implements SecurityApi
 	/**
 	 * Returns the reminders repository.
 	 *
-	 * @return ReminderRepositoryInterface
+	 * @return ReminderRepository
 	 */
 	public function reminders()
 	{
@@ -427,7 +418,7 @@ final class Security implements SecurityApi
 	/**
 	 * Returns the activations repository.
 	 *
-	 * @return ActivationRepositoryInterface
+	 * @return ActivationRepository
 	 */
 	public function activations()
 	{
@@ -475,32 +466,5 @@ final class Security implements SecurityApi
 		}
 
 		return call_user_func_array([$this->sentinel, 'hasAnyAccess'], func_get_args());
-	}
-
-	/**
-	 * @return Collection
-	 */
-	public function getRoles()
-	{
-		if (! $this->hasRoles)
-		{
-			return new Collection;
-		}
-
-		return call_user_func_array([$this->sentinel, 'getRoles'], func_get_args());
-	}
-
-	/**
-	 * @param Role $role
-	 * @return bool
-	 */
-	public function inRole(Role $role)
-	{
-		if (! $this->hasRoles)
-		{
-			return false;
-		}
-
-		return call_user_func_array([$this->sentinel, 'inRole'], func_get_args());
 	}
 }

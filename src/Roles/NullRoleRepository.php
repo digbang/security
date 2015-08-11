@@ -1,14 +1,9 @@
 <?php namespace Digbang\Security\Roles;
 
-use Cartalyst\Sentinel\Roles\RoleRepositoryInterface;
-
-class NullRoleRepository implements RoleRepositoryInterface
+class NullRoleRepository implements RoleRepository
 {
 	/**
-	 * Finds a role by the given primary key.
-	 *
-	 * @param  int $id
-	 * @return \Cartalyst\Sentinel\Roles\RoleInterface
+	 * {@inheritdoc}
 	 */
 	public function findById($id)
 	{
@@ -16,10 +11,7 @@ class NullRoleRepository implements RoleRepositoryInterface
 	}
 
 	/**
-	 * Finds a role by the given slug.
-	 *
-	 * @param  string $slug
-	 * @return \Cartalyst\Sentinel\Roles\RoleInterface
+	 * {@inheritdoc}
 	 */
 	public function findBySlug($slug)
 	{
@@ -27,13 +19,50 @@ class NullRoleRepository implements RoleRepositoryInterface
 	}
 
 	/**
-	 * Finds a role by the given name.
-	 *
-	 * @param  string $name
-	 * @return \Cartalyst\Sentinel\Roles\RoleInterface
+	 * {@inheritdoc}
 	 */
 	public function findByName($name)
 	{
 		return null;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function find($id)
+	{
+		return null;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function findAll()
+	{
+		return [];
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+	{
+		return [];
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function findOneBy(array $criteria)
+	{
+		return null;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getClassName()
+	{
+		return Role::class;
 	}
 }

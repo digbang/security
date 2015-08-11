@@ -4,7 +4,9 @@ use Cartalyst\Sentinel\Reminders\ReminderRepositoryInterface;
 use Cartalyst\Sentinel\Users\UserRepositoryInterface;
 use Digbang\Security\Reminders\DefaultReminder;
 use Digbang\Security\Reminders\Reminder;
+use Digbang\Security\Reminders\ReminderRepository;
 use Digbang\Security\Users\User;
+use Digbang\Security\Users\UserRepository;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -21,7 +23,7 @@ use Prophecy\Argument;
  */
 class DefaultDoctrineReminderRepositorySpec extends ObjectBehavior
 {
-    function let(EntityManager $entityManager, ClassMetadata $classMetadata, UserRepositoryInterface $userRepository)
+    function let(EntityManager $entityManager, ClassMetadata $classMetadata, UserRepository $userRepository)
     {
 	    $classMetadata->name = DefaultReminder::class;
 	    $entityManager->getClassMetadata(DefaultReminder::class)->willReturn($classMetadata);
@@ -37,6 +39,7 @@ class DefaultDoctrineReminderRepositorySpec extends ObjectBehavior
     function it_implements_sentinels_reminder_repository_interface()
     {
         $this->shouldHaveType(ReminderRepositoryInterface::class);
+        $this->shouldHaveType(ReminderRepository::class);
     }
 
 	function it_should_check_if_a_reminder_exists_for_a_given_user(User $user, EntityManager $entityManager, QueryBuilder $queryBuilder, AbstractQuery $query, Reminder $reminder)

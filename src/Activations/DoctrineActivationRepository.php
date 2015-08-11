@@ -1,14 +1,13 @@
 <?php namespace Digbang\Security\Activations;
 
 use Carbon\Carbon;
-use Cartalyst\Sentinel\Activations\ActivationRepositoryInterface;
 use Cartalyst\Sentinel\Users\UserInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping;
 use Doctrine\ORM\NoResultException;
 
-abstract class DoctrineActivationRepository extends EntityRepository implements ActivationRepositoryInterface
+abstract class DoctrineActivationRepository extends EntityRepository implements ActivationRepository
 {
 	/**
 	 * @type int

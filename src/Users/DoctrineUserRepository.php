@@ -1,19 +1,18 @@
 <?php namespace Digbang\Security\Users;
 
-use Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface;
 use Cartalyst\Sentinel\Users\UserInterface;
-use Cartalyst\Sentinel\Users\UserRepositoryInterface;
+use Digbang\Security\Persistences\PersistenceRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use InvalidArgumentException;
 
-abstract class DoctrineUserRepository extends EntityRepository implements UserRepositoryInterface
+abstract class DoctrineUserRepository extends EntityRepository implements UserRepository
 {
 	/**
-	 * @type PersistenceRepositoryInterface
+	 * @type PersistenceRepository
 	 */
-	protected $persistenceRepository;
+	protected $persistences;
 
 	/**
 	 * @type \Closure|null
@@ -21,18 +20,18 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 	protected $permissionsFactory;
 
 	/**
-	 * @param EntityManager                  $entityManager
-	 * @param PersistenceRepositoryInterface $persistenceRepository
-	 * @param \Closure                        $permissionsFactory
+	 * @param EntityManager         $entityManager
+	 * @param PersistenceRepository $persistences
+	 * @param \Closure              $permissionsFactory
 	 */
-    public function __construct(EntityManager $entityManager, PersistenceRepositoryInterface $persistenceRepository, \Closure $permissionsFactory = null)
+    public function __construct(EntityManager $entityManager, PersistenceRepository $persistences, \Closure $permissionsFactory = null)
     {
         parent::__construct($entityManager, $entityManager->getClassMetadata(
             $this->entityName()
         ));
 
-	    $this->persistenceRepository = $persistenceRepository;
-	    $this->permissionsFactory    = $permissionsFactory;
+	    $this->persistences       = $persistences;
+	    $this->permissionsFactory = $permissionsFactory;
     }
 
 	/**
@@ -91,7 +90,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 	 */
 	public function findByPersistenceCode($code)
 	{
-        return $this->persistenceRepository->findUserByPersistenceCode($code);
+        return $this->persistences->findUserByPersistenceCode($code);
 	}
 
 	/**

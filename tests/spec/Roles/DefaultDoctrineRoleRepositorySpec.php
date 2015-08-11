@@ -3,6 +3,7 @@
 use Cartalyst\Sentinel\Roles\RoleRepositoryInterface;
 use Digbang\Security\Roles\Role;
 use Digbang\Security\Roles\DefaultRole;
+use Digbang\Security\Roles\RoleRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Persisters\Entity\EntityPersister;
@@ -51,6 +52,7 @@ class DefaultDoctrineRoleRepositorySpec extends ObjectBehavior
     function it_should_implement_sentinels_role_repository_interface()
     {
         $this->shouldHaveType(RoleRepositoryInterface::class);
+        $this->shouldHaveType(RoleRepository::class);
     }
 
     function it_should_find_roles_by_id()

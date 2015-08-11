@@ -1,16 +1,15 @@
 <?php namespace Digbang\Security\Reminders;
 
 use Carbon\Carbon;
-use Cartalyst\Sentinel\Reminders\ReminderRepositoryInterface;
 use Cartalyst\Sentinel\Users\UserInterface;
-use Cartalyst\Sentinel\Users\UserRepositoryInterface;
 use Digbang\Security\Users\User;
+use Digbang\Security\Users\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping;
 use Doctrine\ORM\NoResultException;
 
-abstract class DoctrineReminderRepository extends EntityRepository implements ReminderRepositoryInterface
+abstract class DoctrineReminderRepository extends EntityRepository implements ReminderRepository
 {
 	/**
 	 * @type int
@@ -18,21 +17,21 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
 	private $expires;
 
 	/**
-	 * @type UserRepositoryInterface
+	 * @type UserRepository
 	 */
-	private $userRepository;
+	private $users;
 
 	/**
-	 * @param EntityManager           $entityManager
-	 * @param UserRepositoryInterface $userRepository
-	 * @param int                     $expires
+	 * @param EntityManager  $entityManager
+	 * @param UserRepository $users
+	 * @param int            $expires
 	 */
-	public function __construct(EntityManager $entityManager, UserRepositoryInterface $userRepository, $expires = 259200)
+	public function __construct(EntityManager $entityManager, UserRepository $users, $expires = 259200)
 	{
 		parent::__construct($entityManager, $entityManager->getClassMetadata($this->entityName()));
 
-		$this->expires        = $expires;
-		$this->userRepository = $userRepository;
+		$this->expires = $expires;
+		$this->users   = $users;
 	}
 
 	/**
@@ -44,8 +43,8 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
 	/**
 	 * Check if a valid reminder exists.
 	 *
-	 * @param  \Cartalyst\Sentinel\Users\UserInterface $user
-	 * @param  string                                  $code
+	 * @param  User   $user
+	 * @param  string $code
 	 *
 	 * @return bool
 	 */
@@ -74,7 +73,7 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
 
 		$credentials = ['password' => $password];
 
-		if (! $this->userRepository->validForUpdate($user, $credentials))
+		if (! $this->users->validForUpdate($user, $credentials))
 		{
 			return false;
 		}
@@ -84,7 +83,7 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
 
 		try
 		{
-			$this->userRepository->update($user, $credentials);
+			$this->users->update($user, $credentials);
 
 			$reminder->complete();
 			$this->save($reminder);

@@ -3,8 +3,10 @@
 use Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface;
 use Cartalyst\Sentinel\Users\UserRepositoryInterface;
 use Digbang\Security\Permissions\LazyStandardPermissions;
+use Digbang\Security\Persistences\PersistenceRepository;
 use Digbang\Security\Users\DefaultUser;
 use Digbang\Security\Users\User;
+use Digbang\Security\Users\UserRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -22,7 +24,7 @@ use Prophecy\Prophet;
  */
 class DefaultDoctrineUserRepositorySpec extends ObjectBehavior
 {
-	function let(EntityManager $entityManager, PersistenceRepositoryInterface $persistenceRepository, ClassMetadata $classMetadata)
+	function let(EntityManager $entityManager, PersistenceRepository $persistenceRepository, ClassMetadata $classMetadata)
 	{
 		$entityManager->getClassMetadata(DefaultUser::class)
 			->shouldBeCalled()
@@ -41,9 +43,10 @@ class DefaultDoctrineUserRepositorySpec extends ObjectBehavior
         $this->shouldHaveType('Digbang\Security\Users\DoctrineUserRepository');
     }
 
-    function it_should_implement_sentrys_repository_interface()
+    function it_should_implement_sentinels_repository_interface()
     {
         $this->shouldHaveType(UserRepositoryInterface::class);
+        $this->shouldHaveType(UserRepository::class);
     }
 
 	function it_should_find_users_by_id(EntityManager $entityManager, DefaultUser $user)
