@@ -55,13 +55,12 @@ final class SecurityContext
 	/**
 	 * Add a security context.
 	 *
-	 * @param string                       $context
 	 * @param SecurityContextConfiguration $configuration
 	 * @throws \BadMethodCallException
 	 */
-	public function add($context, SecurityContextConfiguration $configuration)
+	public function add(SecurityContextConfiguration $configuration)
 	{
-		$this->contexts[$context] = $configuration;
+		$this->contexts[$configuration->getName()] = $configuration;
 
 		$this->updateMappings($configuration);
 	}

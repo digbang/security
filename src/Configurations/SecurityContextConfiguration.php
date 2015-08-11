@@ -10,6 +10,8 @@ use Digbang\Security\Permissions\LazyStrictPermissions;
  * Class SecurityContextConfiguration
  *
  * @package Digbang\Security\Configurations
+ *
+ * Mapping getters:
  * @method string getUserMapping()
  * @method string getActivationMapping()
  * @method string getUserPermissionMapping()
@@ -21,12 +23,16 @@ use Digbang\Security\Permissions\LazyStrictPermissions;
  * @method string getGlobalThrottleMapping()
  * @method string getIpThrottleMapping()
  * @method string getUserThrottleMapping()
+ *
+ * Module enablers:
  * @method $this enableRoles()
  * @method $this enablePermissions()
  * @method $this disableRoles()
  * @method $this disablePermissions()
  * @method bool isRolesEnabled()
  * @method bool isPermissionsEnabled()
+ *
+ * Throttle configuration getters - setters:
  * @method $this setGlobalThrottleInterval($interval)
  * @method $this setGlobalThrottleThresholds($thresholds)
  * @method $this setIpThrottleInterval($interval)
@@ -39,6 +45,8 @@ use Digbang\Security\Permissions\LazyStrictPermissions;
  * @method int|array getIpThrottleThresholds()
  * @method int getUserThrottleInterval()
  * @method int|array getUserThrottleThresholds()
+ *
+ * Expiring getters - setters (reminders and activations):
  * @method $this setRemindersExpiration(int $expiration)
  * @method $this setRemindersLottery(array $lottery)
  * @method $this setActivationsExpiration(int $expiration)
@@ -47,12 +55,16 @@ use Digbang\Security\Permissions\LazyStrictPermissions;
  * @method array getRemindersLottery()
  * @method int getActivationsExpiration()
  * @method array getActivationsLottery()
+ *
+ * Repository getters:
  * @method null|string getUserRepository()
  * @method null|string getActivationRepository()
  * @method null|string getPersistenceRepository()
  * @method null|string getReminderRepository()
  * @method null|string getRoleRepository()
  * @method null|string getThrottleRepository()
+ *
+ * Table getters - setters:
  * @method $this setUserTable(string $table)
  * @method $this setUsersRolesTable(string $table)
  * @method $this setUserPermissionTable(string $table)
@@ -63,6 +75,9 @@ use Digbang\Security\Permissions\LazyStrictPermissions;
  * @method $this setRoleTable(string $table)
  * @method $this setThrottleTable(string $table)
  * @method string|null getUserTable()
+ * @method string|null getUsersRolesTable()
+ * @method string|null getUserPermissionTable()
+ * @method string|null getRolePermissionTable()
  * @method string|null getActivationTable()
  * @method string|null getPersistenceTable()
  * @method string|null getReminderTable()
@@ -208,11 +223,65 @@ final class SecurityContextConfiguration
 	];
 
 	/**
-	 * SecurityContextConfiguration constructor.
+	 * @type string
 	 */
-	public function __construct()
+	private $name;
+
+	/**
+	 * @type string
+	 */
+	private $prefix;
+
+	/**
+	 *
+	 * SecurityContextConfiguration constructor.
+	 *
+	 * @param string $name
+	 */
+	public function __construct($name)
 	{
+		$this->name = $name;
+
+		$this->setPrefix($name);
 		$this->setStandardPermissions();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getName()
+	{
+		return $this->name;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getPrefix()
+	{
+		return substr($this->prefix, 0, -1);
+	}
+
+	/**
+	 * Set the global table prefix. By default, the context name will be used, with
+	 * a trailing underscore.
+	 * A trailing underscore will be added to the given prefix automatically, if needed.
+	 *
+	 * To unset the global prefix, use an empty string as prefix.
+	 *
+	 * @param string $prefix
+	 * @return $this
+	 */
+	public function setPrefix($prefix)
+	{
+		if ($prefix != '')
+		{
+			$prefix = rtrim($prefix, '_') . '_';
+		}
+
+		$this->prefix = $prefix;
+
+		return $this;
 	}
 
 	/**
@@ -670,17 +739,12 @@ final class SecurityContextConfiguration
 	 */
 	public function getTable($entity)
 	{
-		return array_get($this->customTables, $entity);
-	}
+		if (array_key_exists($entity, $this->customTables))
+		{
+			return $this->prefix . $this->customTables[$entity];
+		}
 
-	/**
-	 * @param string $entity
-	 *
-	 * @return string|null
-	 */
-	private function getMappingTable($entity)
-	{
-		return array_get($this->customTables, $entity);
+		return null;
 	}
 
 	/**
@@ -704,14 +768,14 @@ final class SecurityContextConfiguration
 			return $this->setMappingTable(lcfirst($matches[1]), array_shift($arguments));
 		}
 
-		if (preg_match('/^get(.*)Mapping$/', $name, $matches))
+		if (preg_match('/^get(.*)Table/', $name, $matches))
 		{
-			return $this->getMapping(lcfirst($matches[1]));
+			return $this->getTable(lcfirst($matches[1]));
 		}
 
 		if (preg_match('/^get(.*)Mapping$/', $name, $matches))
 		{
-			return $this->getMappingTable(lcfirst($matches[1]));
+			return $this->getMapping(lcfirst($matches[1]));
 		}
 
 		if (preg_match('/^get(.*)Repository$/', $name, $matches))
