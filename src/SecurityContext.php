@@ -3,11 +3,12 @@
 use Digbang\Doctrine\Metadata\DecoupledMappingDriver;
 use Digbang\Doctrine\Metadata\EntityMapping;
 use Digbang\Security\Configurations\SecurityContextConfiguration;
+use Digbang\Security\Contracts\SecurityApi;
 use Digbang\Security\Factories\SecurityFactory;
 use Digbang\Security\Mappings\CustomTableMapping;
-use Digbang\Security\Mappings\SecurityRoleMapping;
-use Digbang\Security\Mappings\SecurityUserMapping;
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Routing\UrlGenerator;
+use Illuminate\Http\Request;
 
 final class SecurityContext
 {
@@ -63,6 +64,27 @@ final class SecurityContext
 		$this->contexts[$configuration->getName()] = $configuration;
 
 		$this->updateMappings($configuration);
+	}
+
+	/**
+	 * Bind the given security context to the Request and Container.
+	 *
+	 * @param string  $context
+	 * @param Request $request
+	 */
+	public function bindContext($context, Request $request)
+	{
+		$this->container->bind(SecurityApi::class, function() use ($context){
+		    return $this->getSecurity($context);
+	    });
+
+	    $this->container->bind(UrlGenerator::class, function() use ($context){
+		    return $this->getSecurity($context)->url();
+	    });
+
+		$request->setUserResolver(function() use ($context){
+            return $this->getSecurity($context)->getUser();
+        });
 	}
 
 	/**

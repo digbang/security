@@ -6,7 +6,7 @@ use Digbang\Security\Permissions\PermissionRepository;
 use Digbang\Security\Persistences\PersistenceRepository;
 use Digbang\Security\Reminders\ReminderRepository;
 use Digbang\Security\Roles\RoleRepository;
-use Digbang\Security\Urls\PermissibleUrlGenerator;
+use Digbang\Security\Urls\PermissionAwareUrlGenerator;
 use Digbang\Security\Users\User;
 use Digbang\Security\Users\UserRepository;
 
@@ -292,7 +292,7 @@ interface SecurityApi
 	/**
 	 * Returns the Url generator.
 	 *
-	 * @return PermissibleUrlGenerator
+	 * @return PermissionAwareUrlGenerator
 	 */
-	public function urls();
+	public function url();
 }

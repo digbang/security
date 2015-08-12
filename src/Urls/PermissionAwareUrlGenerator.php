@@ -2,11 +2,10 @@
 
 use Digbang\Security\Contracts\SecurityApi;
 use Digbang\Security\Permissions\Permissible;
-use Digbang\Security\Permissions\PermissionRepository;
 use Digbang\Security\Permissions\PermissionException;
 use Illuminate\Contracts\Routing\UrlGenerator;
 
-class PermissionAwareUrlGenerator implements PermissibleUrlGenerator
+class PermissionAwareUrlGenerator implements UrlGenerator
 {
 	/**
 	 * @type UrlGenerator
@@ -14,24 +13,17 @@ class PermissionAwareUrlGenerator implements PermissibleUrlGenerator
 	private $url;
 
 	/**
-	 * @type PermissionRepository
-	 */
-	private $permissions;
-
-	/**
 	 * @type SecurityApi
 	 */
 	private $securityApi;
 
 	/**
-	 * @param UrlGenerator         $url
-	 * @param PermissionRepository $permissions
-	 * @param SecurityApi          $securityApi
+	 * @param UrlGenerator $url
+	 * @param SecurityApi  $securityApi
 	 */
-	public function __construct(UrlGenerator $url, PermissionRepository $permissions, SecurityApi $securityApi)
+	public function __construct(UrlGenerator $url, SecurityApi $securityApi)
 	{
 		$this->url         = $url;
-		$this->permissions = $permissions;
 		$this->securityApi = $securityApi;
 	}
 
@@ -40,7 +32,7 @@ class PermissionAwareUrlGenerator implements PermissibleUrlGenerator
 	 */
 	public function route($name, $parameters = [], $absolute = true)
 	{
-		$permission = $this->permissions->getForRoute($name);
+		$permission = $this->securityApi->permissions()->getForRoute($name);
 
 	    if (! $this->hasPermission($permission))
 	    {
@@ -55,7 +47,7 @@ class PermissionAwareUrlGenerator implements PermissibleUrlGenerator
 	 */
 	public function action($action, $parameters = [], $absolute = true)
 	{
-		$permission = $this->permissions->getForAction($action);
+		$permission = $this->securityApi->permissions()->getForAction($action);
 
 	    if (! $this->hasPermission($permission))
 	    {
@@ -68,19 +60,11 @@ class PermissionAwareUrlGenerator implements PermissibleUrlGenerator
 	/**
 	 * {@inheritdoc}
 	 */
-	public function insecure()
-	{
-		return $this->url;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function to($path, $extra = [], $secure = null)
 	{
 		$url = $this->url->to($path, $extra, $secure);
 
-		$permission = $this->permissions->getForPath($url);
+		$permission = $this->securityApi->permissions()->getForPath($url);
 
 	    if (! $this->hasPermission($permission))
 	    {
@@ -118,27 +102,13 @@ class PermissionAwareUrlGenerator implements PermissibleUrlGenerator
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Allow access to the UrlGenerator object without checking permissions.
+	 *
+	 * @return UrlGenerator
 	 */
-	public function bestRoute(array $routes)
+	public function insecure()
 	{
-		return $this->best('route', $routes);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function bestAction(array $actions)
-	{
-		return $this->best('action', $actions);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function bestPath(array $paths)
-	{
-		return $this->best('to', $paths);
+		return $this->url;
 	}
 
 	/**
@@ -166,37 +136,5 @@ class PermissionAwareUrlGenerator implements PermissibleUrlGenerator
 		}
 
 		return false;
-	}
-
-	/**
-	 * @param string $method
-	 * @param array $routes
-	 *
-	 * @return string|null
-	 * @throws \UnexpectedValueException
-	 */
-	private function best($method, array $routes)
-	{
-		if (!method_exists($this, $method))
-		{
-			throw new \UnexpectedValueException("Method $method does not exist.");
-		}
-
-		foreach ($routes as $route)
-		{
-			if (! is_array($route))
-			{
-				$route = [$route];
-			}
-
-			try
-			{
-				return call_user_func_array([$this, $method], $route);
-			}
-			catch (PermissionException $e)
-			{
-				// Do nothing
-			}
-		}
 	}
 }

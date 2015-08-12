@@ -6,7 +6,6 @@ use Cartalyst\Sentinel\Checkpoints\ThrottleCheckpoint;
 use Cartalyst\Sentinel\Sentinel;
 use Digbang\Security\Activations\ActivationRepository;
 use Digbang\Security\Configurations\SecurityContextConfiguration;
-use Digbang\Security\Permissions\InsecurePermissionRepository;
 use Digbang\Security\Persistences\PersistenceRepository;
 use Digbang\Security\Reminders\ReminderRepository;
 use Digbang\Security\Roles\NullRoleRepository;
@@ -81,21 +80,15 @@ class SecurityFactory
             return compact('login', 'password');
         });
 
-		$sentinel->creatingBasicResponse(function () {
+		$sentinel->creatingBasicResponse(function(){
             $headers = ['WWW-Authenticate' => 'Basic'];
 
             return new Response('Invalid credentials.', 401, $headers);
         });
 
-		$permissions = $this->getPermissionRepository($configuration);
+		$security = new Security($sentinel, $this->getPermissionRepository($configuration));
 
-		$security = new Security($sentinel, $permissions);
-
-		$security->setUrlGenerator(new PermissionAwareUrlGenerator(
-			$this->container->make(UrlGenerator::class),
-			$permissions,
-			$security
-		));
+		$this->bindUrlGenerator($security);
 
 		return $security;
 	}
@@ -263,5 +256,19 @@ class SecurityFactory
 		}
 
 		return $this->repositoryFactory->createPermissionRepository($configuration->isPermissionsEnabled());
+	}
+
+	/**
+	 * @param Security $security
+	 */
+	private function bindUrlGenerator(Security $security)
+	{
+		$urls = new PermissionAwareUrlGenerator(
+			$this->container->make(UrlGenerator::class),
+			$security
+		);
+
+		$security->setUrlGenerator($urls);
+		$this->container->instance(UrlGenerator::class, $urls);
 	}
 }

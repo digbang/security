@@ -9,7 +9,7 @@ use Digbang\Security\Persistences\PersistenceRepository;
 use Digbang\Security\Reminders\ReminderRepository;
 use Digbang\Security\Roles\Role;
 use Digbang\Security\Roles\RoleRepository;
-use Digbang\Security\Urls\PermissibleUrlGenerator;
+use Digbang\Security\Urls\PermissionAwareUrlGenerator;
 use Digbang\Security\Users\User;
 use Digbang\Security\Contracts\SecurityApi;
 use Digbang\Security\Users\UserRepository;
@@ -49,9 +49,9 @@ final class Security implements SecurityApi
 	private $permissions;
 
 	/**
-	 * @type PermissibleUrlGenerator
+	 * @type PermissionAwareUrlGenerator
 	 */
-	private $urls;
+	private $url;
 
 	/**
 	 * Security constructor.
@@ -66,11 +66,11 @@ final class Security implements SecurityApi
 	}
 
 	/**
-	 * @param PermissibleUrlGenerator $secureUrl
+	 * @param PermissionAwareUrlGenerator $url
 	 */
-	public function setUrlGenerator(PermissibleUrlGenerator $secureUrl)
+	public function setUrlGenerator(PermissionAwareUrlGenerator $url)
 	{
-		$this->urls = $secureUrl;
+		$this->url = $url;
 	}
 
 	/**
@@ -454,11 +454,11 @@ final class Security implements SecurityApi
 	/**
 	 * Returns the Url generator.
 	 *
-	 * @return PermissibleUrlGenerator
+	 * @return PermissionAwareUrlGenerator
 	 */
-	public function urls()
+	public function url()
 	{
-		return $this->urls;
+		return $this->url;
 	}
 
 	/**

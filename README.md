@@ -144,7 +144,7 @@ The `PermissibleUrlGenerator` is an extension of Laravel's `UrlGenerator` interf
 implementation, `PermissionAwareUrlGenerator`, will check if the currently logged-in user has access to the
 requested url and throw a `Digbang\Security\Permissions\PermissionException` if he or she does not.
  
-You may access this functionality through the `$securityApi->urls()` method. 
+You may access this functionality through the `$securityApi->url()` method. 
 
 ## Custom objects
 The Security package extends the `Cartalyst\Sentinel` interfaces with more functionality. By default,

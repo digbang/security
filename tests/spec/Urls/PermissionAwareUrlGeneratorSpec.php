@@ -34,6 +34,9 @@ class PermissionAwareUrlGeneratorSpec extends ObjectBehavior
 		$url->to(self::INSECURE_PATH, Argument::cetera())->willReturn(self::INSECURE_PATH);
 		$url->to(Argument::not(self::SECURE_PATH), Argument::cetera())->willReturn('/an/invalid/url');
 
+		$securityApi->permissions()->willReturn($permissionRepo);
+		$securityApi->getUser()->willReturn(null);
+
 		$permissionRepo->getForRoute( self::SECURE_ROUTE )->willReturn(self::VALID_PERMISSION);
 		$permissionRepo->getForAction(self::SECURE_ACTION)->willReturn(self::VALID_PERMISSION);
 		$permissionRepo->getForPath(  self::URL         )->willReturn(self::VALID_PERMISSION);
@@ -46,7 +49,7 @@ class PermissionAwareUrlGeneratorSpec extends ObjectBehavior
 		$permissionRepo->getForAction(Argument::not(self::SECURE_ACTION))->willReturn('an.invalid.permission');
 		$permissionRepo->getForPath(  Argument::not(self::SECURE_PATH  ))->willReturn('an.invalid.permission');
 
-		$this->beConstructedWith($url, $permissionRepo, $securityApi);
+		$this->beConstructedWith($url, $securityApi);
 	}
 
 	function withUser(SecurityApi $securityApi)
@@ -63,15 +66,6 @@ class PermissionAwareUrlGeneratorSpec extends ObjectBehavior
 	function it_is_initializable_without_user()
 	{
 		$this->shouldHaveType('Digbang\Security\Urls\PermissionAwareUrlGenerator');
-		$this->shouldHaveType('Digbang\Security\Urls\PermissibleUrlGenerator');
-	}
-
-	function it_is_initializable_with_user(SecurityApi $securityApi)
-	{
-		$this->withUser($securityApi);
-
-	    $this->shouldHaveType('Digbang\Security\Urls\PermissionAwareUrlGenerator');
-	    $this->shouldHaveType('Digbang\Security\Urls\PermissibleUrlGenerator');
 	}
 
 	function it_should_make_urls_by_route_if_the_user_has_a_permission(SecurityApi $securityApi)
@@ -144,31 +138,5 @@ class PermissionAwareUrlGeneratorSpec extends ObjectBehavior
 	function it_should_squeak_when_requested_secure_urls_by_path_without_user()
 	{
 		$this->shouldThrow(PermissionException::class)->duringTo(self::SECURE_PATH);
-	}
-
-	function it_should_give_me_the_best_allowed_route_based_on_the_current_users_permissions(SecurityApi $securityApi)
-	{
-		$this->withUser($securityApi);
-
-		$this->bestRoute([self::SECURE_ROUTE])->shouldReturn(self::URL);
-		$this->bestRoute([self::INSECURE_ROUTE])->shouldReturn(self::URL);
-	}
-
-	function it_should_give_me_null_with_no_user_permissions()
-	{
-		$this->bestRoute([self::SECURE_ROUTE])->shouldReturn(null);
-	}
-
-	function it_should_give_me_the_best_allowed_action_based_on_the_current_users_permissions(SecurityApi $securityApi)
-	{
-		$this->withUser($securityApi);
-
-		$this->bestAction([self::SECURE_ACTION])->shouldReturn(self::URL);
-		$this->bestAction([self::INSECURE_ACTION])->shouldReturn(self::URL);
-	}
-
-	function it_should_give_me_null_on_an_action_with_no_user_permissions()
-	{
-		$this->bestAction([self::SECURE_ACTION])->shouldReturn(null);
 	}
 }

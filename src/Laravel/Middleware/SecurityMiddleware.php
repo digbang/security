@@ -3,21 +3,13 @@
 use Cartalyst\Sentinel\Activations\ActivationRepositoryInterface;
 use Cartalyst\Sentinel\Reminders\ReminderRepositoryInterface;
 use Digbang\Security\Configurations\SecurityContextConfiguration;
-use Digbang\Security\Contracts\SecurityApi;
 use Digbang\Security\Security;
 use Digbang\Security\SecurityContext;
-use Digbang\Security\Urls\PermissibleUrlGenerator;
-use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Routing\UrlGenerator;
+use Illuminate\Http\Request;
 use Psr\Log\LoggerInterface;
 
 final class SecurityMiddleware
 {
-	/**
-	 * @type Container
-	 */
-	private $container;
-
 	/**
 	 * @type SecurityContext
 	 */
@@ -31,13 +23,11 @@ final class SecurityMiddleware
 	/**
 	 * SecurityContext constructor.
 	 *
-	 * @param Container       $container
 	 * @param SecurityContext $securityContext
 	 * @param LoggerInterface $logger
 	 */
-	public function __construct(Container $container, SecurityContext $securityContext, LoggerInterface $logger)
+	public function __construct(SecurityContext $securityContext, LoggerInterface $logger)
 	{
-		$this->container       = $container;
 		$this->securityContext = $securityContext;
 		$this->logger          = $logger;
 	}
@@ -45,27 +35,14 @@ final class SecurityMiddleware
 	/**
      * Run the request filter.
      *
-     * @param \Illuminate\Http\Request  $request
-     * @param \Closure                  $next
-	 * @param string                    $context
+     * @param Request  $request
+     * @param \Closure $next
+	 * @param string   $context
      * @return mixed
      */
-    public function handle($request, \Closure $next, $context)
+    public function handle(Request $request, \Closure $next, $context)
     {
-	    $urlsGetterCallback = function() use ($context){
-		    return $this->securityContext->getSecurity($context)->urls();
-	    };
-
-	    $this->container->bind(SecurityApi::class, function() use ($context){
-		    return $this->securityContext->getSecurity($context);
-	    });
-	    $this->container->bind(UrlGenerator::class, $urlsGetterCallback);
-	    $this->container->bind(PermissibleUrlGenerator::class, $urlsGetterCallback);
-
-
-	    $request->setUserResolver(function() use ($context){
-            return $this->securityContext->getSecurity($context)->getUser();
-        });
+	    $this->securityContext->bindContext($context, $request);
 
 	    $response = $next($request);
 
@@ -98,7 +75,8 @@ final class SecurityMiddleware
 		    // Silently fail and report, but still serve the content.
 		    $this->logger->error(
 			    "Unable to garbage collect reminders or activations: " .
-		        $e->getMessage() . PHP_EOL . $e->getTraceAsString()
+		        $e->getMessage(),
+			    $e->getTrace()
 		    );
 	    }
     }
