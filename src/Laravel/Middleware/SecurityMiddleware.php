@@ -6,7 +6,9 @@ use Digbang\Security\Configurations\SecurityContextConfiguration;
 use Digbang\Security\Contracts\SecurityApi;
 use Digbang\Security\Security;
 use Digbang\Security\SecurityContext;
+use Digbang\Security\Urls\PermissibleUrlGenerator;
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Routing\UrlGenerator;
 use Psr\Log\LoggerInterface;
 
 final class SecurityMiddleware
@@ -50,9 +52,16 @@ final class SecurityMiddleware
      */
     public function handle($request, \Closure $next, $context)
     {
+	    $urlsGetterCallback = function() use ($context){
+		    return $this->securityContext->getSecurity($context)->urls();
+	    };
+
 	    $this->container->bind(SecurityApi::class, function() use ($context){
 		    return $this->securityContext->getSecurity($context);
 	    });
+	    $this->container->bind(UrlGenerator::class, $urlsGetterCallback);
+	    $this->container->bind(PermissibleUrlGenerator::class, $urlsGetterCallback);
+
 
 	    $request->setUserResolver(function() use ($context){
             return $this->securityContext->getSecurity($context)->getUser();
