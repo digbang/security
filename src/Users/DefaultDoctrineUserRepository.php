@@ -38,12 +38,6 @@ final class DefaultDoctrineUserRepository extends DoctrineUserRepository
 			$user->update($rest);
 		}
 
-		if ($this->permissionsFactory)
-		{
-			$user->setPermissionsFactory($this->permissionsFactory);
-		}
-
 		return $user;
 	}
-
 }

@@ -6,6 +6,8 @@ use Digbang\Security\Configurations\SecurityContextConfiguration;
 use Digbang\Security\Contracts\SecurityApi;
 use Digbang\Security\Factories\SecurityFactory;
 use Digbang\Security\Mappings\CustomTableMapping;
+use Digbang\Security\Permissions\PermissionStrategyEventListener;
+use Doctrine\ORM\EntityManagerInterface;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Http\Request;
@@ -85,6 +87,8 @@ final class SecurityContext
 		$request->setUserResolver(function() use ($context){
             return $this->getSecurity($context)->getUser();
         });
+
+		$this->addPermissionsFactoryListener($context);
 	}
 
 	/**
@@ -200,5 +204,24 @@ final class SecurityContext
 		}
 
 		return call_user_func_array([$mapping, $method], $params);
+	}
+
+	/**
+	 * @param string $context
+	 */
+	private function addPermissionsFactoryListener($context)
+	{
+		/** @type SecurityContextConfiguration $configuration */
+		$configuration = $this->contexts[$context];
+
+		if ($configuration->isPermissionsEnabled())
+		{
+			/** @type EntityManagerInterface $entityManager */
+			$entityManager = $this->container->make(EntityManagerInterface::class);
+
+			$entityManager->getEventManager()->addEventSubscriber(
+				new PermissionStrategyEventListener($configuration->getPermissionsFactory())
+			);
+		}
 	}
 }

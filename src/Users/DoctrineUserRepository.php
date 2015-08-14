@@ -15,23 +15,16 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 	protected $persistences;
 
 	/**
-	 * @type \Closure|null
-	 */
-	protected $permissionsFactory;
-
-	/**
 	 * @param EntityManager         $entityManager
 	 * @param PersistenceRepository $persistences
-	 * @param \Closure              $permissionsFactory
 	 */
-    public function __construct(EntityManager $entityManager, PersistenceRepository $persistences, \Closure $permissionsFactory = null)
+    public function __construct(EntityManager $entityManager, PersistenceRepository $persistences)
     {
         parent::__construct($entityManager, $entityManager->getClassMetadata(
             $this->entityName()
         ));
 
-	    $this->persistences       = $persistences;
-	    $this->permissionsFactory = $permissionsFactory;
+	    $this->persistences = $persistences;
     }
 
 	/**
@@ -198,17 +191,13 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 
         if ($callback)
         {
-            $result = $callback($user);
-
-            if ($result === false)
+            if ($callback($user) === false)
             {
                 return false;
             }
         }
 
-        $this->save($user);
-
-        return $user;
+        return $this->save($user);
 	}
 
 	/**
@@ -228,9 +217,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 
         $user->update($credentials);
 
-        $this->save($user);
-
-		return $user;
+        return $this->save($user);
 	}
 
 	/**
