@@ -269,6 +269,5 @@ class SecurityFactory
 		);
 
 		$security->setUrlGenerator($urls);
-		$this->container->instance(UrlGenerator::class, $urls);
 	}
 }
