@@ -3,9 +3,12 @@
 use Cartalyst\Sentinel\Activations\ActivationRepositoryInterface;
 use Cartalyst\Sentinel\Reminders\ReminderRepositoryInterface;
 use Digbang\Security\Configurations\SecurityContextConfiguration;
-use Digbang\Security\Security;
+use Digbang\Security\Contracts\SecurityApi;
+use Digbang\Security\Exceptions\Unauthenticated;
+use Digbang\Security\Exceptions\Unauthorized;
 use Digbang\Security\SecurityContext;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 use Psr\Log\LoggerInterface;
 
 final class SecurityMiddleware
@@ -44,6 +47,8 @@ final class SecurityMiddleware
     {
 	    $this->securityContext->bindContext($context, $request);
 
+	    $this->applySecurity($context, $request);
+
 	    $response = $next($request);
 
 	    $this->garbageCollect(
@@ -57,10 +62,10 @@ final class SecurityMiddleware
 	/**
 	 * Garbage collect activations and reminders.
 	 *
-	 * @param Security                     $security
+	 * @param SecurityApi                  $security
 	 * @param SecurityContextConfiguration $configuration
 	 */
-    protected function garbageCollect(Security $security, SecurityContextConfiguration $configuration)
+    protected function garbageCollect(SecurityApi $security, SecurityContextConfiguration $configuration)
     {
 	    try
 	    {
@@ -106,4 +111,40 @@ final class SecurityMiddleware
     {
         return mt_rand(1, $lottery[1]) <= $lottery[0];
     }
+
+	/**
+	 * @param string  $context
+	 * @param Request $request
+	 *
+	 * @throws Unauthenticated
+	 * @throws Unauthorized
+	 */
+	private function applySecurity($context, Request $request)
+	{
+		$security = $this->securityContext->getSecurity($context);
+
+		if (! $user = $security->getUser(true))
+		{
+			throw Unauthenticated::guest($security)->inContext($context);
+		}
+
+		// Try to make the route, and let it explode upwards
+		try
+		{
+			$route = $request->route();
+
+			if ($route instanceof Route)
+			{
+				$security->url()->action($route->getActionName());
+			}
+			elseif ($route)
+			{
+				$security->url()->to($route);
+			}
+		}
+		catch (Unauthorized $e)
+		{
+			throw $e->inContext($context);
+		}
+	}
 }

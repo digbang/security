@@ -12,7 +12,7 @@ use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Http\Request;
 
-final class SecurityContext
+class SecurityContext
 {
 	/**
 	 * @type SecurityFactory

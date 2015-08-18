@@ -3,16 +3,11 @@
 use Digbang\Security\Contracts\SecurityApi;
 
 /**
- * Class AuthorizationException
+ * Class Unauthorized
  * @package Digbang\Security\Exceptions
  */
-class Unauthorized extends \RuntimeException
+class Unauthorized extends SecurityException
 {
-	/**
-	 * @type SecurityApi
-	 */
-	private $security;
-
 	/**
 	 * @type string
 	 */
@@ -28,10 +23,18 @@ class Unauthorized extends \RuntimeException
 	{
 		$e = new static("Permission [$permission] permissionDenied.");
 
-		$e->security   = $security;
-		$e->permission = $permission;
+		$e->setSecurity($security);
+		$e->setPermission($permission);
 
 		return $e;
+	}
+
+	/**
+	 * @param string $permission
+	 */
+	private function setPermission($permission)
+	{
+		$this->permission = $permission;
 	}
 
 	/**
@@ -40,13 +43,5 @@ class Unauthorized extends \RuntimeException
 	public function getPermission()
 	{
 		return $this->permission;
-	}
-
-	/**
-	 * @return SecurityApi
-	 */
-	public function getSecurity()
-	{
-		return $this->security;
 	}
 }

@@ -25,20 +25,20 @@ use Digbang\Security\Permissions\LazyStrictPermissions;
  * @method string getUserThrottleMapping()
  *
  * Module enablers:
- * @method $this enableRoles()
- * @method $this enablePermissions()
- * @method $this disableRoles()
- * @method $this disablePermissions()
+ * @method static enableRoles()
+ * @method static enablePermissions()
+ * @method static disableRoles()
+ * @method static disablePermissions()
  * @method bool isRolesEnabled()
  * @method bool isPermissionsEnabled()
  *
  * Throttle configuration getters - setters:
- * @method $this setGlobalThrottleInterval($interval)
- * @method $this setGlobalThrottleThresholds($thresholds)
- * @method $this setIpThrottleInterval($interval)
- * @method $this setIpThrottleThresholds($thresholds)
- * @method $this setUserThrottleInterval($interval)
- * @method $this setUserThrottleThresholds($thresholds)
+ * @method static setGlobalThrottleInterval($interval)
+ * @method static setGlobalThrottleThresholds($thresholds)
+ * @method static setIpThrottleInterval($interval)
+ * @method static setIpThrottleThresholds($thresholds)
+ * @method static setUserThrottleInterval($interval)
+ * @method static setUserThrottleThresholds($thresholds)
  * @method int getGlobalThrottleInterval()
  * @method int|array getGlobalThrottleThresholds()
  * @method int getIpThrottleInterval()
@@ -47,10 +47,10 @@ use Digbang\Security\Permissions\LazyStrictPermissions;
  * @method int|array getUserThrottleThresholds()
  *
  * Expiring getters - setters (reminders and activations):
- * @method $this setRemindersExpiration(int $expiration)
- * @method $this setRemindersLottery(array $lottery)
- * @method $this setActivationsExpiration(int $expiration)
- * @method $this setActivationsLottery(array $lottery)
+ * @method static setRemindersExpiration(int $expiration)
+ * @method static setRemindersLottery(array $lottery)
+ * @method static setActivationsExpiration(int $expiration)
+ * @method static setActivationsLottery(array $lottery)
  * @method int getRemindersExpiration()
  * @method array getRemindersLottery()
  * @method int getActivationsExpiration()
@@ -65,15 +65,15 @@ use Digbang\Security\Permissions\LazyStrictPermissions;
  * @method null|string getThrottleRepository()
  *
  * Table getters - setters:
- * @method $this setUserTable(string $table)
- * @method $this setUsersRolesTable(string $table)
- * @method $this setUserPermissionTable(string $table)
- * @method $this setRolePermissionTable(string $table)
- * @method $this setActivationTable(string $table)
- * @method $this setPersistenceTable(string $table)
- * @method $this setReminderTable(string $table)
- * @method $this setRoleTable(string $table)
- * @method $this setThrottleTable(string $table)
+ * @method static setUserTable(string $table)
+ * @method static setUsersRolesTable(string $table)
+ * @method static setUserPermissionTable(string $table)
+ * @method static setRolePermissionTable(string $table)
+ * @method static setActivationTable(string $table)
+ * @method static setPersistenceTable(string $table)
+ * @method static setReminderTable(string $table)
+ * @method static setRoleTable(string $table)
+ * @method static setThrottleTable(string $table)
  * @method string|null getUserTable()
  * @method string|null getUsersRolesTable()
  * @method string|null getUserPermissionTable()
@@ -84,7 +84,7 @@ use Digbang\Security\Permissions\LazyStrictPermissions;
  * @method string|null getRoleTable()
  * @method string|null getThrottleTable()
  */
-final class SecurityContextConfiguration
+class SecurityContextConfiguration
 {
 	/**
 	 * Mapping of each entity to its EntityMapping class or object.
