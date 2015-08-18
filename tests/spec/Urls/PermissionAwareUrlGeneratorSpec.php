@@ -1,8 +1,8 @@
 <?php namespace spec\Digbang\Security\Urls;
 
 use Digbang\Security\Contracts\SecurityApi;
+use Digbang\Security\Exceptions\Unauthorized;
 use Digbang\Security\Permissions\Permissible;
-use Digbang\Security\Permissions\PermissionException;
 use Digbang\Security\Permissions\PermissionRepository;
 use Digbang\Security\Users\User;
 use Illuminate\Routing\UrlGenerator;
@@ -35,7 +35,7 @@ class PermissionAwareUrlGeneratorSpec extends ObjectBehavior
 		$url->to(Argument::not(self::SECURE_PATH), Argument::cetera())->willReturn('/an/invalid/url');
 
 		$securityApi->permissions()->willReturn($permissionRepo);
-		$securityApi->getUser()->willReturn(null);
+		$securityApi->getUser(true)->willReturn(null);
 
 		$permissionRepo->getForRoute( self::SECURE_ROUTE )->willReturn(self::VALID_PERMISSION);
 		$permissionRepo->getForAction(self::SECURE_ACTION)->willReturn(self::VALID_PERMISSION);
@@ -60,7 +60,7 @@ class PermissionAwareUrlGeneratorSpec extends ObjectBehavior
 		$user->hasAccess(Argument::exact(self::VALID_PERMISSION))->willReturn(true);
 		$user->hasAccess(Argument::not(  self::VALID_PERMISSION))->willReturn(false);
 
-		$securityApi->getUser()->willReturn($user);
+		$securityApi->getUser(true)->willReturn($user);
 	}
 
 	function it_is_initializable_without_user()
@@ -79,7 +79,7 @@ class PermissionAwareUrlGeneratorSpec extends ObjectBehavior
 	{
 		$this->withUser($securityApi);
 
-		$this->shouldThrow(PermissionException::class)->duringRoute('any.invalid.route');
+		$this->shouldThrow(Unauthorized::class)->duringRoute('any.invalid.route');
 	}
 
 	function it_should_make_urls_by_action_if_the_user_has_a_permission(SecurityApi $securityApi)
@@ -93,7 +93,7 @@ class PermissionAwareUrlGeneratorSpec extends ObjectBehavior
 	{
 		$this->withUser($securityApi);
 
-		$this->shouldThrow(PermissionException::class)->duringAction('Any\Invalid\Controller@action');
+		$this->shouldThrow(Unauthorized::class)->duringAction('Any\Invalid\Controller@action');
 	}
 
 	function it_should_make_urls_by_path_if_the_user_has_a_permission(SecurityApi $securityApi)
@@ -107,7 +107,7 @@ class PermissionAwareUrlGeneratorSpec extends ObjectBehavior
 	{
 		$this->withUser($securityApi);
 
-		$this->shouldThrow(PermissionException::class)->duringTo('/any/invalid/path');
+		$this->shouldThrow(Unauthorized::class)->duringTo('/any/invalid/path');
 	}
 
 	function it_should_make_insecure_urls_by_route_without_user()
@@ -127,16 +127,16 @@ class PermissionAwareUrlGeneratorSpec extends ObjectBehavior
 
 	function it_should_squeak_when_requested_secure_urls_by_route_without_user()
 	{
-		$this->shouldThrow(PermissionException::class)->duringRoute(self::SECURE_ROUTE);
+		$this->shouldThrow(Unauthorized::class)->duringRoute(self::SECURE_ROUTE);
 	}
 
 	function it_should_squeak_when_requested_secure_urls_by_action_without_user()
 	{
-		$this->shouldThrow(PermissionException::class)->duringAction(self::SECURE_ACTION);
+		$this->shouldThrow(Unauthorized::class)->duringAction(self::SECURE_ACTION);
 	}
 
 	function it_should_squeak_when_requested_secure_urls_by_path_without_user()
 	{
-		$this->shouldThrow(PermissionException::class)->duringTo(self::SECURE_PATH);
+		$this->shouldThrow(Unauthorized::class)->duringTo(self::SECURE_PATH);
 	}
 }

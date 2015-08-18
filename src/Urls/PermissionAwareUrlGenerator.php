@@ -1,8 +1,8 @@
 <?php namespace Digbang\Security\Urls;
 
 use Digbang\Security\Contracts\SecurityApi;
+use Digbang\Security\Exceptions\Unauthorized;
 use Digbang\Security\Permissions\Permissible;
-use Digbang\Security\Permissions\PermissionException;
 use Illuminate\Contracts\Routing\UrlGenerator;
 
 class PermissionAwareUrlGenerator implements UrlGenerator
@@ -34,10 +34,7 @@ class PermissionAwareUrlGenerator implements UrlGenerator
 	{
 		$permission = $this->securityApi->permissions()->getForRoute($name);
 
-	    if (! $this->hasPermission($permission))
-	    {
-		    throw new PermissionException("Current user does not have required permission: $permission");
-	    }
+	    $this->checkPermission($permission);
 
 	    return $this->url->route($name, $parameters, $absolute);
 	}
@@ -49,10 +46,7 @@ class PermissionAwareUrlGenerator implements UrlGenerator
 	{
 		$permission = $this->securityApi->permissions()->getForAction($action);
 
-	    if (! $this->hasPermission($permission))
-	    {
-		    throw new PermissionException("Current user does not have required permission: $permission");
-	    }
+	    $this->checkPermission($permission);
 
 	    return $this->url->action($action, $parameters, $absolute);
 	}
@@ -66,10 +60,7 @@ class PermissionAwareUrlGenerator implements UrlGenerator
 
 		$permission = $this->securityApi->permissions()->getForPath($url);
 
-	    if (! $this->hasPermission($permission))
-	    {
-		    throw new PermissionException("Current user does not have required permission: $permission");
-	    }
+	    $this->checkPermission($permission);
 
 	    return $url;
 	}
@@ -116,25 +107,23 @@ class PermissionAwareUrlGenerator implements UrlGenerator
 	 * Users must implement the Digbang\Security\Permissions\Permissible interface.
 	 *
 	 * @param string|array $permission
-	 * @return bool
+	 *
+	 * @return void
+	 * @throws Unauthorized
 	 */
-	private function hasPermission($permission)
+	private function checkPermission($permission)
 	{
 		if (!$permission)
 		{
-			return true;
+			return;
 		}
 
-		if (! $user = $this->securityApi->getUser())
+		$user = $this->securityApi->getUser(true);
+		if ($user instanceof Permissible && $user->hasAccess($permission))
 		{
-			return false;
+			return;
 		}
 
-		if ($user instanceof Permissible)
-		{
-			return $user->hasAccess($permission);
-		}
-
-		return false;
+		throw Unauthorized::permissionDenied($permission, $this->securityApi);
 	}
 }
