@@ -41,12 +41,13 @@ final class SecurityMiddleware
 	 * @param Request  $request
 	 * @param \Closure $next
 	 * @param string   $context
-	 * @param string   $privacy
 	 *
 	 * @return mixed
 	 */
-    public function handle(Request $request, \Closure $next, $context, $privacy = 'private')
+    public function handle(Request $request, \Closure $next, $context)
     {
+	    list($context, $privacy) = $this->parseContext($context);
+
 	    $this->securityContext->bindContext($context, $request);
 
 	    $this->applySecurity($context, $privacy, $request);
@@ -154,5 +155,10 @@ final class SecurityMiddleware
 		{
 			throw $e->inContext($context);
 		}
+	}
+
+	private function parseContext($context)
+	{
+		return array_pad(explode(':', $context, 2), 2, 'private');
 	}
 }

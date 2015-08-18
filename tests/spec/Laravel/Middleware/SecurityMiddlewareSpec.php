@@ -94,6 +94,6 @@ class SecurityMiddlewareSpec extends ObjectBehavior
 			return 'Hello!';
 		};
 
-		$this->handle($request, $next, 'a_context', 'public');
+		$this->handle($request, $next, 'a_context:public');
 	}
 }
