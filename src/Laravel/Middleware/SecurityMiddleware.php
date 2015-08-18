@@ -36,18 +36,20 @@ final class SecurityMiddleware
 	}
 
 	/**
-     * Run the request filter.
-     *
-     * @param Request  $request
-     * @param \Closure $next
+	 * Run the request filter.
+	 *
+	 * @param Request  $request
+	 * @param \Closure $next
 	 * @param string   $context
-     * @return mixed
-     */
-    public function handle(Request $request, \Closure $next, $context)
+	 * @param string   $privacy
+	 *
+	 * @return mixed
+	 */
+    public function handle(Request $request, \Closure $next, $context, $privacy = 'private')
     {
 	    $this->securityContext->bindContext($context, $request);
 
-	    $this->applySecurity($context, $request);
+	    $this->applySecurity($context, $privacy, $request);
 
 	    $response = $next($request);
 
@@ -114,13 +116,19 @@ final class SecurityMiddleware
 
 	/**
 	 * @param string  $context
+	 * @param string  $privacy
 	 * @param Request $request
 	 *
 	 * @throws Unauthenticated
 	 * @throws Unauthorized
 	 */
-	private function applySecurity($context, Request $request)
+	private function applySecurity($context, $privacy, Request $request)
 	{
+		if (mb_strtoupper($privacy) == 'PUBLIC')
+		{
+			return;
+		}
+
 		$security = $this->securityContext->getSecurity($context);
 
 		if (! $user = $security->getUser(true))

@@ -82,4 +82,18 @@ class SecurityMiddlewareSpec extends ObjectBehavior
 		$this->shouldThrow(Unauthorized::class)
 			->duringHandle($request, $next, 'a_context');
 	}
+
+	function it_should_not_check_for_authentication_on_public_routes(SecurityContext $securityContext, Request $request, SecurityApi $security)
+	{
+		$securityContext->bindContext('a_context', Argument::any())
+			->shouldBeCalled();
+
+		$security->getUser()->shouldNotBeCalled();
+
+		$next = function(){
+			return 'Hello!';
+		};
+
+		$this->handle($request, $next, 'a_context', 'public');
+	}
 }
