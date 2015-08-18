@@ -31,13 +31,20 @@ class SecurityFactory
 	private $repositoryFactory;
 
 	/**
+	 * @type UrlGenerator
+	 */
+	private $url;
+
+	/**
 	 * @param Container         $container
 	 * @param RepositoryFactory $repositoryFactory
+	 * @param UrlGenerator      $url
 	 */
-	public function __construct(Container $container, RepositoryFactory $repositoryFactory)
+	public function __construct(Container $container, RepositoryFactory $repositoryFactory, UrlGenerator $url)
 	{
 		$this->container         = $container;
 		$this->repositoryFactory = $repositoryFactory;
+		$this->url = $url;
 	}
 
 	/**
@@ -263,10 +270,7 @@ class SecurityFactory
 	 */
 	private function bindUrlGenerator(Security $security)
 	{
-		$urls = new PermissionAwareUrlGenerator(
-			$this->container->make(UrlGenerator::class),
-			$security
-		);
+		$urls = new PermissionAwareUrlGenerator($this->url, $security);
 
 		$security->setUrlGenerator($urls);
 	}
