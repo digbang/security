@@ -7,9 +7,11 @@ use Digbang\Security\Contracts\SecurityApi;
 use Digbang\Security\Factories\SecurityFactory;
 use Digbang\Security\Mappings\CustomTableMapping;
 use Digbang\Security\Permissions\PermissionStrategyEventListener;
+use Digbang\Security\Urls\PermissionAwareUrlGeneratorExtension;
 use Doctrine\ORM\EntityManagerInterface;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Routing\UrlGenerator;
+use Illuminate\Contracts\Routing\UrlGenerator as UrlGeneratorContract;
+use Illuminate\Routing\UrlGenerator;
 use Illuminate\Http\Request;
 
 class SecurityContext
@@ -80,8 +82,16 @@ class SecurityContext
 		    return $this->getSecurity($context);
 	    });
 
-	    $this->container->bind(UrlGenerator::class, function() use ($context){
+	    $this->container->bind(UrlGeneratorContract::class, function() use ($context){
 		    return $this->getSecurity($context)->url();
+	    });
+
+	    $this->container->bind([UrlGenerator::class => 'url'], function(Container $container) use ($context){
+		    /** @type PermissionAwareUrlGeneratorExtension $url */
+		    $url = $container->make(PermissionAwareUrlGeneratorExtension::class);
+		    $url->setUrlGenerator($this->getSecurity($context)->url());
+
+		    return $url;
 	    });
 
 		$request->setUserResolver(function() use ($context){
