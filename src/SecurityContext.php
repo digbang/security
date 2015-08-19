@@ -14,13 +14,6 @@ use Illuminate\Contracts\Routing\UrlGenerator as UrlGeneratorContract;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Http\Request;
 
-/**
- * Class SecurityContext
- *
- * @package Digbang\Security
- * @property-read SecurityFactory $securityFactory
- * @property-read DecoupledMappingDriver $mappingDriver
- */
 class SecurityContext
 {
 	/**
@@ -118,7 +111,7 @@ class SecurityContext
 
 		$configuration = $this->getConfigurationFor($context);
 
-		return $this->instances[$context] = $this->securityFactory->create($context, $configuration);
+		return $this->instances[$context] = $this->getSecurityFactory()->create($context, $configuration);
 	}
 
 	/**
@@ -182,7 +175,7 @@ class SecurityContext
 				$entityMapping->setTable($table);
 			}
 
-			$this->mappingDriver->addMapping($entityMapping);
+			$this->getMappingDriver()->addMapping($entityMapping);
 		}
 	}
 
@@ -238,9 +231,12 @@ class SecurityContext
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Get a named lazy dependency.
+	 *
+	 * @param string $name
+	 * @return object
 	 */
-	public function __get($name)
+	private function get($name)
 	{
 		if (! array_key_exists($name, $this->dependencies))
 		{
@@ -253,5 +249,21 @@ class SecurityContext
 		}
 
 		return $this->dependencies[$name];
+	}
+
+	/**
+	 * @return DecoupledMappingDriver
+	 */
+	private function getMappingDriver()
+	{
+		return $this->get('mappingDriver');
+	}
+
+	/**
+	 * @return SecurityFactory
+	 */
+	private function getSecurityFactory()
+	{
+		return $this->get('securityFactory');
 	}
 }
