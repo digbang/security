@@ -70,24 +70,24 @@ class SecurityContext
 	 */
 	public function bindContext($context, Request $request)
 	{
-		$this->container->bind(SecurityApi::class, function() use ($context){
-		    return $this->getSecurity($context);
+		$security = $this->getSecurity($context);
+
+		$this->container->instance(SecurityApi::class, $security);
+
+	    $this->container->bind(UrlGeneratorContract::class, function() use ($security){
+		    return $security->url();
 	    });
 
-	    $this->container->bind(UrlGeneratorContract::class, function() use ($context){
-		    return $this->getSecurity($context)->url();
-	    });
-
-	    $this->container->bind([UrlGenerator::class => 'url'], function(Container $container) use ($context){
+	    $this->container->bind([UrlGenerator::class => 'url'], function(Container $container) use ($security){
 		    /** @type PermissionAwareUrlGeneratorExtension $url */
 		    $url = $container->make(PermissionAwareUrlGeneratorExtension::class);
-		    $url->setUrlGenerator($this->getSecurity($context)->url());
+		    $url->setUrlGenerator($security->url());
 
 		    return $url;
 	    });
 
-		$request->setUserResolver(function() use ($context){
-            return $this->getSecurity($context)->getUser();
+		$request->setUserResolver(function() use ($security){
+            return $security->getUser();
         });
 
 		$this->addPermissionsFactoryListener($context);

@@ -47,7 +47,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
 	{
 		if ($this->configuration($context)->getPersistenceRepository())
 		{
-			$repository = $this->container->make($this->configuration($context)->getPersistenceRepository(), [$context]);
+			$repository = $this->container->make($this->configuration($context)->getPersistenceRepository());
 		}
 		else
 		{
@@ -66,7 +66,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
 	{
 		if ($this->configuration($context)->getUserRepository())
 		{
-			return $this->container->make($this->configuration($context)->getUserRepository(), [$context, $persistenceRepository]);
+			return $this->container->make($this->configuration($context)->getUserRepository());
 		}
 
 		return $this->defaults->createUserRepository($context, $persistenceRepository);
@@ -84,7 +84,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
 
 		if ($this->configuration($context)->getRoleRepository())
 		{
-			return $this->container->make($this->configuration($context)->getRoleRepository(), [$context]);
+			return $this->container->make($this->configuration($context)->getRoleRepository());
 		}
 
 		return $this->defaults->createRoleRepository($context);
@@ -97,7 +97,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
 	{
 		if ($this->configuration($context)->getActivationRepository())
 		{
-			$repository = $this->container->make($this->configuration($context)->getActivationRepository(), [$context]);
+			$repository = $this->container->make($this->configuration($context)->getActivationRepository());
 		}
 		else
 		{
@@ -117,7 +117,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
 	{
 		if ($this->configuration($context)->getReminderRepository())
 		{
-			$repository = $this->container->make($this->configuration($context)->getReminderRepository(), [$context, $userRepository]);
+			$repository = $this->container->make($this->configuration($context)->getReminderRepository());
 		}
 		else
 		{
@@ -144,7 +144,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
 
 		if ($permissionRepository = $this->configuration($context)->getPermissionRepository())
 		{
-			return $this->container->make($permissionRepository, [$context]);
+			return $this->container->make($permissionRepository);
 		}
 
 		return $this->defaults->createPermissionRepository($context);
@@ -157,7 +157,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
 	{
 		if ($this->configuration($context)->getThrottleRepository())
 		{
-			$repository = $this->container->make($this->configuration($context)->getThrottleRepository(), [$context]);
+			$repository = $this->container->make($this->configuration($context)->getThrottleRepository());
 		}
 		else
 		{
