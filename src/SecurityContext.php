@@ -14,17 +14,19 @@ use Illuminate\Contracts\Routing\UrlGenerator as UrlGeneratorContract;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Http\Request;
 
+/**
+ * Class SecurityContext
+ *
+ * @package Digbang\Security
+ * @property-read SecurityFactory $securityFactory
+ * @property-read DecoupledMappingDriver $mappingDriver
+ */
 class SecurityContext
 {
 	/**
-	 * @type SecurityFactory
+	 * @type Container
 	 */
-	private $securityFactory;
-
-	/**
-	 * @type DecoupledMappingDriver
-	 */
-	private $mappingDriver;
+	private $container;
 
 	/**
 	 * Configured contexts
@@ -33,28 +35,24 @@ class SecurityContext
 	private $contexts = [];
 
 	/**
-	 * @type Container
-	 */
-	private $container;
-
-	/**
 	 * Flyweight Security instances.
 	 * @type array
 	 */
 	private $instances = [];
 
 	/**
+	 * Flyweight dependencies
+	 */
+	private $dependencies = [];
+
+	/**
 	 * SecurityContext constructor.
 	 *
-	 * @param SecurityFactory        $securityFactory
-	 * @param DecoupledMappingDriver $mappingDriver
 	 * @param Container              $container
 	 */
-	public function __construct(SecurityFactory $securityFactory, DecoupledMappingDriver $mappingDriver, Container $container)
+	public function __construct(Container $container)
 	{
-		$this->securityFactory = $securityFactory;
-		$this->mappingDriver   = $mappingDriver;
-		$this->container       = $container;
+		$this->container = $container;
 	}
 
 	/**
@@ -234,4 +232,30 @@ class SecurityContext
 			);
 		}
 	}
+
+	/**
+	 * is utilized for reading data from inaccessible members.
+	 *
+	 * @param $name string
+	 *
+	 * @return mixed
+	 * @link http://php.net/manual/en/language.oop5.overloading.php#language.oop5.overloading.members
+	 */
+	public function __get($name)
+	{
+		if (array_key_exists($name, $this->dependencies))
+		{
+			return $this->dependencies[$name];
+		}
+
+		switch ($name)
+		{
+			case SecurityFactory::class:
+			case DecoupledMappingDriver::class:
+				return $this->dependencies[$name] = $this->container->make($name);
+		}
+
+		throw new \BadMethodCallException("Property [$name] does not exist.");
+	}
+
 }
