@@ -108,7 +108,23 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
 	 */
 	public function getName()
 	{
-		return $this->name;
+		return $this->name->getFullName();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getFirstName()
+	{
+		return $this->name->getFirstName();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLastName()
+	{
+		return $this->name->getLastName();
 	}
 
 	/**
