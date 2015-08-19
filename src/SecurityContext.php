@@ -232,7 +232,7 @@ class SecurityContext
 	 */
 	private function getMappingDriver()
 	{
-		if (! is_object($this->dependencies[DecoupledMappingDriver::class]))
+		if (! array_key_exists(DecoupledMappingDriver::class, $this->dependencies))
 		{
 			$this->dependencies[DecoupledMappingDriver::class] = $this->container->make(DecoupledMappingDriver::class);
 		}
@@ -245,7 +245,7 @@ class SecurityContext
 	 */
 	private function getSecurityFactory()
 	{
-		if (! is_object($this->dependencies[SecurityFactory::class]))
+		if (! array_key_exists(SecurityFactory::class, $this->dependencies))
 		{
 			$this->dependencies[SecurityFactory::class] = $this->container->make(SecurityFactory::class);
 		}
