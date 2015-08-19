@@ -41,14 +41,18 @@ class SecurityContext
 	private $instances = [];
 
 	/**
-	 * Flyweight dependencies
+	 * Flyweight dependencies.
+	 * @type array
 	 */
-	private $dependencies = [];
+	private $dependencies = [
+		'securityFactory' => SecurityFactory::class,
+		'mappingDriver'   => DecoupledMappingDriver::class
+	];
 
 	/**
 	 * SecurityContext constructor.
 	 *
-	 * @param Container              $container
+	 * @param Container $container
 	 */
 	public function __construct(Container $container)
 	{
@@ -234,28 +238,20 @@ class SecurityContext
 	}
 
 	/**
-	 * is utilized for reading data from inaccessible members.
-	 *
-	 * @param $name string
-	 *
-	 * @return mixed
-	 * @link http://php.net/manual/en/language.oop5.overloading.php#language.oop5.overloading.members
+	 * {@inheritdoc}
 	 */
 	public function __get($name)
 	{
-		if (array_key_exists($name, $this->dependencies))
+		if (! array_key_exists($name, $this->dependencies))
 		{
-			return $this->dependencies[$name];
+			throw new \BadMethodCallException("Property [$name] does not exist.");
 		}
 
-		switch ($name)
+		if (! is_object($this->dependencies[$name]))
 		{
-			case SecurityFactory::class:
-			case DecoupledMappingDriver::class:
-				return $this->dependencies[$name] = $this->container->make($name);
+			$this->dependencies[$name] = $this->container->make($this->dependencies[$name]);
 		}
 
-		throw new \BadMethodCallException("Property [$name] does not exist.");
+		return $this->dependencies[$name];
 	}
-
 }
