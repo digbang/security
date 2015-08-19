@@ -24,6 +24,7 @@ class ConfigurationRepositoryFactorySpec extends ObjectBehavior
 {
     function let(Container $container, SecurityContext $securityContext, RepositoryFactory $defaults, SecurityContextConfiguration $config, ActivationRepository $activationRepository, PermissionRepository $permissionRepository, PersistenceRepository $persistenceRepository, UserRepository $userRepository, RoleRepository $roleRepository, ReminderRepository $reminderRepository, ThrottleRepository $throttleRepository)
     {
+	    $container->make(SecurityContext::class)->willReturn($securityContext);
 	    $securityContext->getConfigurationFor(Argument::any())
 		    ->willReturn($config);
 
@@ -35,7 +36,7 @@ class ConfigurationRepositoryFactorySpec extends ObjectBehavior
 		$defaults->createReminderRepository(Argument::cetera())->willReturn($reminderRepository);
 		$defaults->createThrottleRepository(Argument::cetera())->willReturn($throttleRepository);
 
-        $this->beConstructedWith($container, $securityContext, $defaults);
+        $this->beConstructedWith($container, $defaults);
     }
 
     function it_is_initializable()

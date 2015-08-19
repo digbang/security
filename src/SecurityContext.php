@@ -37,10 +37,7 @@ class SecurityContext
 	 * Flyweight dependencies.
 	 * @type array
 	 */
-	private $dependencies = [
-		'securityFactory' => SecurityFactory::class,
-		'mappingDriver'   => DecoupledMappingDriver::class
-	];
+	private $dependencies = [];
 
 	/**
 	 * SecurityContext constructor.
@@ -231,32 +228,16 @@ class SecurityContext
 	}
 
 	/**
-	 * Get a named lazy dependency.
-	 *
-	 * @param string $name
-	 * @return object
-	 */
-	private function get($name)
-	{
-		if (! array_key_exists($name, $this->dependencies))
-		{
-			throw new \BadMethodCallException("Property [$name] does not exist.");
-		}
-
-		if (! is_object($this->dependencies[$name]))
-		{
-			$this->dependencies[$name] = $this->container->make($this->dependencies[$name]);
-		}
-
-		return $this->dependencies[$name];
-	}
-
-	/**
 	 * @return DecoupledMappingDriver
 	 */
 	private function getMappingDriver()
 	{
-		return $this->get('mappingDriver');
+		if (! is_object($this->dependencies[DecoupledMappingDriver::class]))
+		{
+			$this->dependencies[DecoupledMappingDriver::class] = $this->container->make(DecoupledMappingDriver::class);
+		}
+
+		return $this->dependencies[DecoupledMappingDriver::class];
 	}
 
 	/**
@@ -264,6 +245,11 @@ class SecurityContext
 	 */
 	private function getSecurityFactory()
 	{
-		return $this->get('securityFactory');
+		if (! is_object($this->dependencies[SecurityFactory::class]))
+		{
+			$this->dependencies[SecurityFactory::class] = $this->container->make(SecurityFactory::class);
+		}
+
+		return $this->dependencies[SecurityFactory::class];
 	}
 }

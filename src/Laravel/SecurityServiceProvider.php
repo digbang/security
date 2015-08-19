@@ -26,7 +26,7 @@ class SecurityServiceProvider extends ServiceProvider
 		$this->app->bind(RepositoryFactory::class, function(Container $container){
 			return
 				new ContainerBindingRepositoryFactory($container,
-					new ConfigurationRepositoryFactory($container, $container->make(SecurityContext::class),
+					new ConfigurationRepositoryFactory($container,
 						new DefaultRepositoryFactory($container)
 					)
 				);
