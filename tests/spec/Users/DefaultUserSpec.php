@@ -2,6 +2,7 @@
 
 use Carbon\Carbon;
 use Cartalyst\Sentinel\Permissions\PermissionsInterface;
+use Digbang\Security\Activations\Activation;
 use Digbang\Security\Permissions\LazyStandardPermissions;
 use Digbang\Security\Permissions\Permissible;
 use Digbang\Security\Roles\Role;
@@ -168,5 +169,31 @@ class DefaultUserSpec extends ObjectBehavior
 
 		$this->checkPassword('foo')->shouldBe(false);
 		$this->checkPassword('bar')->shouldBe(true);
+	}
+
+	function it_should_know_if_its_not_activated()
+	{
+		$this->isActivated()->shouldBe(false);
+	}
+
+	function it_should_know_if_its_activated(Activation $activation)
+	{
+		$activation->isCompleted()->willReturn(true);
+
+		$activations = $this->getActivations();
+		$activations->add($activation);
+
+		$this->isActivated()->shouldBe(true);
+	}
+
+	function it_should_know_when_it_was_activated(Activation $activation)
+	{
+		$activation->isCompleted()->willReturn(true);
+		$activation->getCompletedAt()->willReturn($now = Carbon::now());
+
+		$activations = $this->getActivations();
+		$activations->add($activation);
+
+		$this->getActivatedAt()->shouldBe($now);
 	}
 }

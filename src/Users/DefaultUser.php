@@ -108,7 +108,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
 	 */
 	public function getName()
 	{
-		return $this->name->getFullName();
+		return $this->name;
 	}
 
 	/**
@@ -314,7 +314,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
 	 */
 	public function isActivated()
 	{
-		return $this->activations->exists(function(Activation $activation){
+		return $this->activations->exists(function($id, Activation $activation){
 			return $activation->isCompleted();
 		});
 	}
