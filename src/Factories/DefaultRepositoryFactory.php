@@ -20,7 +20,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Session\Store;
 
-final class DefaultRepositoryFactory implements RepositoryFactory
+class DefaultRepositoryFactory implements RepositoryFactory
 {
 	/**
 	 * @type Container
@@ -44,7 +44,7 @@ final class DefaultRepositoryFactory implements RepositoryFactory
 	/**
 	 * {@inheritdoc}
 	 */
-	public function createPersistenceRepository($context, $single = false)
+	public function createPersistenceRepository($context)
 	{
 		if (array_key_exists('persistence', $this->instances))
 		{
@@ -59,35 +59,30 @@ final class DefaultRepositoryFactory implements RepositoryFactory
 			$context
 		);
 
-		return $this->instances['persistence'] = new DefaultDoctrinePersistenceRepository($entityManager, $session, $cookie, $single);
+		return $this->instances['persistence'] = new DefaultDoctrinePersistenceRepository($entityManager, $session, $cookie);
 	}
 
 	/**
 	 * {@inheritdoc]
 	 */
-	public function createUserRepository(PersistenceRepository $persistenceRepository, \Closure $permissionsFactory = null)
+	public function createUserRepository($context, PersistenceRepository $persistenceRepository)
 	{
 		if (array_key_exists('user', $this->instances))
 		{
 			return $this->instances['user'];
 		}
 
-		if (! $permissionsFactory)
-		{
-			$permissionsFactory = LazyStandardPermissions::getFactory();
-		}
-
 		$entityManager = $this->container->make(EntityManager::class);
 
 		return $this->instances['user'] = new DefaultDoctrineUserRepository(
-			$entityManager, $persistenceRepository, $permissionsFactory
+			$entityManager, $persistenceRepository
 		);
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function createRoleRepository()
+	public function createRoleRepository($context)
 	{
 		if (array_key_exists('role', $this->instances))
 		{
@@ -101,7 +96,7 @@ final class DefaultRepositoryFactory implements RepositoryFactory
 	/**
 	 * {@inheritdoc}
 	 */
-	public function createActivationRepository($expires)
+	public function createActivationRepository($context)
 	{
 		if (array_key_exists('activation', $this->instances))
 		{
@@ -109,16 +104,13 @@ final class DefaultRepositoryFactory implements RepositoryFactory
 		}
 
 		$entityManager = $this->container->make(EntityManager::class);
-		return $this->instances['activation'] = new DefaultDoctrineActivationRepository(
-			$entityManager,
-			$expires
-		);
+		return $this->instances['activation'] = new DefaultDoctrineActivationRepository($entityManager);
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function createReminderRepository(UserRepository $userRepository, $expires)
+	public function createReminderRepository($context, UserRepository $userRepository)
 	{
 		if (array_key_exists('reminder', $this->instances))
 		{
@@ -128,28 +120,22 @@ final class DefaultRepositoryFactory implements RepositoryFactory
 		$entityManager = $this->container->make(EntityManager::class);
 		return $this->instances['reminder'] = new DefaultDoctrineReminderRepository(
 			$entityManager,
-			$userRepository,
-			$expires
+			$userRepository
 		);
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function createPermissionRepository($enabled = true)
+	public function createPermissionRepository($context)
 	{
-		if ($enabled)
-		{
-			return new RoutePermissionRepository($this->container->make(Router::class));
-		}
-
-		return new InsecurePermissionRepository;
+		return new RoutePermissionRepository($this->container->make(Router::class));
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function createThrottleRepository($globalInterval, $globalThresholds, $ipInterval, $ipThresholds, $userInterval, $userThresholds)
+	public function createThrottleRepository($context)
 	{
 		if (array_key_exists('throttle', $this->instances))
 		{
@@ -158,15 +144,6 @@ final class DefaultRepositoryFactory implements RepositoryFactory
 
 		$entityManager = $this->container->make(EntityManager::class);
 
-		$throttles = new DefaultDoctrineThrottleRepository($entityManager);
-
-		$throttles->setGlobalInterval($globalInterval);
-		$throttles->setGlobalThresholds($globalThresholds);
-		$throttles->setIpInterval($ipInterval);
-		$throttles->setIpThresholds($ipThresholds);
-		$throttles->setUserInterval($userInterval);
-		$throttles->setUserThresholds($userThresholds);
-
-		return $this->instances['throttle'] = $throttles;
+		return $this->instances['throttle'] = new DefaultDoctrineThrottleRepository($entityManager);
 	}
 }

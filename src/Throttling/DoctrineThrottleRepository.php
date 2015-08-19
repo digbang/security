@@ -135,17 +135,6 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
 	 */
 	abstract protected function createUserThrottle(User $user);
 
-
-    /**
-     * Returns the global interval.
-     *
-     * @return int
-     */
-    public function getGlobalInterval()
-    {
-        return $this->globalInterval;
-    }
-
     /**
      * Sets the global interval.
      *
@@ -155,16 +144,6 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
     public function setGlobalInterval($globalInterval)
     {
         $this->globalInterval = (int) $globalInterval;
-    }
-
-    /**
-     * Returns the global thresholds.
-     *
-     * @return int|array
-     */
-    public function getGlobalThresholds()
-    {
-        return $this->globalThresholds;
     }
 
     /**
@@ -179,16 +158,6 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
     }
 
     /**
-     * Returns the IP address interval.
-     *
-     * @return int
-     */
-    public function getIpInterval()
-    {
-        return $this->ipInterval;
-    }
-
-    /**
      * Sets the IP address interval.
      *
      * @param  int  $ipInterval
@@ -197,16 +166,6 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
     public function setIpInterval($ipInterval)
     {
         $this->ipInterval = (int) $ipInterval;
-    }
-
-    /**
-     * Returns the IP address thresholds.
-     *
-     * @return int|array
-     */
-    public function getIpThresholds()
-    {
-        return $this->ipThresholds;
     }
 
     /**
@@ -221,16 +180,6 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
     }
 
     /**
-     * Returns the user interval.
-     *
-     * @return int
-     */
-    public function getUserInterval()
-    {
-        return $this->userInterval;
-    }
-
-    /**
      * Sets the user interval.
      *
      * @param  int  $userInterval
@@ -239,16 +188,6 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
     public function setUserInterval($userInterval)
     {
         $this->userInterval = (int) $userInterval;
-    }
-
-    /**
-     * Returns the user thresholds.
-     *
-     * @return int|array
-     */
-    public function getUserThresholds()
-    {
-        return $this->userThresholds;
     }
 
     /**

@@ -16,12 +16,10 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
 
 	/**
 	 * @param EntityManager $entityManager
-	 * @param int           $expires
 	 */
-	public function __construct(EntityManager $entityManager, $expires = 259200)
+	public function __construct(EntityManager $entityManager)
 	{
 		parent::__construct($entityManager, $entityManager->getClassMetadata($this->entityName()));
-		$this->expires = $expires;
 	}
 
 	/**
@@ -137,6 +135,14 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
 		{
 			return 0;
 		}
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setExpires($expires)
+	{
+		$this->expires = $expires;
 	}
 
 	/**

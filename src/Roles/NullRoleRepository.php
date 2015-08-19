@@ -1,5 +1,8 @@
 <?php namespace Digbang\Security\Roles;
 
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+
 class NullRoleRepository implements RoleRepository
 {
 	/**
@@ -64,5 +67,18 @@ class NullRoleRepository implements RoleRepository
 	public function getClassName()
 	{
 		return Role::class;
+	}
+
+	/**
+	 * Selects all elements from a selectable that match the expression and
+	 * returns a new collection containing these elements.
+	 *
+	 * @param Criteria $criteria
+	 *
+	 * @return Collection
+	 */
+	public function matching(Criteria $criteria)
+	{
+		return [];
 	}
 }

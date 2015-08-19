@@ -12,54 +12,45 @@ interface RepositoryFactory
 {
 	/**
 	 * @param string $context
-	 * @param bool   $single
 	 * @return PersistenceRepository
 	 */
-	public function createPersistenceRepository($context, $single = false);
+	public function createPersistenceRepository($context);
 
 	/**
+	 * @param string $context
 	 * @param PersistenceRepository $persistenceRepository
-	 * @param \Closure|null         $permissionsFactory
-	 *
 	 * @return UserRepository
 	 */
-	public function createUserRepository(PersistenceRepository $persistenceRepository, \Closure $permissionsFactory = null);
+	public function createUserRepository($context, PersistenceRepository $persistenceRepository);
 
 	/**
+	 * @param string $context
 	 * @return RoleRepository
 	 */
-	public function createRoleRepository();
+	public function createRoleRepository($context);
 
 	/**
-	 * @param int $expires
+	 * @param string $context
 	 * @return ActivationRepository
 	 */
-	public function createActivationRepository($expires);
+	public function createActivationRepository($context);
 
 	/**
+	 * @param string $context
 	 * @param UserRepository $userRepository
-	 * @param int            $expires
-	 *
 	 * @return ReminderRepository
 	 */
-	public function createReminderRepository(UserRepository $userRepository, $expires);
+	public function createReminderRepository($context, UserRepository $userRepository);
 
 	/**
-	 * @param bool $enabled
-	 *
+	 * @param string $context
 	 * @return PermissionRepository
 	 */
-	public function createPermissionRepository($enabled = true);
+	public function createPermissionRepository($context);
 
 	/**
-	 * @param int       $globalInterval
-	 * @param int|array $globalThresholds
-	 * @param int       $ipInterval
-	 * @param int|array $ipThresholds
-	 * @param int       $userInterval
-	 * @param int|array $userThresholds
-	 *
+	 * @param string $context
 	 * @return ThrottleRepository
 	 */
-	public function createThrottleRepository($globalInterval, $globalThresholds, $ipInterval, $ipThresholds, $userInterval, $userThresholds);
+	public function createThrottleRepository($context);
 }

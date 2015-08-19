@@ -24,13 +24,11 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
 	/**
 	 * @param EntityManager  $entityManager
 	 * @param UserRepository $users
-	 * @param int            $expires
 	 */
-	public function __construct(EntityManager $entityManager, UserRepository $users, $expires = 259200)
+	public function __construct(EntityManager $entityManager, UserRepository $users)
 	{
 		parent::__construct($entityManager, $entityManager->getClassMetadata($this->entityName()));
 
-		$this->expires = $expires;
 		$this->users   = $users;
 	}
 
@@ -127,6 +125,14 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
 		{
 			return 0;
 		}
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setExpires($expires)
+	{
+		$this->expires = $expires;
 	}
 
 	/**

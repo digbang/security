@@ -29,9 +29,8 @@ abstract class DoctrinePersistenceRepository extends EntityRepository implements
 	 * @param EntityManager    $entityManager The EntityManager to use.
 	 * @param SessionInterface $session
 	 * @param CookieInterface  $cookie
-	 * @param bool             $single
 	 */
-	public function __construct(EntityManager $entityManager, SessionInterface $session, CookieInterface $cookie, $single = false)
+	public function __construct(EntityManager $entityManager, SessionInterface $session, CookieInterface $cookie)
 	{
 		parent::__construct($entityManager, $entityManager->getClassMetadata(
 			$this->entityName()
@@ -39,7 +38,6 @@ abstract class DoctrinePersistenceRepository extends EntityRepository implements
 
 		$this->session = $session;
 		$this->cookie = $cookie;
-		$this->single = $single;
 	}
 
 	/**
@@ -226,5 +224,13 @@ abstract class DoctrinePersistenceRepository extends EntityRepository implements
 		]);
 
 		$queryBuilder->getQuery()->execute();
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setPersistenceMode($mode = 'single')
+	{
+		$this->single = $mode === 'single';
 	}
 }

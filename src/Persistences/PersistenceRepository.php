@@ -5,5 +5,5 @@ use Doctrine\Common\Persistence\ObjectRepository;
 
 interface PersistenceRepository extends ObjectRepository, PersistenceRepositoryInterface
 {
-
+	public function setPersistenceMode($mode = 'single');
 }
