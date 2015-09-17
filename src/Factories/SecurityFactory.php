@@ -93,6 +93,7 @@ class SecurityFactory
 		);
 
 		$this->bindUrlGenerator($security);
+		$security->setLoginRoute($configuration->getLoginRoute());
 
 		return $security;
 	}

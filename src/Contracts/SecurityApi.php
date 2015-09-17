@@ -295,4 +295,10 @@ interface SecurityApi
 	 * @return PermissionAwareUrlGenerator
 	 */
 	public function url();
+
+	/**
+	 * Returns the login url
+	 * @return string
+	 */
+    public function getLoginUrl();
 }

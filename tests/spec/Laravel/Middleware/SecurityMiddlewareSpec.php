@@ -7,7 +7,9 @@ use Digbang\Security\Exceptions\Unauthorized;
 use Digbang\Security\SecurityContext;
 use Digbang\Security\Users\User;
 use Illuminate\Contracts\Routing\UrlGenerator;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Redirector;
 use Illuminate\Routing\Route;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -21,15 +23,18 @@ use Psr\Log\LoggerInterface;
  */
 class SecurityMiddlewareSpec extends ObjectBehavior
 {
-    function let(SecurityContext $securityContext, LoggerInterface $logger, Request $request, SecurityApi $security, Route $route, UrlGenerator $url, SecurityContextConfiguration $config)
+	function let(SecurityContext $securityContext, LoggerInterface $logger, Request $request, SecurityApi $security, Route $route, UrlGenerator $url, SecurityContextConfiguration $config, Redirector $redirector, RedirectResponse $redirect)
     {
 	    $securityContext->getSecurity('a_context')->willReturn($security);
 	    $securityContext->getConfigurationFor('a_context')->willReturn($config);
 	    $request->route()->willReturn($route);
 	    $security->url()->willReturn($url);
 	    $security->getUser(Argument::any())->willReturn(null);
+	    $security->getLoginUrl()->willReturn('/auth/login');
+	    $redirector->guest(Argument::cetera())
+		    ->willReturn($redirect);
 
-        $this->beConstructedWith($securityContext, $logger);
+        $this->beConstructedWith($securityContext, $logger, $redirector);
     }
 
     function it_is_initializable()
@@ -53,17 +58,18 @@ class SecurityMiddlewareSpec extends ObjectBehavior
 		$this->handle($request, $next, 'a_context')->shouldBe('Hello!');
 	}
 
-	function it_should_throw_an_unauthenticated_exception_when_user_is_not_logged_in(SecurityContext $securityContext, Request $request)
+	function it_should_return_a_redirect_response_when_user_is_not_logged_in(SecurityContext $securityContext, Request $request, SecurityApi $security)
 	{
 		$securityContext->bindContext('a_context', Argument::any())
 			->shouldBeCalled();
+		$security->getLoginUrl()->shouldBeCalled();
 
 		$next = function(){
 			return 'Hello!';
 		};
 
-		$this->shouldThrow(Unauthenticated::class)
-			->duringHandle($request, $next, 'a_context');
+		$this->handle($request, $next, 'a_context')
+			->shouldBeAnInstanceOf(RedirectResponse::class);
 	}
 
 	function it_should_throw_an_unauthorized_exception_when_user_does_not_have_permissions(SecurityContext $securityContext, Request $request, SecurityApi $security, User $user, UrlGenerator $url)

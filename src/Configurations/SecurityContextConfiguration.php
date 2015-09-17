@@ -233,6 +233,11 @@ class SecurityContextConfiguration
 	private $prefix;
 
 	/**
+	 * @type string
+	 */
+	private $loginRoute;
+
+	/**
 	 *
 	 * SecurityContextConfiguration constructor.
 	 *
@@ -849,5 +854,21 @@ class SecurityContextConfiguration
 		}
 
 		throw new \BadMethodCallException("Invalid method [$name].");
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLoginRoute()
+	{
+		return $this->loginRoute;
+	}
+
+	/**
+	 * @param string $loginRoute
+	 */
+	public function setLoginRoute($loginRoute)
+	{
+		$this->loginRoute = $loginRoute;
 	}
 }

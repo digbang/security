@@ -54,6 +54,11 @@ final class Security implements SecurityApi
 	private $url;
 
 	/**
+	 * @type string
+	 */
+	private $loginRoute;
+
+	/**
 	 * Security constructor.
 	 *
 	 * @param Sentinel             $sentinel
@@ -502,5 +507,23 @@ final class Security implements SecurityApi
 		}
 
 		return call_user_func_array([$this->sentinel, 'hasAnyAccess'], func_get_args());
+	}
+
+	/**
+	 * @param string $route
+	 */
+	public function setLoginRoute($route)
+	{
+		$this->loginRoute = $route;
+	}
+
+	/**
+	 * Returns the login url
+	 *
+	 * @return string
+	 */
+	public function getLoginUrl()
+	{
+		return $this->url()->insecure()->route($this->loginRoute);
 	}
 }

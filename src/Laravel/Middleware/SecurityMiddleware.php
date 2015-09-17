@@ -7,7 +7,9 @@ use Digbang\Security\Contracts\SecurityApi;
 use Digbang\Security\Exceptions\Unauthenticated;
 use Digbang\Security\Exceptions\Unauthorized;
 use Digbang\Security\SecurityContext;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Redirector;
 use Illuminate\Routing\Route;
 use Psr\Log\LoggerInterface;
 
@@ -24,15 +26,22 @@ final class SecurityMiddleware
 	private $logger;
 
 	/**
+	 * @type Redirector
+	 */
+	private $redirector;
+
+	/**
 	 * SecurityContext constructor.
 	 *
 	 * @param SecurityContext $securityContext
 	 * @param LoggerInterface $logger
+	 * @param Redirector      $redirector
 	 */
-	public function __construct(SecurityContext $securityContext, LoggerInterface $logger)
+	public function __construct(SecurityContext $securityContext, LoggerInterface $logger, Redirector $redirector)
 	{
 		$this->securityContext = $securityContext;
 		$this->logger          = $logger;
+		$this->redirector      = $redirector;
 	}
 
 	/**
@@ -50,9 +59,18 @@ final class SecurityMiddleware
 
 	    $this->securityContext->bindContext($context, $request);
 
-	    $this->applySecurity($context, $privacy, $request);
+		try
+		{
+			$this->applySecurity($context, $privacy, $request);
 
-	    $response = $next($request);
+			$response = $next($request);
+		}
+		catch (Unauthenticated $e)
+		{
+			$response = $this->redirector->guest(
+				$this->getLoginUrl($context)
+			);
+		}
 
 	    $this->garbageCollect(
 		    $this->securityContext->getSecurity($context),
@@ -160,5 +178,12 @@ final class SecurityMiddleware
 	private function parseContext($context)
 	{
 		return array_pad(explode(':', $context, 2), 2, 'private');
+	}
+
+	private function getLoginUrl($context)
+	{
+		$security = $this->securityContext->getSecurity($context);
+
+		return $security->getLoginUrl();
 	}
 }
