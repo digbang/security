@@ -42,7 +42,7 @@ class NullRoleRepository implements RoleRepository
 	 */
 	public function findAll()
 	{
-		return [];
+		return new \Illuminate\Support\Collection;
 	}
 
 	/**
@@ -80,5 +80,47 @@ class NullRoleRepository implements RoleRepository
 	public function matching(Criteria $criteria)
 	{
 		return [];
+	}
+
+	/**
+	 * Creates a role and persists it.
+	 *
+	 * @param string      $name
+	 * @param string|null $slug
+	 *
+	 * @return Role
+	 */
+	public function create($name, $slug = null)
+	{
+		throw new \BadMethodCallException(
+			"Cannot create role [$name], Roles are disabled. " .
+			"Enable Roles through the configuration and try again."
+		);
+	}
+
+	/**
+	 * Persist changes to the Role.
+	 *
+	 * @param Role $role
+	 */
+	public function save(Role $role)
+	{
+		throw new \BadMethodCallException(
+			"Cannot save role, Roles are disabled. " .
+			"Enable Roles through the configuration and try again."
+		);
+	}
+
+	/**
+	 * Delete the role.
+	 *
+	 * @param Role $role
+	 */
+	public function delete(Role $role)
+	{
+		throw new \BadMethodCallException(
+			"Cannot delete role, Roles are disabled. " .
+			"Enable Roles through the configuration and try again."
+		);
 	}
 }

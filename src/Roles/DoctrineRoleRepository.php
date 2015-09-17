@@ -70,14 +70,9 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
         return $this->findOneBy(['name' => $name]);
     }
 
-	/**
-	 * Creates a role and persists it.
-	 *
-	 * @param string      $name
-	 * @param string|null $slug
-	 *
-	 * @return Role
-	 */
+    /**
+     * {@inheritdoc}
+     */
 	public function create($name, $slug = null)
 	{
 		$role = $this->createRole($name, $slug);
@@ -88,7 +83,7 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
 	}
 
     /**
-     * @param Role $role
+     * {@inheritdoc}
      */
     public function save(Role $role)
     {
@@ -99,7 +94,7 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
     }
 
     /**
-     * @param Role $role
+     * {@inheritdoc}
      */
     public function delete(Role $role)
     {
@@ -110,10 +105,10 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
     }
 
     /**
-     * @return Collection
+     * {@inheritdoc}
      */
-    public function all()
+    public function findAll()
     {
-        return new Collection($this->findAll());
+        return new Collection(parent::findAll());
     }
 }
