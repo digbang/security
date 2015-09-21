@@ -52,7 +52,7 @@ class DefaultRepositoryFactory implements RepositoryFactory
 		}
 
 		$entityManager = $this->container->make(EntityManager::class);
-		$session = new IlluminateSession($this->container->make(Store::class), $context);
+		$session = new IlluminateSession($this->container->make(Store::class), "persistence:$context");
 		$cookie = new IlluminateCookie(
 			$this->container->make(Request::class),
 			$this->container->make(CookieJar::class),

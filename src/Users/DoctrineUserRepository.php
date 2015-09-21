@@ -221,6 +221,15 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 	}
 
 	/**
+	 * {@inheritdoc}
+	 */
+	public function destroy(User $user)
+	{
+		$this->_em->remove($user);
+		$this->_em->flush();
+	}
+
+	/**
 	 * @param UserInterface $user
 	 *
 	 * @return bool|UserInterface
