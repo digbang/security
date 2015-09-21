@@ -179,7 +179,7 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
         if ($code)
         {
             $queryBuilder
-	            ->andWhere('code = :code')
+	            ->andWhere('r.code = :code')
 	            ->setParameter('code', $code);
         }
 
