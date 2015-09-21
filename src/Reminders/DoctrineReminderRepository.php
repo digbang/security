@@ -168,8 +168,8 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
 
 		$queryBuilder
 			->where('r.user = :user')
-			->andWhere('completed = :completed')
-			->andWhere('createdAt > :expires');
+			->andWhere('r.completed = :completed')
+			->andWhere('r.createdAt > :expires');
 
 		$queryBuilder
 			->setParameter('user', $user)
