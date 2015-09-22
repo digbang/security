@@ -8,6 +8,7 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * Class RoutePermissionRepositorySpec
@@ -83,5 +84,14 @@ class RoutePermissionRepositorySpec extends ObjectBehavior
 			->willReturn(new Collection([$route->getWrappedObject()]));
 
 		$this->all()->shouldReturn([self::VALID_PERMISSION]);
+	}
+
+	function it_should_return_null_when_asked_for_a_permission_for_an_unmapped_url(Router $router, RouteCollection $routeCollection)
+	{
+		$router->getRoutes()->shouldBeCalled();
+		$routeCollection->match(Argument::any())->shouldBeCalled()
+			->willThrow(HttpException::class);
+
+		$this->getForPath('/unmapped_path')->shouldBe(null);
 	}
 }

@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 final class RoutePermissionRepository implements PermissionRepository
 {
@@ -97,11 +98,15 @@ final class RoutePermissionRepository implements PermissionRepository
 		/** @type Request $request */
 		$request = Request::create($path);
 
-		if ($route = $this->router->getRoutes()->match($request))
+		try
 		{
-			return $this->extractPermissionFrom($route);
+			if ($route = $this->router->getRoutes()->match($request))
+			{
+				return $this->extractPermissionFrom($route);
+			}
 		}
-
+		catch (HttpException $e){ }
+		
 		return null;
 	}
 }
