@@ -89,8 +89,6 @@ class SecurityContext
 		$request->setUserResolver(function() use ($security){
             return $security->getUser();
         });
-
-		$this->addPermissionsFactoryListener($context);
 	}
 
 	/**
@@ -107,7 +105,8 @@ class SecurityContext
 		}
 
 		$configuration = $this->getConfigurationFor($context);
-
+		$this->addPermissionsFactoryListener($context);
+		
 		return $this->instances[$context] = $this->getSecurityFactory()->create($context, $configuration);
 	}
 
