@@ -6,6 +6,18 @@ use Doctrine\Common\Collections\Collection;
 interface Role extends RoleInterface
 {
 	/**
+	 * @param  string $name
+	 * @return void
+	 */
+	public function setName($name);
+
+	/**
+	 * @param  string $slug
+	 * @return void
+	 */
+	public function setRoleSlug($slug);
+
+	/**
 	 * @return string
 	 */
 	public function getName();

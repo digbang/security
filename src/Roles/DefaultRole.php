@@ -7,6 +7,7 @@ use Digbang\Security\Permissions\Permissible;
 use Digbang\Security\Permissions\PermissibleTrait;
 use Digbang\Security\Users\DefaultUser;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Illuminate\Support\Str;
 
 class DefaultRole implements Role, Permissible
@@ -158,5 +159,21 @@ class DefaultRole implements Role, Permissible
 		}
 
 		return $permissionsFactory(null, [$this->permissions]);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setName($name)
+	{
+		$this->name = $name;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setRoleSlug($slug)
+	{
+		$this->slug = $slug;
 	}
 }

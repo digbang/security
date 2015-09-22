@@ -38,4 +38,18 @@ class DefaultRoleSpec extends ObjectBehavior
 		$this->is('admin')->shouldBe(false);
 		$this->is('a-very-clever-role-name')->shouldBe(true);
 	}
+
+	function it_should_mutate_names()
+	{
+		$this->getName()->shouldBe('A Very Clever Role Name');
+		$this->setName('Dull name');
+		$this->getName()->shouldBe('Dull name');
+	}
+
+	function it_should_mutate_slugs()
+	{
+		$this->getRoleSlug()->shouldBe('a-very-clever-role-name');
+		$this->setRoleSlug('dull-slug');
+		$this->getRoleSlug()->shouldBe('dull-slug');
+	}
 }
