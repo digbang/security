@@ -29,4 +29,9 @@ interface Permissible extends PermissibleInterface
 	 * @return Collection
 	 */
 	public function getPermissions();
+
+	/**
+	 * @return void
+	 */
+	public function clearPermissions();
 }

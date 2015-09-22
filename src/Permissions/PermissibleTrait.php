@@ -123,6 +123,16 @@ trait PermissibleTrait
 	/**
 	 * {@inheritdoc}
 	 */
+	public function clearPermissions()
+	{
+		$this->permissions->clear();
+
+		$this->refreshPermissionsInstance();
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	protected function getPermissionsFactory()
 	{
 		return $this->permissionsFactory;
