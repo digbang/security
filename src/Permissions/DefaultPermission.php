@@ -42,4 +42,12 @@ abstract class DefaultPermission implements Permission
 	{
 		return $this->allowed;
 	}
+
+	/**
+	 * Return the name as the string representation.
+	 */
+	public function __toString()
+	{
+		return $this->getName();
+	}
 }
