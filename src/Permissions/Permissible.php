@@ -26,6 +26,18 @@ interface Permissible extends PermissibleInterface
 	public function hasAnyAccess($permission);
 
 	/**
+	 * @param string|array $permissions
+	 * @param bool         $force
+	 */
+	public function allow($permissions, $force = false);
+
+	/**
+	 * @param string|array $permissions
+	 * @param bool         $force
+	 */
+	public function deny($permissions, $force = false);
+
+	/**
 	 * @return Collection
 	 */
 	public function getPermissions();

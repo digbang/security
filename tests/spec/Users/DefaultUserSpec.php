@@ -3,11 +3,15 @@
 use Carbon\Carbon;
 use Cartalyst\Sentinel\Permissions\PermissionsInterface;
 use Digbang\Security\Activations\Activation;
+use Digbang\Security\Permissions\DefaultRolePermission;
 use Digbang\Security\Permissions\LazyStandardPermissions;
 use Digbang\Security\Permissions\Permissible;
+use Digbang\Security\Roles\DefaultRole;
 use Digbang\Security\Roles\Role;
 use Digbang\Security\Users\ValueObjects\Email;
 use Digbang\Security\Users\ValueObjects\Password;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Prophecy\Prophet;
@@ -160,6 +164,36 @@ class DefaultUserSpec extends ObjectBehavior
 		$this->hasAccess('baz')->shouldBe(true);
 		$this->removePermission('baz');
 		$this->hasAccess('baz')->shouldBe(false);
+	}
+
+	function it_should_allow_a_permission()
+	{
+		$this->setPermissionsFactory(LazyStandardPermissions::getFactory());
+
+		$this->hasAccess('foo')->shouldBe(false);
+		$this->allow('foo');
+		$this->hasAccess('foo')->shouldBe(true);
+		$this->hasAnyAccess(['fooes', 'bar', 'baz'])->shouldBe(false);
+		$this->allow(['fooes', 'bar', 'baz']);
+		$this->hasAccess('foo')->shouldBe(true);
+		$this->hasAccess('bar')->shouldBe(true);
+		$this->hasAccess('baz')->shouldBe(true);
+	}
+
+	function it_should_deny_a_permission(DefaultRole $role, DefaultRolePermission $permission)
+	{
+		$role->getPermissions()->willReturn(new ArrayCollection([$permission->getWrappedObject()]));
+		$permission->getName()->willReturn('foo');
+		$permission->isAllowed()->willReturn(true);
+
+		$this->addRole($role);
+
+		$this->setPermissionsFactory(LazyStandardPermissions::getFactory());
+
+		$this->hasAccess('foo')->shouldBe(true);
+
+		$this->deny('foo');
+		$this->hasAccess('foo')->shouldBe(false);
 	}
 
 	function it_should_delegate_to_the_password_object_to_check_itself(Password $password)

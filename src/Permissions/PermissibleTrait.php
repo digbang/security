@@ -57,6 +57,38 @@ trait PermissibleTrait
 	/**
 	 * {@inheritdoc}
 	 */
+	public function allow($permissions, $force = false)
+	{
+		foreach ((array) $permissions as $permission)
+		{
+			if ($force || !$this->hasAccess($permission))
+			{
+				$this->addPermission($permission);
+			}
+		}
+
+		$this->refreshPermissionsInstance();
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function deny($permissions, $force = false)
+	{
+		foreach ((array) $permissions as $permission)
+		{
+			if ($force || $this->hasAccess($permission))
+			{
+				$this->addPermission($permission, false);
+			}
+		}
+
+		$this->refreshPermissionsInstance();
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function getPermissionsInstance()
 	{
 		if (! $this->permissionsInstance)
@@ -80,9 +112,16 @@ trait PermissibleTrait
 	 */
 	public function updatePermission($permission, $value = true, $create = false)
 	{
-		if ($create || $this->permissions->containsKey($permission))
+		$existing = $this->getPermission($permission);
+
+		if ($create || $existing)
 		{
-			$this->permissions->set($permission, $this->createPermission($permission, $value));
+			if ($existing)
+			{
+				$this->removePermission($existing);
+			}
+
+			$this->permissions->add($this->createPermission($permission, $value));
 
 			$this->refreshPermissionsInstance();
 		}
@@ -95,11 +134,25 @@ trait PermissibleTrait
 	 */
 	public function removePermission($permission)
 	{
-		$this->permissions->remove($permission);
-
-		$this->refreshPermissionsInstance();
+		if ($object = $this->getPermission($permission))
+		{
+			$this->permissions->removeElement($object);
+			$this->refreshPermissionsInstance();
+		}
 
 		return $this;
+	}
+
+	/**
+	 * @param string $permission
+	 *
+	 * @return Permission|null
+	 */
+	protected function getPermission($permission)
+	{
+		return $this->permissions->filter(function(Permission $object) use ($permission) {
+			return $object->getName() == $permission;
+		})->first();
 	}
 
 	/**
