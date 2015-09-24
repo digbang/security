@@ -1,7 +1,11 @@
 <?php namespace Digbang\Security\Users;
 
 use Cartalyst\Sentinel\Users\UserInterface;
+use Digbang\Security\Permissions\Permissible;
 use Digbang\Security\Persistences\PersistenceRepository;
+use Digbang\Security\Roles\Role;
+use Digbang\Security\Roles\Roleable;
+use Digbang\Security\Roles\RoleRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -15,16 +19,27 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 	protected $persistences;
 
 	/**
+	 * @type RoleRepository
+	 */
+	protected $roles;
+
+	/**
 	 * @param EntityManager         $entityManager
 	 * @param PersistenceRepository $persistences
+	 * @param RoleRepository        $roles
 	 */
-    public function __construct(EntityManager $entityManager, PersistenceRepository $persistences)
+    public function __construct(
+	    EntityManager         $entityManager,
+	    PersistenceRepository $persistences,
+		RoleRepository        $roles
+    )
     {
         parent::__construct($entityManager, $entityManager->getClassMetadata(
             $this->entityName()
         ));
 
 	    $this->persistences = $persistences;
+	    $this->roles        = $roles;
     }
 
 	/**
@@ -214,6 +229,32 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 		{
             $user = $this->findById($user);
         }
+
+		if ($user instanceof Roleable && isset($credentials['roles']))
+		{
+			foreach ($credentials['roles'] as $roleSlug)
+			{
+				/** @type Role|null $role */
+				$role = $this->roles->findBySlug($roleSlug);
+
+				if (! $role)
+				{
+					throw new \InvalidArgumentException("Role [$roleSlug] does not exist.");
+				}
+
+				$user->addRole($role);
+			}
+		}
+
+		if ($user instanceof Permissible && isset($credentials['permissions']))
+		{
+			$user->clearPermissions();
+
+			foreach ($credentials['permissions'] as $permission)
+			{
+				$user->addPermission($permission);
+			}
+		}
 
         $user->update($credentials);
 

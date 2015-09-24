@@ -82,7 +82,7 @@ trait RoleMappingTrait
 	public function addRelations(Builder $builder)
 	{
 		$builder->belongsToMany($this->relations['users'][0], $this->relations['users'][1], function(BelongsToMany $belongsToMany){
-			$belongsToMany->inversedBy($this->relations['users'][2]);
+			$belongsToMany->mappedBy($this->relations['users'][2]);
 
 			if ($this->joinTable)
 			{

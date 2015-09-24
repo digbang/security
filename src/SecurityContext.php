@@ -106,7 +106,7 @@ class SecurityContext
 
 		$configuration = $this->getConfigurationFor($context);
 		$this->addPermissionsFactoryListener($context);
-		
+
 		return $this->instances[$context] = $this->getSecurityFactory()->create($context, $configuration);
 	}
 

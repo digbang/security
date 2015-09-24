@@ -104,7 +104,7 @@ trait UserMappingTrait
 		if ($this->enabled['roles'])
 		{
 			$builder->belongsToMany($this->relations['roles'][0], $this->relations['roles'][1], function(BelongsToMany $belongsToMany){
-				$belongsToMany->mappedBy($this->relations['roles'][2]);
+				$belongsToMany->inversedBy($this->relations['roles'][2]);
 
 				if ($this->joinTable)
 				{
