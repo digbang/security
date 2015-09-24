@@ -67,6 +67,8 @@ final class RoutePermissionRepository implements PermissionRepository
 					$this->permissions[] = $permission;
 				}
 			}
+
+			$this->permissions = array_unique($this->permissions);
 		}
 
 		return $this->permissions;
