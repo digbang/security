@@ -10,6 +10,7 @@ use Digbang\Security\Persistences\DefaultDoctrinePersistenceRepository;
 use Digbang\Security\Persistences\PersistenceRepository;
 use Digbang\Security\Reminders\DefaultDoctrineReminderRepository;
 use Digbang\Security\Roles\DefaultDoctrineRoleRepository;
+use Digbang\Security\Roles\RoleRepository;
 use Digbang\Security\Throttling\DefaultDoctrineThrottleRepository;
 use Digbang\Security\Users\DefaultDoctrineUserRepository;
 use Digbang\Security\Users\UserRepository;
@@ -65,7 +66,7 @@ class DefaultRepositoryFactory implements RepositoryFactory
 	/**
 	 * {@inheritdoc]
 	 */
-	public function createUserRepository($context, PersistenceRepository $persistenceRepository)
+	public function createUserRepository($context, PersistenceRepository $persistenceRepository, RoleRepository $roleRepository)
 	{
 		if (array_key_exists('user', $this->instances))
 		{
@@ -75,7 +76,7 @@ class DefaultRepositoryFactory implements RepositoryFactory
 		$entityManager = $this->container->make(EntityManager::class);
 
 		return $this->instances['user'] = new DefaultDoctrineUserRepository(
-			$entityManager, $persistenceRepository
+			$entityManager, $persistenceRepository, $roleRepository
 		);
 	}
 

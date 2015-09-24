@@ -50,9 +50,10 @@ class ConfigurationRepositoryFactorySpec extends ObjectBehavior
 
     }
 
-	function it_should_make_user_repositories(PersistenceRepository $persistences)
+	function it_should_make_user_repositories(PersistenceRepository $persistences, RoleRepository $roles)
 	{
-		$this->createUserRepository('a_context', $persistences)->shouldBeAnInstanceOf(UserRepository::class);
+		$this->createUserRepository('a_context', $persistences, $roles)
+			->shouldBeAnInstanceOf(UserRepository::class);
 	}
 
 	function it_should_make_role_repositories()

@@ -6,6 +6,7 @@ use Digbang\Security\Permissions\InsecurePermissionRepository;
 use Digbang\Security\Persistences\PersistenceRepository;
 use Digbang\Security\Reminders\ReminderRepository;
 use Digbang\Security\Roles\NullRoleRepository;
+use Digbang\Security\Roles\RoleRepository;
 use Digbang\Security\SecurityContext;
 use Digbang\Security\Throttling\ThrottleRepository;
 use Digbang\Security\Users\UserRepository;
@@ -62,14 +63,14 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
 	/**
 	 * {@inheritdoc}
 	 */
-	public function createUserRepository($context, PersistenceRepository $persistenceRepository)
+	public function createUserRepository($context, PersistenceRepository $persistenceRepository, RoleRepository $roleRepository)
 	{
 		if ($this->configuration($context)->getUserRepository())
 		{
 			return $this->container->make($this->configuration($context)->getUserRepository());
 		}
 
-		return $this->defaults->createUserRepository($context, $persistenceRepository);
+		return $this->defaults->createUserRepository($context, $persistenceRepository, $roleRepository);
 	}
 
 	/**

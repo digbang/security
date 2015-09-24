@@ -244,6 +244,8 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 
 				$user->addRole($role);
 			}
+
+			unset($credentials['roles']);
 		}
 
 		if ($user instanceof Permissible && isset($credentials['permissions']))
@@ -254,6 +256,8 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 			{
 				$user->addPermission($permission);
 			}
+
+			unset($credentials['permissions']);
 		}
 
         $user->update($credentials);

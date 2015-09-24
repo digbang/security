@@ -48,9 +48,9 @@ class DefaultRepositoryFactorySpec extends ObjectBehavior
 		$this->shouldHaveType(RepositoryFactory::class);
 	}
 
-	function it_should_make_user_repositories(PersistenceRepository $persistences)
+	function it_should_make_user_repositories(PersistenceRepository $persistences, RoleRepository $roles)
 	{
-		$this->createUserRepository('a_context', $persistences)
+		$this->createUserRepository('a_context', $persistences, $roles)
 			->shouldBeAnInstanceOf(UserRepository::class);
 	}
 

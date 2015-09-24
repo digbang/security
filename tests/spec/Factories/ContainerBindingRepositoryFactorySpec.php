@@ -43,11 +43,12 @@ class ContainerBindingRepositoryFactorySpec extends ObjectBehavior
 		$this->shouldHaveType(RepositoryFactory::class);
 	}
 
-	function it_should_make_user_repositories(PersistenceRepository $persistences, Container $container)
+	function it_should_make_user_repositories(PersistenceRepository $persistences, Container $container, RoleRepository $roles)
 	{
 		$container->instance(UserRepository::class, Argument::type(UserRepository::class))->shouldBeCalled();
 
-		$this->createUserRepository('a_context', $persistences)->shouldBeAnInstanceOf(UserRepository::class);
+		$this->createUserRepository('a_context', $persistences, $roles)
+			->shouldBeAnInstanceOf(UserRepository::class);
 	}
 
 	function it_should_make_role_repositories(Container $container)

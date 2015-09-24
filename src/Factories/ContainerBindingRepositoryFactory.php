@@ -47,11 +47,11 @@ class ContainerBindingRepositoryFactory implements RepositoryFactory
 	/**
 	 * {@inheritdoc}
 	 */
-	public function createUserRepository($context, PersistenceRepository $persistenceRepository)
+	public function createUserRepository($context, PersistenceRepository $persistenceRepository, RoleRepository $roleRepository)
 	{
 		return $this->bindAndReturn(
 			UserRepository::class,
-			$this->repositories->createUserRepository($context, $persistenceRepository)
+			$this->repositories->createUserRepository($context, $persistenceRepository, $roleRepository)
 		);
 	}
 

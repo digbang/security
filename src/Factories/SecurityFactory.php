@@ -48,13 +48,15 @@ class SecurityFactory
 	 */
 	public function create($context, SecurityContextConfiguration $configuration)
 	{
-		$persistenceRepository = $this->repositories->createPersistenceRepository($context);
-		$userRepository = $this->repositories->createUserRepository($context, $persistenceRepository);
+		$persistences = $this->repositories->createPersistenceRepository($context);
+		$roles        = $this->repositories->createRoleRepository($context);
+		$users        = $this->repositories->createUserRepository($context, $persistences, $roles);
+
 
 		$sentinel = new Sentinel(
-			$persistenceRepository,
-			$userRepository,
-			$this->repositories->createRoleRepository($context),
+			$persistences,
+			$users,
+			$roles,
 			$this->repositories->createActivationRepository($context),
 			$this->container->make(Dispatcher::class)
 		);
@@ -65,7 +67,7 @@ class SecurityFactory
 		}
 
 		$sentinel->setReminderRepository(
-			$this->repositories->createReminderRepository($context, $userRepository)
+			$this->repositories->createReminderRepository($context, $users)
 		);
 
 		$sentinel->setRequestCredentials(function(){

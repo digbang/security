@@ -17,11 +17,13 @@ interface RepositoryFactory
 	public function createPersistenceRepository($context);
 
 	/**
-	 * @param string $context
+	 * @param string                $context
 	 * @param PersistenceRepository $persistenceRepository
+	 * @param RoleRepository        $roleRepository
+	 *
 	 * @return UserRepository
 	 */
-	public function createUserRepository($context, PersistenceRepository $persistenceRepository);
+	public function createUserRepository($context, PersistenceRepository $persistenceRepository, RoleRepository $roleRepository);
 
 	/**
 	 * @param string $context

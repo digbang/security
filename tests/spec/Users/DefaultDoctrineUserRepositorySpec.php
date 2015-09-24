@@ -4,6 +4,8 @@ use Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface;
 use Cartalyst\Sentinel\Users\UserRepositoryInterface;
 use Digbang\Security\Permissions\LazyStandardPermissions;
 use Digbang\Security\Persistences\PersistenceRepository;
+use Digbang\Security\Roles\Role;
+use Digbang\Security\Roles\RoleRepository;
 use Digbang\Security\Users\DefaultUser;
 use Digbang\Security\Users\User;
 use Digbang\Security\Users\UserRepository;
@@ -24,7 +26,7 @@ use Prophecy\Prophet;
  */
 class DefaultDoctrineUserRepositorySpec extends ObjectBehavior
 {
-	function let(EntityManager $entityManager, PersistenceRepository $persistenceRepository, ClassMetadata $classMetadata)
+	function let(EntityManager $entityManager, PersistenceRepository $persistenceRepository, ClassMetadata $classMetadata, RoleRepository $roles)
 	{
 		$entityManager->getClassMetadata(DefaultUser::class)
 			->shouldBeCalled()
@@ -32,9 +34,7 @@ class DefaultDoctrineUserRepositorySpec extends ObjectBehavior
 
 		$classMetadata->name = DefaultUser::class;
 
-		$this->beConstructedWith($entityManager, $persistenceRepository, function(){
-			return new LazyStandardPermissions();
-		});
+		$this->beConstructedWith($entityManager, $persistenceRepository, $roles);
 	}
 
     function it_is_initializable()
@@ -207,17 +207,22 @@ class DefaultDoctrineUserRepositorySpec extends ObjectBehavior
 		])->shouldBeAUser();
 	}
 
-	function it_should_update_users(EntityManager $entityManager, User $user)
+	function it_should_update_users(EntityManager $entityManager, DefaultUser $user, RoleRepository $roles, Role $role)
 	{
 		$entityManager->persist($user)->shouldBeCalled();
 		$entityManager->flush(Argument::cetera())->shouldBeCalled();
+		$roles->findBySlug('foo')->shouldBeCalled()
+			->willReturn($role);
 
 		$user->update([
 			'email'    => 'foo@example.org'
 		])->shouldBeCalled();
 
+		$user->addRole($role)->shouldBeCalled();
+
 		$this->update($user, [
-			'email'    => 'foo@example.org'
+			'email'    => 'foo@example.org',
+			'roles' => ['foo']
 		])->shouldBe($user);
 	}
 
