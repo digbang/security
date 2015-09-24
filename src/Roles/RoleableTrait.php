@@ -32,7 +32,10 @@ trait RoleableTrait
 	 */
 	public function addRole(Role $role)
 	{
-		$this->roles->add($role);
+		if (! $this->inRole($role))
+		{
+			$this->roles->add($role);
+		}
 	}
 
 	/**
