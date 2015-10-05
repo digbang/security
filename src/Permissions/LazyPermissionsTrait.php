@@ -1,6 +1,7 @@
 <?php namespace Digbang\Security\Permissions;
 
 use Doctrine\Common\Collections\Collection;
+use Illuminate\Support\Str;
 
 trait LazyPermissionsTrait
 {
@@ -130,7 +131,7 @@ trait LazyPermissionsTrait
 	protected function getMatchingPermissions($permission)
 	{
 		return array_filter($this->permissions->getKeys(), function($key) use ($permission){
-			return str_is($permission, $key) || str_is($key, $permission);
+			return Str::is($permission, $key) || Str::is($key, $permission);
 		});
 	}
 }
