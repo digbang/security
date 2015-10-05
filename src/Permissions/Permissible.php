@@ -26,24 +26,30 @@ interface Permissible extends PermissibleInterface
 	public function hasAnyAccess($permission);
 
 	/**
-	 * @param string|array $permissions
-	 * @param bool         $force
-	 */
-	public function allow($permissions, $force = false);
-
-	/**
-	 * @param string|array $permissions
-	 * @param bool         $force
-	 */
-	public function deny($permissions, $force = false);
-
-	/**
 	 * @return Collection
 	 */
 	public function getPermissions();
 
 	/**
+	 * @param array|string $permissions
+	 * @param bool         $force
+	 *
 	 * @return void
 	 */
-	public function clearPermissions();
+	public function allow($permissions, $force = false);
+
+	/**
+	 * @param array|string $permissions
+	 * @param bool         $force
+	 *
+	 * @return void
+	 */
+	public function deny($permissions, $force = false);
+
+	/**
+	 * @param array $permissions
+	 *
+	 * @return void
+	 */
+	public function syncPermissions(array $permissions);
 }

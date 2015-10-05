@@ -11,7 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 trait PermissibleTrait
 {
 	/**
-	 * @type ArrayCollection
+	 * @type ArrayCollection|Permission[]
 	 */
 	protected $permissions;
 
@@ -37,6 +37,13 @@ trait PermissibleTrait
 	 * @return Permission
 	 */
 	abstract protected function createPermission($permission, $value);
+
+	/**
+	 * @param array $permissions
+	 *
+	 * @return void
+	 */
+	abstract public function syncPermissions(array $permissions);
 
 	/**
 	 * {@inheritdoc}

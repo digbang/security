@@ -214,6 +214,7 @@ class DefaultDoctrineUserRepositorySpec extends ObjectBehavior
 		$roles->findBySlug('foo')->shouldBeCalled()
 			->willReturn($role);
 
+		$user->getRoles()->shouldBeCalled()->willReturn([]);
 		$user->update([
 			'email'    => 'foo@example.org'
 		])->shouldBeCalled();

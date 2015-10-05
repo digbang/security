@@ -7,6 +7,7 @@ use Digbang\Security\Permissions\DefaultUserPermission;
 use Digbang\Security\Permissions\NullPermissions;
 use Digbang\Security\Permissions\Permissible;
 use Digbang\Security\Permissions\PermissibleTrait;
+use Digbang\Security\Permissions\Permission;
 use Digbang\Security\Persistences\Persistable;
 use Digbang\Security\Persistences\PersistableTrait;
 use Digbang\Security\Roles\Role;
@@ -156,6 +157,11 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
 
 			$this->name = new ValueObjects\Name($firstName, $lastName);
 		}
+
+		if (array_key_exists('permissions', $credentials))
+		{
+			$this->syncPermissions($credentials['permissions']);
+		}
 	}
 
 	/**
@@ -244,11 +250,34 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
 	/**
 	 * {@inheritdoc}
 	 */
+	public function syncPermissions(array $permissions)
+	{
+		$this->permissions->clear();
+
+		foreach ($this->roles as $role)
+		{
+			/** @var Permissible $role */
+			foreach ($role->getPermissions() as $permission)
+			{
+				/** @var Permission $permission */
+				if ($permission->isAllowed() && ! in_array($permission->getName(), $permissions))
+				{
+					$this->addPermission($permission->getName(), false);
+				}
+			}
+		}
+
+		$this->allow($permissions);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function addRole(Role $role)
 	{
 		$this->_addRole($role);
 
-		$this->makePermissionsInstance();
+		$this->refreshPermissionsInstance();
 	}
 
 	/**
@@ -258,7 +287,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
 	{
 		$this->_removeRole($role);
 
-		$this->makePermissionsInstance();
+		$this->refreshPermissionsInstance();
 	}
 
 	/**

@@ -176,4 +176,16 @@ class DefaultRole implements Role, Permissible
 	{
 		$this->slug = $slug;
 	}
+
+	/**
+	 * @param array $permissions
+	 *
+	 * @return void
+	 */
+	public function syncPermissions(array $permissions)
+	{
+		$this->permissions->clear();
+
+		$this->allow($permissions);
+	}
 }

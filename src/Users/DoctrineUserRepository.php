@@ -232,6 +232,20 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 
 		if ($user instanceof Roleable && isset($credentials['roles']))
 		{
+			foreach ($user->getRoles() as $role)
+			{
+				/** @var Role $role */
+				$idx = array_search($role->getRoleSlug(), $credentials['roles']);
+				if ($idx === false)
+				{
+					$user->removeRole($role);
+				}
+				else
+				{
+					unset($credentials['roles'][$idx]);
+				}
+			}
+
 			foreach ($credentials['roles'] as $roleSlug)
 			{
 				/** @type Role|null $role */
@@ -248,19 +262,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 			unset($credentials['roles']);
 		}
 
-		if ($user instanceof Permissible && isset($credentials['permissions']))
-		{
-			$user->clearPermissions();
-
-			foreach ($credentials['permissions'] as $permission)
-			{
-				$user->addPermission($permission);
-			}
-
-			unset($credentials['permissions']);
-		}
-
-        $user->update($credentials);
+		$user->update($credentials);
 
         return $this->save($user);
 	}

@@ -230,4 +230,27 @@ class DefaultUserSpec extends ObjectBehavior
 
 		$this->getActivatedAt()->shouldBe($now);
 	}
+
+	function it_should_sync_permissions()
+	{
+		$role = new DefaultRole('Testing role');
+		$role->setPermissionsFactory(LazyStandardPermissions::getFactory());
+		$this->setPermissionsFactory(LazyStandardPermissions::getFactory());
+
+		$role->allow(['role.foo', 'role.bar']);
+		$role->deny('role.baz');
+
+		$this->addRole($role);
+
+		$this->hasAccess('role.foo')->shouldBe(true);
+		$this->hasAccess('role.bar')->shouldBe(true);
+		$this->hasAccess('role.baz')->shouldBe(false);
+
+		$this->syncPermissions(['foo', 'role.foo', 'role.baz']);
+
+		$this->hasAccess('foo')->shouldBe(true);
+		$this->hasAccess('role.foo')->shouldBe(true);
+		$this->hasAccess('role.bar')->shouldBe(false);
+		$this->hasAccess('role.baz')->shouldBe(true);
+	}
 }
