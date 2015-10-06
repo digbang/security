@@ -267,6 +267,8 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
 			}
 		}
 
+		$this->refreshPermissionsInstance();
+
 		$this->allow($permissions);
 	}
 

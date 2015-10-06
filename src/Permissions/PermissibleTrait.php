@@ -123,10 +123,7 @@ trait PermissibleTrait
 
 		if ($create || $existing)
 		{
-			if ($existing)
-			{
-				$this->removePermission($existing);
-			}
+			$this->removePermission($existing);
 
 			$this->permissions->add($this->createPermission($permission, $value));
 
@@ -151,14 +148,18 @@ trait PermissibleTrait
 	}
 
 	/**
-	 * @param string $permission
+	 * @param Permission|string $permission
 	 *
 	 * @return Permission|null
 	 */
 	protected function getPermission($permission)
 	{
-		return $this->permissions->filter(function(Permission $object) use ($permission) {
-			return $object->getName() == $permission;
+		$name = $permission instanceof Permission
+			? $permission->getName()
+			: $permission;
+
+		return $this->permissions->filter(function(Permission $current) use ($name) {
+			return $current->getName() == $name;
 		})->first();
 	}
 
@@ -201,7 +202,7 @@ trait PermissibleTrait
 	/**
 	 * Forces a refresh on the PermissionsInterface instance.
 	 */
-	private function refreshPermissionsInstance()
+	protected function refreshPermissionsInstance()
 	{
 		$this->permissionsInstance = $this->makePermissionsInstance();
 	}
