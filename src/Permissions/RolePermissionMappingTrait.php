@@ -1,7 +1,9 @@
 <?php namespace Digbang\Security\Permissions;
 
 use Digbang\Doctrine\Metadata\Builder;
+use Digbang\Doctrine\Metadata\Relations\BelongsTo;
 use Digbang\Security\Roles\DefaultRole;
+use Doctrine\ORM\Mapping\Builder\FieldBuilder;
 
 trait RolePermissionMappingTrait
 {
@@ -37,8 +39,9 @@ trait RolePermissionMappingTrait
 	public function addProperties(Builder $builder)
 	{
 		$builder
-			->primary()
-			->string('name')
+			->string('name', function(FieldBuilder $fieldBuilder){
+				$fieldBuilder->makePrimaryKey();
+			})
 			->boolean('allowed');
 	}
 
@@ -49,6 +52,8 @@ trait RolePermissionMappingTrait
 	 */
 	public function addRelations(Builder $builder)
 	{
-		$builder->belongsTo($this->relations['role'][0], $this->relations['role'][1]);
+		$builder->belongsTo($this->relations['role'][0], $this->relations['role'][1], function(BelongsTo $belongsTo){
+			$belongsTo->isPrimaryKey();
+		});
 	}
 }
