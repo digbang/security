@@ -9,7 +9,7 @@
 	],
 	"require": {
 		"php": ">=5.6",
-		"digbang/doctrine":     "dev-master",
+		"digbang/doctrine":     "^3.0",
 		"illuminate/support":   "~5.1",
 		"illuminate/contracts": "~5.1",
 		"illuminate/events":    "~5.1",

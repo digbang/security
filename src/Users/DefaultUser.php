@@ -259,27 +259,33 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
 			{
 				$current->deny();
 			}
-		}
-
-		foreach ($this->roles as $role)
-		{
-			/** @var Permissible $role */
-			foreach ($role->getPermissions() as $permission)
+			elseif (! $current->isAllowed() && in_array($current->getName(), $permissions))
 			{
-				/** @var Permission $permission */
-				if ($permission->isAllowed() && ! in_array($permission->getName(), $permissions))
-				{
-					$this->addPermission($permission->getName(), false);
-				}
-
-				foreach ($this->permissions->filter(function(Permission $current) use ($permission){
-					return $current->equals($permission);
-				}) as $repeated)
-				{
-					$this->permissions->removeElement($repeated);
-				}
+				$current->allow();
 			}
 		}
+
+		$this->roles->map(function(Role $role) use ($permissions) {
+			if ($role instanceof Permissible)
+			{
+				$rolePermissions = $role->getPermissions();
+				$rolePermissions
+					->filter(function(Permission $permission) use ($permissions) {
+						return $permission->isAllowed() && ! in_array($permission->getName(), $permissions);
+					})
+					->map(function(Permission $permission){
+						$this->addPermission($permission->getName(), false);
+					});
+
+				$rolePermissions->map(function(Permission $permission){
+					$this->permissions->filter(function(Permission $current) use ($permission){
+						return $current->equals($permission);
+					})->map(function(Permission $repeated){
+						$this->permissions->removeElement($repeated);
+					});
+				});
+			}
+		});
 
 		$this->refreshPermissionsInstance();
 

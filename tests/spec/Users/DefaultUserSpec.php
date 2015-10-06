@@ -6,6 +6,7 @@ use Digbang\Security\Activations\Activation;
 use Digbang\Security\Permissions\DefaultRolePermission;
 use Digbang\Security\Permissions\LazyStandardPermissions;
 use Digbang\Security\Permissions\Permissible;
+use Digbang\Security\Permissions\Permission;
 use Digbang\Security\Roles\DefaultRole;
 use Digbang\Security\Roles\Role;
 use Digbang\Security\Users\ValueObjects\Email;
@@ -252,5 +253,26 @@ class DefaultUserSpec extends ObjectBehavior
 		$this->hasAccess('role.foo')->shouldBe(true);
 		$this->hasAccess('role.bar')->shouldBe(false);
 		$this->hasAccess('role.baz')->shouldBe(true);
+	}
+
+	function it_shouldnt_hold_allowed_user_permissions_that_the_role_already_allows()
+	{
+		$role = new DefaultRole('Testing role');
+		$role->setPermissionsFactory(LazyStandardPermissions::getFactory());
+		$this->setPermissionsFactory(LazyStandardPermissions::getFactory());
+
+		$role->allow(['role.foo', 'role.bar']);
+		$role->deny('role.baz');
+		$this->addRole($role);
+
+		$this->deny('role.foo');
+
+		$this->syncPermissions(['foo', 'role.foo', 'role.baz']);
+
+		$permissions = $this->getPermissions();
+
+		$permissions->filter(function(Permission $permission){
+			return $permission->getName() == 'role.foo' && $permission->isAllowed();
+		})->isEmpty()->shouldBe(true);
 	}
 }
