@@ -118,7 +118,8 @@ trait UserMappingTrait
 			$builder->hasMany($this->relations['permissions'][0], $this->relations['permissions'][1], function(HasMany $hasMany){
 				$hasMany
 					->mappedBy($this->name)
-					->cascadeAll();
+					->cascadeAll()
+					->orphanRemoval();
 			});
 		}
 	}
