@@ -117,18 +117,25 @@ trait PermissibleTrait
 	/**
 	 * {@inheritdoc}
 	 */
-	public function updatePermission($permission, $value = true, $create = false)
+	public function updatePermission($permission, $allow = true, $create = false)
 	{
-		$existing = $this->getPermission($permission);
-
-		if ($create || $existing)
+		if ($existing = $this->getPermission($permission))
 		{
-			$this->removePermission($existing);
-
-			$this->permissions->add($this->createPermission($permission, $value));
-
-			$this->refreshPermissionsInstance();
+			if ($allow && ! $existing->isAllowed())
+			{
+				$existing->allow();
+			}
+			elseif (! $allow && $existing->isAllowed())
+			{
+				$existing->deny();
+			}
 		}
+		elseif ($create)
+		{
+			$this->permissions->add($this->createPermission($permission, $allow));
+		}
+
+		$this->refreshPermissionsInstance();
 
 		return $this;
 	}

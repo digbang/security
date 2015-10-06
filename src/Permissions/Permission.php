@@ -11,4 +11,18 @@ interface Permission
 	 * @return bool
 	 */
 	public function isAllowed();
+
+	/**
+	 * Allow this permission.
+	 *
+	 * @return void
+	 */
+	public function allow();
+
+	/**
+	 * Deny this permission.
+	 *
+	 * @return void
+	 */
+	public function deny();
 }

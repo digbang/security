@@ -5,6 +5,7 @@ use Digbang\Security\Permissions\DefaultRolePermission;
 use Digbang\Security\Permissions\NullPermissions;
 use Digbang\Security\Permissions\Permissible;
 use Digbang\Security\Permissions\PermissibleTrait;
+use Digbang\Security\Permissions\Permission;
 use Digbang\Security\Users\DefaultUser;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -184,7 +185,14 @@ class DefaultRole implements Role, Permissible
 	 */
 	public function syncPermissions(array $permissions)
 	{
-		$this->permissions->clear();
+		foreach ($this->permissions as $current)
+		{
+			/** @var Permission $current */
+			if ($current->isAllowed() && ! in_array($current->getName(), $permissions))
+			{
+				$this->removePermission($current);
+			}
+		}
 
 		$this->allow($permissions);
 	}

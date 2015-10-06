@@ -252,7 +252,14 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
 	 */
 	public function syncPermissions(array $permissions)
 	{
-		$this->permissions->clear();
+		foreach ($this->permissions as $current)
+		{
+			/** @var Permission $current */
+			if ($current->isAllowed() && ! in_array($current->getName(), $permissions))
+			{
+				$current->deny();
+			}
+		}
 
 		foreach ($this->roles as $role)
 		{

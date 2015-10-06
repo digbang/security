@@ -39,6 +39,22 @@ abstract class DefaultPermission implements Permission
 	}
 
 	/**
+	 * {@inheritdoc}
+	 */
+	public function allow()
+	{
+		$this->allowed = true;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function deny()
+	{
+		$this->allowed = false;
+	}
+
+	/**
 	 * Return the name as the string representation.
 	 */
 	public function __toString()
