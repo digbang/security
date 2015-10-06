@@ -25,4 +25,13 @@ interface Permission
 	 * @return void
 	 */
 	public function deny();
+
+	/**
+	 * Compares two permissions and returns TRUE if they are equal.
+	 *
+	 * @param Permission $permission
+	 *
+	 * @return boolean
+	 */
+	public function equals(Permission $permission);
 }

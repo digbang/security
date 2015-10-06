@@ -271,6 +271,13 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
 				{
 					$this->addPermission($permission->getName(), false);
 				}
+
+				foreach ($this->permissions->filter(function(Permission $current) use ($permission){
+					return $current->equals($permission);
+				}) as $repeated)
+				{
+					$this->permissions->removeElement($repeated);
+				}
 			}
 		}
 

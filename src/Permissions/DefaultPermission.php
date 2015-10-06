@@ -54,6 +54,17 @@ abstract class DefaultPermission implements Permission
 		$this->allowed = false;
 	}
 
+	public function equals(Permission $permission)
+	{
+		if ($permission->getName() != $this->name)
+		{
+			return false;
+		}
+
+		// True if allow is equal ((true && true) || (false && false))
+		return !($this->isAllowed() XOR $permission->isAllowed());
+	}
+
 	/**
 	 * Return the name as the string representation.
 	 */
