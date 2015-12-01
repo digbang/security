@@ -1,6 +1,6 @@
 <?php namespace Digbang\Security\Roles;
 
-use Digbang\Doctrine\TimestampsTrait;
+use Digbang\Security\Support\TimestampsTrait;
 use Digbang\Security\Permissions\DefaultRolePermission;
 use Digbang\Security\Permissions\NullPermissions;
 use Digbang\Security\Permissions\Permissible;
@@ -8,7 +8,6 @@ use Digbang\Security\Permissions\PermissibleTrait;
 use Digbang\Security\Permissions\Permission;
 use Digbang\Security\Users\DefaultUser;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Illuminate\Support\Str;
 
 class DefaultRole implements Role, Permissible

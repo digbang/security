@@ -1,11 +1,12 @@
-<?php namespace Digbang\Security\Mappings;
+<?php
+namespace Digbang\Security\Mappings;
 
-use Digbang\Doctrine\Metadata\Builder;
-use Digbang\Doctrine\Metadata\EntityMapping;
 use Digbang\Security\Activations\DefaultActivation;
 use Digbang\Security\Activations\ActivationMappingTrait;
+use LaravelDoctrine\Fluent\EntityMapping;
+use LaravelDoctrine\Fluent\Fluent;
 
-final class ActivationMapping implements EntityMapping, CustomTableMapping
+final class ActivationMapping extends EntityMapping implements  CustomTableMapping
 {
 	use ActivationMappingTrait;
 
@@ -31,29 +32,22 @@ final class ActivationMapping implements EntityMapping, CustomTableMapping
 	}
 
 	/**
-	 * Returns the fully qualified name of the entity that this mapper maps.
+	 * Returns the fully qualified name of the class that this mapper maps.
 	 *
 	 * @return string
 	 */
-	public function getEntityName()
+	public function mapFor()
 	{
 		return DefaultActivation::class;
 	}
 
 	/**
-	 * Load the entity's metadata through the Metadata Builder object.
+	 * Load the object's metadata through the Metadata Builder object.
 	 *
-	 * @param Builder $builder
-	 *
-	 * @return void
+	 * @param Fluent $builder
 	 */
-	public function build(Builder $builder)
+	public function map(Fluent $builder)
 	{
-		if ($this->table)
-		{
-			$builder->table($this->table);
-		}
-
 		$this->addMappings($builder);
 	}
 }

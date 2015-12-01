@@ -1,11 +1,12 @@
-<?php namespace Digbang\Security\Mappings;
+<?php
+namespace Digbang\Security\Mappings;
 
-use Digbang\Doctrine\Metadata\Builder;
-use Digbang\Doctrine\Metadata\EntityMapping;
 use Digbang\Security\Throttling\DefaultThrottle;
 use Digbang\Security\Throttling\ThrottleMappingTrait;
+use LaravelDoctrine\Fluent\EntityMapping;
+use LaravelDoctrine\Fluent\Fluent;
 
-final class ThrottleMapping implements EntityMapping, CustomTableMapping
+final class ThrottleMapping extends EntityMapping implements CustomTableMapping
 {
 	use ThrottleMappingTrait;
 
@@ -23,33 +24,6 @@ final class ThrottleMapping implements EntityMapping, CustomTableMapping
 	}
 
 	/**
-	 * Returns the fully qualified name of the entity that this mapper maps.
-	 *
-	 * @return string
-	 */
-	public function getEntityName()
-	{
-		return DefaultThrottle::class;
-	}
-
-	/**
-	 * Load the entity's metadata through the Metadata Builder object.
-	 *
-	 * @param Builder $builder
-	 *
-	 * @return void
-	 */
-	public function build(Builder $builder)
-	{
-		if ($this->table)
-		{
-			$builder->table($this->table);
-		}
-
-		$this->addMappings($builder);
-	}
-
-	/**
 	 * Set the custom table name.
 	 *
 	 * @param string $table
@@ -57,5 +31,30 @@ final class ThrottleMapping implements EntityMapping, CustomTableMapping
 	public function setTable($table)
 	{
 		$this->table = $table;
+	}
+
+	/**
+	 * Returns the fully qualified name of the class that this mapper maps.
+	 *
+	 * @return string
+	 */
+	public function mapFor()
+	{
+		return DefaultThrottle::class;
+	}
+
+	/**
+	 * Load the object's metadata through the Metadata Builder object.
+	 *
+	 * @param Fluent $builder
+	 */
+	public function map(Fluent $builder)
+	{
+		if ($this->table)
+		{
+			$builder->table($this->table);
+		}
+
+		$this->addMappings($builder);
 	}
 }

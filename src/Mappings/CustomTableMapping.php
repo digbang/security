@@ -1,4 +1,5 @@
-<?php namespace Digbang\Security\Mappings;
+<?php
+namespace Digbang\Security\Mappings;
 
 interface CustomTableMapping
 {

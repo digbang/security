@@ -1,11 +1,12 @@
-<?php namespace Digbang\Security\Mappings;
+<?php
+namespace Digbang\Security\Mappings;
 
-use Digbang\Doctrine\Metadata\Builder;
-use Digbang\Doctrine\Metadata\EntityMapping;
 use Digbang\Security\Permissions\DefaultUserPermission;
 use Digbang\Security\Permissions\UserPermissionMappingTrait;
+use LaravelDoctrine\Fluent\EntityMapping;
+use LaravelDoctrine\Fluent\Fluent;
 
-final class UserPermissionMapping implements EntityMapping, CustomTableMapping
+final class UserPermissionMapping extends EntityMapping implements CustomTableMapping
 {
 	use UserPermissionMappingTrait;
 
@@ -13,33 +14,6 @@ final class UserPermissionMapping implements EntityMapping, CustomTableMapping
 	 * @type string
 	 */
 	private $table;
-
-	/**
-	 * Returns the fully qualified name of the entity that this mapper maps.
-	 *
-	 * @return string
-	 */
-	public function getEntityName()
-	{
-		return DefaultUserPermission::class;
-	}
-
-	/**
-	 * Load the entity's metadata through the Metadata Builder object.
-	 *
-	 * @param Builder $builder
-	 *
-	 * @return void
-	 */
-	public function build(Builder $builder)
-	{
-		if ($this->table)
-		{
-			$builder->table($this->table);
-		}
-
-		$this->addMappings($builder);
-	}
 
 	/**
 	 * Set the custom table name.
@@ -59,5 +33,30 @@ final class UserPermissionMapping implements EntityMapping, CustomTableMapping
 	public function getTable()
 	{
 		return $this->table;
+	}
+
+	/**
+	 * Returns the fully qualified name of the class that this mapper maps.
+	 *
+	 * @return string
+	 */
+	public function mapFor()
+	{
+		return DefaultUserPermission::class;
+	}
+
+	/**
+	 * Load the object's metadata through the Metadata Builder object.
+	 *
+	 * @param Fluent $builder
+	 */
+	public function map(Fluent $builder)
+	{
+		if ($this->table)
+		{
+			$builder->table($this->table);
+		}
+
+		$this->addMappings($builder);
 	}
 }

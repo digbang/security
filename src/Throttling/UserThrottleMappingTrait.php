@@ -1,7 +1,8 @@
-<?php namespace Digbang\Security\Throttling;
+<?php
+namespace Digbang\Security\Throttling;
 
-use Digbang\Doctrine\Metadata\Builder;
 use Digbang\Security\Users\DefaultUser;
+use LaravelDoctrine\Fluent\Fluent;
 
 trait UserThrottleMappingTrait
 {
@@ -18,8 +19,8 @@ trait UserThrottleMappingTrait
 		'user' => [DefaultUser::class, 'user']
 	];
 
-	public function addMappings(Builder $builder)
+	public function addMappings(Fluent $builder)
 	{
-		$builder->mayBelongTo($this->relations['user'][0], $this->relations['user'][1]);
+		$builder->belongsTo($this->relations['user'][0], $this->relations['user'][1])->nullable();
 	}
 }

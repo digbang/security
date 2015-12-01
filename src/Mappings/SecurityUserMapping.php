@@ -1,26 +1,26 @@
-<?php namespace Digbang\Security\Mappings;
+<?php
+namespace Digbang\Security\Mappings;
 
-use Digbang\Doctrine\Metadata\EntityMapping;
-use Digbang\Security\Mappings\CustomTableMapping;
+use LaravelDoctrine\Fluent\EntityMapping;
 
-interface SecurityUserMapping extends EntityMapping, CustomTableMapping, PermissibleMapping
+abstract class SecurityUserMapping extends EntityMapping implements CustomTableMapping, PermissibleMapping
 {
 	/**
 	 * Disable the roles relation.
 	 * @return void
 	 */
-	public function disableRoles();
+	abstract public function disableRoles();
 
 	/**
 	 * Disable the throttles relation.
 	 * @return void
 	 */
-	public function disableThrottles();
+	abstract public function disableThrottles();
 
 	/**
 	 * Change the roles join table name.
 	 *
 	 * @param string $table
 	 */
-	public function changeRolesJoinTable($table);
+	abstract public function changeRolesJoinTable($table);
 }

@@ -1,33 +1,29 @@
-<?php namespace Digbang\Security\Mappings;
+<?php
+namespace Digbang\Security\Mappings;
 
-use Digbang\Doctrine\Metadata\Builder;
-use Digbang\Doctrine\Metadata\EmbeddableMapping;
 use Digbang\Security\Users\ValueObjects\Password;
-use Doctrine\ORM\Mapping\Builder\FieldBuilder;
+use LaravelDoctrine\Fluent\EmbeddableMapping;
+use LaravelDoctrine\Fluent\Fluent;
 
-final class PasswordMapping implements EmbeddableMapping
+final class PasswordMapping extends EmbeddableMapping
 {
 	/**
-	 * Returns the fully qualified name of the embeddable that this mapper maps.
+	 * Returns the fully qualified name of the class that this mapper maps.
 	 *
 	 * @return string
 	 */
-	public function getEmbeddableName()
+	public function mapFor()
 	{
 		return Password::class;
 	}
 
 	/**
-	 * Load the embeddable's metadata through the Metadata Builder object.
+	 * Load the object's metadata through the Metadata Builder object.
 	 *
-	 * @param Builder $builder
-	 *
-	 * @return void
+	 * @param Fluent $builder
 	 */
-	public function build(Builder $builder)
+	public function map(Fluent $builder)
 	{
-		$builder->string('hash', function(FieldBuilder $fieldBuilder){
-			$fieldBuilder->columnName('password');
-		});
+		$builder->string('hash')->columnName('password');
 	}
 }

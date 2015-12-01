@@ -1,14 +1,13 @@
-<?php namespace Digbang\Security\Throttling;
+<?php
+namespace Digbang\Security\Throttling;
 
-use Digbang\Doctrine\Metadata\Builder;
+use LaravelDoctrine\Fluent\Fluent;
 
 trait ThrottleMappingTrait
 {
-	public function addMappings(Builder $builder)
+	public function addMappings(Fluent $builder)
 	{
-		$builder
-			->primary()
-			->inheritance('type')
-			->timestamps();
+		$builder->bigIncrements('id');
+		$builder->singleTableInheritance()->column('type');
 	}
 }

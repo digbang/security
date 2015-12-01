@@ -1,34 +1,32 @@
-<?php namespace Digbang\Security\Mappings;
-use Digbang\Doctrine\Metadata\Builder;
-use Digbang\Doctrine\Metadata\EmbeddableMapping;
-use Digbang\Security\Users\ValueObjects\Email;
-use Doctrine\ORM\Mapping\Builder\FieldBuilder;
+<?php
+namespace Digbang\Security\Mappings;
 
-class EmailMapping implements EmbeddableMapping
+use Digbang\Security\Users\ValueObjects\Email;
+use LaravelDoctrine\Fluent\EmbeddableMapping;
+use LaravelDoctrine\Fluent\Fluent;
+
+class EmailMapping extends EmbeddableMapping
 {
 	/**
-	 * Returns the fully qualified name of the embeddable that this mapper maps.
+	 * Returns the fully qualified name of the class that this mapper maps.
 	 *
 	 * @return string
 	 */
-	public function getEmbeddableName()
+	public function mapFor()
 	{
 		return Email::class;
 	}
 
 	/**
-	 * Load the embeddable's metadata through the Metadata Builder object.
+	 * Load the object's metadata through the Metadata Builder object.
 	 *
-	 * @param Builder $builder
-	 *
-	 * @return void
+	 * @param Fluent $builder
 	 */
-	public function build(Builder $builder)
+	public function map(Fluent $builder)
 	{
-		$builder->string('address', function(FieldBuilder $fieldBuilder){
-			$fieldBuilder->columnName('email');
-		});
-
-		$builder->addUniqueConstraint(['email'], uniqid('email_unique_'));
+		$builder
+			->string('address')
+			->columnName('email')
+			->unique();
 	}
 }

@@ -1,6 +1,5 @@
 <?php namespace Digbang\Security\Laravel;
 
-use Digbang\Doctrine\Metadata\DecoupledMappingDriver;
 use Digbang\Security\Factories\ConfigurationRepositoryFactory;
 use Digbang\Security\Factories\ContainerBindingRepositoryFactory;
 use Digbang\Security\Factories\RepositoryFactory;
@@ -12,6 +11,8 @@ use Digbang\Security\SecurityContext;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
+use LaravelDoctrine\Fluent\FluentDriver;
+use LaravelDoctrine\ORM\Configuration\MetaData\MetaDataManager;
 
 class SecurityServiceProvider extends ServiceProvider
 {
@@ -36,21 +37,21 @@ class SecurityServiceProvider extends ServiceProvider
 	/**
 	 * Boot the service provider.
 	 *
-	 * @param DecoupledMappingDriver $mappingDriver
-	 * @param Router                 $router
+	 * @param MetaDataManager $metaDataManager
+	 * @param Router          $router
 	 */
-	public function boot(DecoupledMappingDriver $mappingDriver, Router $router)
+	public function boot(MetaDataManager $metaDataManager, Router $router)
 	{
-		$this->addMappings($mappingDriver);
+		$this->addMappings($metaDataManager->driver('fluent'));
 		$this->addMiddleware($router);
 	}
 
 	/**
-	 * @param DecoupledMappingDriver $mappingDriver
+	 * @param FluentDriver $mappingDriver
 	 *
 	 * @throws \Doctrine\Common\Persistence\Mapping\MappingException
 	 */
-	private function addMappings(DecoupledMappingDriver $mappingDriver)
+	private function addMappings(FluentDriver $mappingDriver)
 	{
 		$mappingDriver->addMapping(new NameMapping);
 		$mappingDriver->addMapping(new EmailMapping);

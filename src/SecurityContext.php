@@ -1,7 +1,6 @@
-<?php namespace Digbang\Security;
+<?php
+namespace Digbang\Security;
 
-use Digbang\Doctrine\Metadata\DecoupledMappingDriver;
-use Digbang\Doctrine\Metadata\EntityMapping;
 use Digbang\Security\Configurations\SecurityContextConfiguration;
 use Digbang\Security\Contracts\SecurityApi;
 use Digbang\Security\Factories\SecurityFactory;
@@ -13,6 +12,9 @@ use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Routing\UrlGenerator as UrlGeneratorContract;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Http\Request;
+use LaravelDoctrine\Fluent\FluentDriver;
+use LaravelDoctrine\Fluent\Mapping;
+use LaravelDoctrine\ORM\Configuration\MetaData\MetaDataManager;
 
 class SecurityContext
 {
@@ -175,9 +177,14 @@ class SecurityContext
 		}
 	}
 
+	/**
+	 * @param Mapping|string $mapping
+	 *
+	 * @return Mapping
+	 */
 	private function makeMapping($mapping)
 	{
-		if ($mapping instanceof EntityMapping)
+		if ($mapping instanceof Mapping)
 		{
 			return $mapping;
 		}
@@ -186,7 +193,7 @@ class SecurityContext
 	}
 
 	/**
-	 * @param EntityMapping|string &$mapping
+	 * @param Mapping|string &$mapping
 	 * @param string $method
 	 * @param ...$params
 	 * @return mixed
@@ -227,16 +234,19 @@ class SecurityContext
 	}
 
 	/**
-	 * @return DecoupledMappingDriver
+	 * @return FluentDriver
 	 */
 	private function getMappingDriver()
 	{
-		if (! array_key_exists(DecoupledMappingDriver::class, $this->dependencies))
+		if (! array_key_exists(FluentDriver::class, $this->dependencies))
 		{
-			$this->dependencies[DecoupledMappingDriver::class] = $this->container->make(DecoupledMappingDriver::class);
+			/** @var MetaDataManager $manager */
+			$manager = $this->container->make(MetaDataManager::class);
+
+			$this->dependencies[FluentDriver::class] = $manager->driver('fluent');
 		}
 
-		return $this->dependencies[DecoupledMappingDriver::class];
+		return $this->dependencies[FluentDriver::class];
 	}
 
 	/**

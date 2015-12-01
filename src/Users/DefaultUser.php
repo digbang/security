@@ -1,7 +1,7 @@
 <?php namespace Digbang\Security\Users;
 
 use Carbon\Carbon;
-use Digbang\Doctrine\TimestampsTrait;
+use Digbang\Security\Support\TimestampsTrait;
 use Digbang\Security\Activations\Activation;
 use Digbang\Security\Permissions\DefaultUserPermission;
 use Digbang\Security\Permissions\NullPermissions;

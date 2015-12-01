@@ -1,7 +1,7 @@
 <?php namespace Digbang\Security\Activations;
 
 use Carbon\Carbon;
-use Digbang\Doctrine\TimestampsTrait;
+use Digbang\Security\Support\TimestampsTrait;
 use Digbang\Security\Users\User;
 
 class DefaultActivation implements Activation

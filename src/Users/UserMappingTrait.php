@@ -1,14 +1,14 @@
-<?php namespace Digbang\Security\Users;
+<?php
+namespace Digbang\Security\Users;
 
-use Digbang\Doctrine\Metadata\Builder;
-use Digbang\Doctrine\Metadata\Relations\BelongsToMany;
-use Digbang\Doctrine\Metadata\Relations\HasMany;
 use Digbang\Security\Activations\DefaultActivation;
 use Digbang\Security\Permissions\DefaultUserPermission;
 use Digbang\Security\Roles\DefaultRole;
 use Digbang\Security\Persistences\DefaultPersistence;
 use Digbang\Security\Reminders\DefaultReminder;
 use Digbang\Security\Throttling\DefaultThrottle;
+use LaravelDoctrine\Fluent\Fluent;
+use LaravelDoctrine\Fluent\Relations\OneToMany;
 
 trait UserMappingTrait
 {
@@ -51,9 +51,9 @@ trait UserMappingTrait
 	/**
 	 * Adds all mappings: properties and relations
 	 *
-	 * @param Builder $builder
+	 * @param Fluent $builder
 	 */
-	public function addMappings(Builder $builder)
+	public function addMappings(Fluent $builder)
 	{
 		$this->addProperties($builder);
 		$this->addRelations($builder);
@@ -62,39 +62,31 @@ trait UserMappingTrait
 	/**
 	 * Adds only properties
 	 *
-	 * @param Builder $builder
+	 * @param Fluent $builder
 	 */
-	public function addProperties(Builder $builder)
+	public function addProperties(Fluent $builder)
 	{
-		$builder
-			->primary()
-			->string('username')
-			->nullableDatetime('lastLogin')
-			->timestamps();
+		$builder->bigIncrements('id');
+		$builder->string('username');
+		$builder->carbonDateTime('lastLogin')->nullable();
+		$builder->carbonDateTime('createdAt');
+		$builder->carbonDateTime('updatedAt');
 
-		$builder
-			->embedded(ValueObjects\Email::class,    'email')
-			->embedded(ValueObjects\Name::class,     'name')
-			->embedded(ValueObjects\Password::class, 'password');
+		$builder->embed(ValueObjects\Email::class);
+		$builder->embed(ValueObjects\Name::class);
+		$builder->embed(ValueObjects\Password::class);
 	}
 
 	/**
 	 * Adds only relations
 	 *
-	 * @param Builder $builder
+	 * @param Fluent $builder
 	 */
-	public function addRelations(Builder $builder)
+	public function addRelations(Fluent $builder)
 	{
-		$this
-			->hasMany('persistences', $builder)
-			->hasMany('reminders',    $builder);
-
-		$builder->hasMany($this->relations['activations'][0], $this->relations['activations'][1], function(HasMany $hasMany){
-			$hasMany
-				->mappedBy($this->name)
-				->orderBy('createdAt', 'desc');
-
-		});
+		$this->hasMany('persistences', $builder);
+		$this->hasMany('reminders',    $builder);
+		$this->hasMany('activations', $builder)->orderBy('createdAt', 'desc');
 
 		if ($this->enabled['throttles'])
 		{
@@ -103,24 +95,21 @@ trait UserMappingTrait
 
 		if ($this->enabled['roles'])
 		{
-			$builder->belongsToMany($this->relations['roles'][0], $this->relations['roles'][1], function(BelongsToMany $belongsToMany){
-				$belongsToMany->inversedBy($this->relations['roles'][2]);
+			$roles = $builder
+				->belongsToMany($this->relations['roles'][0], $this->relations['roles'][1])
+				->inversedBy($this->relations['roles'][2]);
 
-				if ($this->joinTable)
-				{
-					$belongsToMany->tableName($this->joinTable);
-				}
-			});
+			if ($this->joinTable)
+			{
+				$roles->joinTable($this->joinTable);
+			}
 		}
 
 		if ($this->enabled['permissions'])
 		{
-			$builder->hasMany($this->relations['permissions'][0], $this->relations['permissions'][1], function(HasMany $hasMany){
-				$hasMany
-					->mappedBy($this->name)
-					->cascadeAll()
-					->orphanRemoval();
-			});
+			$this->hasMany('permissions', $builder)
+				->cascadeAll()
+				->orphanRemoval();
 		}
 	}
 
@@ -153,16 +142,14 @@ trait UserMappingTrait
 
 	/**
 	 * @param string  $key
-	 * @param Builder $builder
-	 * @return $this
+	 * @param Fluent $builder
+	 * @return OneToMany
 	 */
-	private function hasMany($key, Builder $builder)
+	private function hasMany($key, Fluent $builder)
 	{
-		$builder->hasMany($this->relations[$key][0], $this->relations[$key][1], function(HasMany $hasMany){
-			$hasMany->mappedBy($this->name);
-		});
-
-		return $this;
+		return $builder
+			->hasMany($this->relations[$key][0], $this->relations[$key][1])
+			->mappedBy($this->name);
 	}
 
 	/**

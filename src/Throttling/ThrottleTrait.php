@@ -1,7 +1,6 @@
 <?php namespace Digbang\Security\Throttling;
 
-use Carbon\Carbon;
-use Digbang\Doctrine\TimestampsTrait;
+use Digbang\Security\Support\TimestampsTrait;
 
 trait ThrottleTrait
 {

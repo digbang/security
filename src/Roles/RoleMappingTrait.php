@@ -1,10 +1,9 @@
-<?php namespace Digbang\Security\Roles;
+<?php
+namespace Digbang\Security\Roles;
 
-use Digbang\Doctrine\Metadata\Builder;
-use Digbang\Doctrine\Metadata\Relations\BelongsToMany;
-use Digbang\Doctrine\Metadata\Relations\HasMany;
 use Digbang\Security\Permissions\DefaultRolePermission;
 use Digbang\Security\Users\DefaultUser;
+use LaravelDoctrine\Fluent\Fluent;
 
 trait RoleMappingTrait
 {
@@ -43,9 +42,9 @@ trait RoleMappingTrait
 	/**
 	 * Adds all mappings: properties and relations
 	 *
-	 * @param Builder $builder
+	 * @param Fluent $builder
 	 */
-	public function addMappings(Builder $builder)
+	public function addMappings(Fluent $builder)
 	{
 		$this->addProperties($builder);
 		$this->addRelations($builder);
@@ -54,15 +53,15 @@ trait RoleMappingTrait
 	/**
 	 * Adds only properties
 	 *
-	 * @param Builder $builder
+	 * @param Fluent $builder
 	 */
-	public function addProperties(Builder $builder)
+	public function addProperties(Fluent $builder)
 	{
-		$builder
-			->primary()
-			->uniqueString('slug')
-			->string('name')
-			->timestamps();
+		$builder->bigIncrements('id');
+		$builder->string('slug')->unique();
+		$builder->string('name');
+		$builder->carbonDateTime('createdAt');
+		$builder->carbonDateTime('updatedAt');
 	}
 
 	/**
@@ -77,27 +76,26 @@ trait RoleMappingTrait
 	/**
 	 * Adds only relations
 	 *
-	 * @param Builder $builder
+	 * @param Fluent $builder
 	 */
-	public function addRelations(Builder $builder)
+	public function addRelations(Fluent $builder)
 	{
-		$builder->belongsToMany($this->relations['users'][0], $this->relations['users'][1], function(BelongsToMany $belongsToMany){
-			$belongsToMany->mappedBy($this->relations['users'][2]);
+		$users = $builder
+			->belongsToMany($this->relations['users'][0], $this->relations['users'][1])
+			->mappedBy($this->relations['users'][2]);
 
-			if ($this->joinTable)
-			{
-				$belongsToMany->tableName($this->joinTable);
-			}
-		});
+		if ($this->joinTable)
+		{
+			$users->joinTable($this->joinTable);
+		}
 
 		if ($this->permissions)
 		{
-			$builder->hasMany($this->relations['permissions'][0], $this->relations['permissions'][1], function(HasMany $hasMany){
-				$hasMany
-					->mappedBy($this->name)
-					->cascadeAll()
-					->orphanRemoval();
-			});
+			$builder
+				->hasMany($this->relations['permissions'][0], $this->relations['permissions'][1])
+				->mappedBy($this->name)
+				->cascadeAll()
+				->orphanRemoval();
 		}
 	}
 

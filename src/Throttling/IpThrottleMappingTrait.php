@@ -1,11 +1,12 @@
-<?php namespace Digbang\Security\Throttling;
+<?php
+namespace Digbang\Security\Throttling;
 
-use Digbang\Doctrine\Metadata\Builder;
+use LaravelDoctrine\Fluent\Fluent;
 
 trait IpThrottleMappingTrait
 {
-	public function addMappings(Builder $builder)
+	public function addMappings(Fluent $builder)
 	{
-		$builder->nullableString('ip');
+		$builder->string('ip')->nullable();
 	}
 }

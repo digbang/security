@@ -531,7 +531,7 @@ class SecurityContextConfiguration
 	/**
 	 * @param string $entity
 	 *
-	 * @return string An FQCN that implements \Digbang\Doctrine\Metadata\EntityMapping
+	 * @return string An FQCN that implements \LaravelDoctrine\Fluent\Mapping
 	 * @throws \InvalidArgumentException
 	 */
 	private function getMapping($entity)
@@ -629,8 +629,8 @@ class SecurityContextConfiguration
 	}
 
 	/**
-	 * @param string|null $userPermissionMapping Must implement \Digbang\Doctrine\Metadata\EntityMapping
-	 * @param string|null $rolePermissionMapping Must implement \Digbang\Doctrine\Metadata\EntityMapping
+	 * @param string|null $userPermissionMapping Must implement \LaravelDoctrine\Fluent\EntityMapping
+	 * @param string|null $rolePermissionMapping Must implement \LaravelDoctrine\Fluent\EntityMapping
 	 */
 	public function changePermissions($userPermissionMapping = null, $rolePermissionMapping = null)
 	{
@@ -640,7 +640,7 @@ class SecurityContextConfiguration
 
 	/**
 	 * @param string $activationRepository Must implement \Cartalyst\Sentinel\Activations\ActivationRepositoryInterface
-	 * @param string|null $activationMapping Must implement \Digbang\Doctrine\Metadata\EntityMapping
+	 * @param string|null $activationMapping Must implement \LaravelDoctrine\Fluent\EntityMapping
 	 *
 	 * @return $this
 	 */
@@ -654,7 +654,7 @@ class SecurityContextConfiguration
 
 	/**
 	 * @param string $persistenceRepository Must implement \Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface
-	 * @param string|null $persistencesMapping Must implement \Digbang\Doctrine\Metadata\EntityMapping
+	 * @param string|null $persistencesMapping Must implement \LaravelDoctrine\Fluent\EntityMapping
 	 *
 	 * @return $this
 	 */
@@ -667,7 +667,7 @@ class SecurityContextConfiguration
 
 	/**
 	 * @param string $reminderRepository Must implement \Cartalyst\Sentinel\Reminders\ReminderRepositoryInterface
-	 * @param string $reminderMappping Must implement \Digbang\Doctrine\Metadata\EntityMapping
+	 * @param string $reminderMappping Must implement \LaravelDoctrine\Fluent\EntityMapping
 	 *
 	 * @return $this
 	 */
@@ -680,7 +680,7 @@ class SecurityContextConfiguration
 
 	/**
 	 * @param string $roleRepository Must implement \Cartalyst\Sentinel\Roles\RoleRepositoryInterface
-	 * @param string $roleMapping Must implement \Digbang\Doctrine\Metadata\EntityMapping
+	 * @param string $roleMapping Must implement \LaravelDoctrine\Fluent\EntityMapping
 	 *
 	 * @return $this
 	 */

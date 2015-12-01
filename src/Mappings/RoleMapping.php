@@ -1,10 +1,11 @@
-<?php namespace Digbang\Security\Mappings;
+<?php
+namespace Digbang\Security\Mappings;
 
-use Digbang\Doctrine\Metadata\Builder;
 use Digbang\Security\Roles\DefaultRole;
 use Digbang\Security\Roles\RoleMappingTrait;
+use LaravelDoctrine\Fluent\Fluent;
 
-final class RoleMapping implements SecurityRoleMapping
+final class RoleMapping extends SecurityRoleMapping
 {
 	use RoleMappingTrait;
 
@@ -12,33 +13,6 @@ final class RoleMapping implements SecurityRoleMapping
 	 * @type string
 	 */
 	private $table;
-
-	/**
-	 * Returns the fully qualified name of the entity that this mapper maps.
-	 *
-	 * @return string
-	 */
-	public function getEntityName()
-	{
-		return DefaultRole::class;
-	}
-
-	/**
-	 * Load the entity's metadata through the Metadata Builder object.
-	 *
-	 * @param Builder $builder
-	 *
-	 * @return void
-	 */
-	public function build(Builder $builder)
-	{
-		if ($this->table)
-		{
-			$builder->table($this->table);
-		}
-
-		$this->addMappings($builder);
-	}
 
 	/**
 	 * Set the custom table name.
@@ -56,5 +30,30 @@ final class RoleMapping implements SecurityRoleMapping
 	public function getTable()
 	{
 		return $this->table;
+	}
+
+	/**
+	 * Returns the fully qualified name of the class that this mapper maps.
+	 *
+	 * @return string
+	 */
+	public function mapFor()
+	{
+		return DefaultRole::class;
+	}
+
+	/**
+	 * Load the object's metadata through the Metadata Builder object.
+	 *
+	 * @param Fluent $builder
+	 */
+	public function map(Fluent $builder)
+	{
+		if ($this->table)
+		{
+			$builder->table($this->table);
+		}
+
+		$this->addMappings($builder);
 	}
 }

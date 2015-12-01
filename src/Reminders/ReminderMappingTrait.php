@@ -1,7 +1,8 @@
-<?php namespace Digbang\Security\Reminders;
+<?php
+namespace Digbang\Security\Reminders;
 
-use Digbang\Doctrine\Metadata\Builder;
 use Digbang\Security\Users\DefaultUser;
+use LaravelDoctrine\Fluent\Fluent;
 
 trait ReminderMappingTrait
 {
@@ -21,9 +22,9 @@ trait ReminderMappingTrait
 	/**
 	 * Adds all mappings: properties and relations
 	 *
-	 * @param Builder $builder
+	 * @param Fluent $builder
 	 */
-	public function addMappings(Builder $builder)
+	public function addMappings(Fluent $builder)
 	{
 		$this->addProperties($builder);
 		$this->addRelations($builder);
@@ -32,24 +33,24 @@ trait ReminderMappingTrait
 	/**
 	 * Adds only properties
 	 *
-	 * @param Builder $builder
+	 * @param Fluent $builder
 	 */
-	public function addProperties(Builder $builder)
+	public function addProperties(Fluent $builder)
 	{
-		$builder
-			->primary()
-			->string('code')
-			->boolean('completed')
-			->nullableDatetime('completedAt')
-			->timestamps();
+		$builder->bigIncrements('id');
+		$builder->string('code');
+		$builder->boolean('completed');
+		$builder->carbonDateTime('completedAt')->nullable();
+		$builder->carbonDateTime('createdAt');
+		$builder->carbonDateTime('updatedAt');
 	}
 
 	/**
 	 * Adds only relations
 	 *
-	 * @param Builder $builder
+	 * @param Fluent $builder
 	 */
-	public function addRelations(Builder $builder)
+	public function addRelations(Fluent $builder)
 	{
 		$builder->belongsTo($this->relations['user'][0], $this->relations['user'][1]);
 	}

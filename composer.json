@@ -9,7 +9,8 @@
 	],
 	"require": {
 		"php": ">=5.6",
-		"digbang/doctrine":     "^3.0",
+		"laravel-doctrine/orm": "~1.0",
+		"laravel-doctrine/fluent": "dev-master",
 		"illuminate/support":   "~5.1",
 		"illuminate/contracts": "~5.1",
 		"illuminate/events":    "~5.1",
@@ -29,7 +30,7 @@
 	"repositories": [
 		{
 			"type": "vcs",
-			"url": "git@github.com:digbang/doctrine.git"
+			"url": "git@github.com:laravel-doctrine/fluent.git"
 		}
 	],
 	"minimum-stability": "dev",

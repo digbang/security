@@ -1,6 +1,6 @@
 <?php namespace Digbang\Security\Persistences;
 
-use Digbang\Doctrine\TimestampsTrait;
+use Digbang\Security\Support\TimestampsTrait;
 use Digbang\Security\Users\User;
 
 class DefaultPersistence implements Persistence

@@ -1,7 +1,7 @@
 <?php namespace Digbang\Security\Reminders;
 
 use Carbon\Carbon;
-use Digbang\Doctrine\TimestampsTrait;
+use Digbang\Security\Support\TimestampsTrait;
 use Digbang\Security\Users\User;
 
 class DefaultReminder implements Reminder

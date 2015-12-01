@@ -1,9 +1,8 @@
-<?php namespace Digbang\Security\Permissions;
+<?php
+namespace Digbang\Security\Permissions;
 
-use Digbang\Doctrine\Metadata\Builder;
-use Digbang\Doctrine\Metadata\Relations\BelongsTo;
 use Digbang\Security\Users\DefaultUser;
-use Doctrine\ORM\Mapping\Builder\FieldBuilder;
+use LaravelDoctrine\Fluent\Fluent;
 
 trait UserPermissionMappingTrait
 {
@@ -23,9 +22,9 @@ trait UserPermissionMappingTrait
 	/**
 	 * Adds all mappings: properties and relations
 	 *
-	 * @param Builder $builder
+	 * @param Fluent $builder
 	 */
-	public function addMappings(Builder $builder)
+	public function addMappings(Fluent $builder)
 	{
 		$this->addProperties($builder);
 		$this->addRelations($builder);
@@ -34,26 +33,23 @@ trait UserPermissionMappingTrait
 	/**
 	 * Adds only properties
 	 *
-	 * @param Builder $builder
+	 * @param Fluent $builder
 	 */
-	public function addProperties(Builder $builder)
+	public function addProperties(Fluent $builder)
 	{
-		$builder
-			->string('name', function(FieldBuilder $fieldBuilder){
-				$fieldBuilder->makePrimaryKey();
-			})
-			->boolean('allowed');
+		$builder->string('name')->primary();
+		$builder->boolean('allowed');
 	}
 
 	/**
 	 * Adds only relations
 	 *
-	 * @param Builder $builder
+	 * @param Fluent $builder
 	 */
-	public function addRelations(Builder $builder)
+	public function addRelations(Fluent $builder)
 	{
-		$builder->belongsTo($this->relations['user'][0], $this->relations['user'][1], function(BelongsTo $belongsTo){
-			$belongsTo->isPrimaryKey();
-		});
+		$builder
+			->belongsTo($this->relations['user'][0], $this->relations['user'][1])
+			->primary();
 	}
 }

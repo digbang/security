@@ -1,6 +1,6 @@
 <?php namespace Digbang\Security\Throttling;
 
-use Digbang\Doctrine\TimestampsTrait;
+use Digbang\Security\Support\TimestampsTrait;
 
 abstract class DefaultThrottle implements Throttle
 {
