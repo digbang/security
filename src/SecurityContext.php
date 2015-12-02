@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use LaravelDoctrine\Fluent\FluentDriver;
 use LaravelDoctrine\Fluent\Mapping;
 use LaravelDoctrine\ORM\Configuration\MetaData\MetaDataManager;
+use LaravelDoctrine\ORM\Extensions\MappingDriverChain;
 
 class SecurityContext
 {
@@ -240,10 +241,7 @@ class SecurityContext
 	{
 		if (! array_key_exists(FluentDriver::class, $this->dependencies))
 		{
-			/** @var MetaDataManager $manager */
-			$manager = $this->container->make(MetaDataManager::class);
-
-			$this->dependencies[FluentDriver::class] = $manager->driver('fluent');
+			$this->dependencies[FluentDriver::class] = $this->extractFluentDriverFromEntityManager();
 		}
 
 		return $this->dependencies[FluentDriver::class];
@@ -260,5 +258,35 @@ class SecurityContext
 		}
 
 		return $this->dependencies[SecurityFactory::class];
+	}
+
+	/**
+	 * @return FluentDriver
+	 * @throw \UnexpectedValueException
+	 */
+	public function extractFluentDriverFromEntityManager()
+	{
+		/** @type EntityManagerInterface $entityManager */
+		$entityManager = $this->container->make(EntityManagerInterface::class);
+
+		$driver = $entityManager->getConfiguration()->getMetadataDriverImpl();
+
+		if ($driver instanceof FluentDriver)
+		{
+			return $driver;
+		}
+
+		if ($driver instanceof MappingDriverChain)
+		{
+			foreach ($driver->getDrivers() as $chain)
+			{
+				if ($chain instanceof FluentDriver)
+				{
+					return $chain;
+				}
+			}
+		}
+
+		throw new \UnexpectedValueException("The security context needs a FluentDriver as metadata mapping.");
 	}
 }

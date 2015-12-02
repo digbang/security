@@ -12,7 +12,6 @@ use Illuminate\Contracts\Container\Container;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use LaravelDoctrine\Fluent\FluentDriver;
-use LaravelDoctrine\ORM\Configuration\MetaData\MetaDataManager;
 
 class SecurityServiceProvider extends ServiceProvider
 {
@@ -37,12 +36,12 @@ class SecurityServiceProvider extends ServiceProvider
 	/**
 	 * Boot the service provider.
 	 *
-	 * @param MetaDataManager $metaDataManager
+	 * @param SecurityContext $securityContext
 	 * @param Router          $router
 	 */
-	public function boot(MetaDataManager $metaDataManager, Router $router)
+	public function boot(SecurityContext $securityContext, Router $router)
 	{
-		$this->addMappings($metaDataManager->driver('fluent'));
+		$this->addMappings($securityContext->extractFluentDriverFromEntityManager());
 		$this->addMiddleware($router);
 	}
 
