@@ -3,12 +3,12 @@
 class Name
 {
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $firstName;
 
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $lastName;
 

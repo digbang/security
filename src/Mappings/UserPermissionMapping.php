@@ -11,7 +11,7 @@ final class UserPermissionMapping extends EntityMapping implements CustomTableMa
 	use UserPermissionMappingTrait;
 
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $table;
 

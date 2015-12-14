@@ -3,7 +3,7 @@
 class Password
 {
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $hash;
 

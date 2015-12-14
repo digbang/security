@@ -20,25 +20,25 @@ use LaravelDoctrine\ORM\Extensions\MappingDriverChain;
 class SecurityContext
 {
 	/**
-	 * @type Container
+	 * @var Container
 	 */
 	private $container;
 
 	/**
 	 * Configured contexts
-	 * @type array
+	 * @var array
 	 */
 	private $contexts = [];
 
 	/**
 	 * Flyweight Security instances.
-	 * @type array
+	 * @var array
 	 */
 	private $instances = [];
 
 	/**
 	 * Flyweight dependencies.
-	 * @type array
+	 * @var array
 	 */
 	private $dependencies = [];
 
@@ -82,7 +82,7 @@ class SecurityContext
 	    });
 
 	    $this->container->bind([UrlGenerator::class => 'url'], function(Container $container) use ($security){
-		    /** @type PermissionAwareUrlGeneratorExtension $url */
+		    /** @var PermissionAwareUrlGeneratorExtension $url */
 		    $url = $container->make(PermissionAwareUrlGeneratorExtension::class);
 		    $url->setUrlGenerator($security->url());
 
@@ -220,12 +220,12 @@ class SecurityContext
 	 */
 	private function addPermissionsFactoryListener($context)
 	{
-		/** @type SecurityContextConfiguration $configuration */
+		/** @var SecurityContextConfiguration $configuration */
 		$configuration = $this->contexts[$context];
 
 		if ($configuration->isPermissionsEnabled())
 		{
-			/** @type EntityManagerInterface $entityManager */
+			/** @var EntityManagerInterface $entityManager */
 			$entityManager = $this->container->make(EntityManagerInterface::class);
 
 			$entityManager->getEventManager()->addEventSubscriber(
@@ -266,7 +266,7 @@ class SecurityContext
 	 */
 	public function extractFluentDriverFromEntityManager()
 	{
-		/** @type EntityManagerInterface $entityManager */
+		/** @var EntityManagerInterface $entityManager */
 		$entityManager = $this->container->make(EntityManagerInterface::class);
 
 		$driver = $entityManager->getConfiguration()->getMetadataDriverImpl();

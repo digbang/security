@@ -10,7 +10,7 @@ final class RoleMapping extends SecurityRoleMapping
 	use RoleMappingTrait;
 
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $table;
 

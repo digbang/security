@@ -29,42 +29,42 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
 	}
 
 	/**
-	 * @type int
+	 * @var int
 	 */
 	private $id;
 
 	/**
-	 * @type ValueObjects\Email
+	 * @var ValueObjects\Email
 	 */
 	private $email;
 
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $username;
 
 	/**
-	 * @type ValueObjects\Password
+	 * @var ValueObjects\Password
 	 */
 	private $password;
 
 	/**
-	 * @type ValueObjects\Name
+	 * @var ValueObjects\Name
 	 */
 	private $name;
 
 	/**
-	 * @type Carbon
+	 * @var Carbon
 	 */
 	private $lastLogin;
 
 	/**
-	 * @type ArrayCollection
+	 * @var ArrayCollection
 	 */
 	private $activations;
 
 	/**
-	 * @type ArrayCollection
+	 * @var ArrayCollection
 	 */
 	private $reminders;
 

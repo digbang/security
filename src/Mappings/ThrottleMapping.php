@@ -11,7 +11,7 @@ final class ThrottleMapping extends EntityMapping implements CustomTableMapping
 	use ThrottleMappingTrait;
 
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $table;
 

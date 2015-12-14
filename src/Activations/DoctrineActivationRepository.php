@@ -10,7 +10,7 @@ use Doctrine\ORM\NoResultException;
 abstract class DoctrineActivationRepository extends EntityRepository implements ActivationRepository
 {
 	/**
-	 * @type int
+	 * @var int
 	 */
 	protected $expires;
 
@@ -45,7 +45,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
 	 */
 	public function complete(UserInterface $user, $code)
 	{
-		/** @type Activation $activation */
+		/** @var Activation $activation */
         $activation = $this->findIncomplete($user, $code);
 
         if ($activation === null)

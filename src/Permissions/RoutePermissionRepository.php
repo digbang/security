@@ -8,13 +8,13 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 final class RoutePermissionRepository implements PermissionRepository
 {
 	/**
-	 * @type \Illuminate\Routing\Router
+	 * @var \Illuminate\Routing\Router
 	 */
 	private $router;
 
 	/**
 	 * Flyweight Pattern
-	 * @type array
+	 * @var array
 	 */
 	private $permissions = [];
 
@@ -61,7 +61,7 @@ final class RoutePermissionRepository implements PermissionRepository
 		{
 			foreach ($this->router->getRoutes() as $route)
 			{
-				/* @type $route \Illuminate\Routing\Route */
+				/* @var $route \Illuminate\Routing\Route */
 				if ($permission = $this->extractPermissionFrom($route))
 				{
 					$this->permissions[] = $permission;
@@ -97,7 +97,7 @@ final class RoutePermissionRepository implements PermissionRepository
 	 */
 	public function getForPath($path)
 	{
-		/** @type Request $request */
+		/** @var Request $request */
 		$request = Request::create($path);
 
 		try

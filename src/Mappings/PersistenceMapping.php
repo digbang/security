@@ -11,7 +11,7 @@ final class PersistenceMapping extends EntityMapping implements CustomTableMappi
 	use PersistenceMappingTrait;
 
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $table;
 

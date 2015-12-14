@@ -11,17 +11,17 @@ use Doctrine\Common\Collections\ArrayCollection;
 trait PermissibleTrait
 {
 	/**
-	 * @type ArrayCollection|Permission[]
+	 * @var ArrayCollection|Permission[]
 	 */
 	protected $permissions;
 
 	/**
-	 * @type PermissionsInterface
+	 * @var PermissionsInterface
 	 */
 	private $permissionsInstance;
 
 	/**
-	 * @type \Closure
+	 * @var \Closure
 	 */
 	protected $permissionsFactory;
 

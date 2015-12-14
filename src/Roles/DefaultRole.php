@@ -18,27 +18,27 @@ class DefaultRole implements Role, Permissible
 	/**
 	 * Probably unused, but part of the sentinel interface...
 	 *
-	 * @type string
+	 * @var string
 	 */
 	private static $usersModel = DefaultUser::class;
 
 	/**
-	 * @type int
+	 * @var int
 	 */
 	private $id;
 
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $name;
 
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $slug;
 
 	/**
-	 * @type ArrayCollection
+	 * @var ArrayCollection
 	 */
 	private $users;
 

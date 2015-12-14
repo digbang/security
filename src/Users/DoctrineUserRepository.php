@@ -14,12 +14,12 @@ use InvalidArgumentException;
 abstract class DoctrineUserRepository extends EntityRepository implements UserRepository
 {
 	/**
-	 * @type PersistenceRepository
+	 * @var PersistenceRepository
 	 */
 	protected $persistences;
 
 	/**
-	 * @type RoleRepository
+	 * @var RoleRepository
 	 */
 	protected $roles;
 
@@ -248,7 +248,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 
 			foreach ($credentials['roles'] as $roleSlug)
 			{
-				/** @type Role|null $role */
+				/** @var Role|null $role */
 				$role = $this->roles->findBySlug($roleSlug);
 
 				if (! $role)

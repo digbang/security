@@ -5,7 +5,7 @@ use Doctrine\Common\Collections\Collection;
 trait PersistableTrait
 {
 	/**
-	 * @type Collection
+	 * @var Collection
 	 */
 	protected $persistences;
 

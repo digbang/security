@@ -5,7 +5,7 @@ use Digbang\Security\Roles\Role;
 class DefaultRolePermission extends DefaultPermission
 {
 	/**
-	 * @type Role
+	 * @var Role
 	 */
 	private $role;
 

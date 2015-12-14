@@ -3,7 +3,7 @@
 class DefaultIpThrottle extends DefaultThrottle
 {
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $ip;
 

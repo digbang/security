@@ -5,7 +5,7 @@ use Digbang\Security\Users\User;
 class DefaultUserPermission extends DefaultPermission
 {
 	/**
-	 * @type User
+	 * @var User
 	 */
 	private $user;
 

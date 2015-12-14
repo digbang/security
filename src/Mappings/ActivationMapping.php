@@ -11,7 +11,7 @@ final class ActivationMapping extends EntityMapping implements  CustomTableMappi
 	use ActivationMappingTrait;
 
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $table;
 

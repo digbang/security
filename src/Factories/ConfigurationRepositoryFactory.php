@@ -15,17 +15,17 @@ use Illuminate\Contracts\Container\Container;
 class ConfigurationRepositoryFactory implements RepositoryFactory
 {
 	/**
-	 * @type RepositoryFactory
+	 * @var RepositoryFactory
 	 */
 	private $defaults;
 
 	/**
-	 * @type Container
+	 * @var Container
 	 */
 	private $container;
 
 	/**
-	 * @type SecurityContextConfiguration
+	 * @var SecurityContextConfiguration
 	 */
 	private $config;
 
@@ -105,7 +105,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
 			$repository = $this->defaults->createActivationRepository($context);
 		}
 
-		/** @type ActivationRepository $repository */
+		/** @var ActivationRepository $repository */
 		$repository->setExpires($this->configuration($context)->getActivationsExpiration());
 
 		return $repository;
@@ -125,7 +125,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
 			$repository = $this->defaults->createReminderRepository($context, $userRepository);
 		}
 
-		/** @type ReminderRepository $repository */
+		/** @var ReminderRepository $repository */
 		$repository->setExpires($this->configuration($context)->getRemindersExpiration());
 
 		return $repository;
@@ -165,7 +165,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
 			$repository = $this->defaults->createThrottleRepository($context);
 		}
 
-		/** @type ThrottleRepository $repository */
+		/** @var ThrottleRepository $repository */
 		$repository->setGlobalInterval($this->configuration($context)->getGlobalThrottleInterval());
 		$repository->setGlobalThresholds($this->configuration($context)->getGlobalThrottleThresholds());
 		$repository->setIpInterval($this->configuration($context)->getIpThrottleInterval());

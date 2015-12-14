@@ -8,12 +8,12 @@ use Illuminate\Contracts\Routing\UrlGenerator;
 class PermissionAwareUrlGenerator implements UrlGenerator
 {
 	/**
-	 * @type UrlGenerator
+	 * @var UrlGenerator
 	 */
 	private $url;
 
 	/**
-	 * @type SecurityApi
+	 * @var SecurityApi
 	 */
 	private $securityApi;
 

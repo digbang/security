@@ -8,17 +8,17 @@ class DefaultPersistence implements Persistence
 	use TimestampsTrait;
 
 	/**
-	 * @type int
+	 * @var int
 	 */
 	private $id;
 
 	/**
-	 * @type User
+	 * @var User
 	 */
 	private $user;
 
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $code;
 

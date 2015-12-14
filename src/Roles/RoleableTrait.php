@@ -5,7 +5,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 trait RoleableTrait
 {
 	/**
-	 * @type ArrayCollection|Role[]
+	 * @var ArrayCollection|Role[]
 	 */
 	protected $roles;
 

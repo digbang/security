@@ -3,12 +3,12 @@
 abstract class DefaultPermission implements Permission
 {
 	/**
-	 * @type string
+	 * @var string
 	 */
 	protected $name;
 
 	/**
-	 * @type bool
+	 * @var bool
 	 */
 	protected $allowed = true;
 

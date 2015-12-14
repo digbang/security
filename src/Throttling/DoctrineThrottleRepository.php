@@ -262,7 +262,7 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
 
         $thresholds = $type.'Thresholds';
 
-        /** @type Collection $throttles */
+        /** @var Collection $throttles */
         $throttles = $this->{$method}($argument);
 
         if (! $throttles->count())
@@ -274,7 +274,7 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
         {
             // Great, now we compare our delay against the most recent attempt
 
-            /** @type DefaultThrottle $last */
+            /** @var DefaultThrottle $last */
             $last = $throttles->last();
 
             foreach (array_reverse($this->$thresholds, true) as $attempts => $delay)

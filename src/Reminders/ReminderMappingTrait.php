@@ -13,7 +13,7 @@ trait ReminderMappingTrait
 	 * IMPORTANT: Relations will NOT be iterated! Each object will access its specific
 	 *            relation keys.
 	 *
-	 * @type array
+	 * @var array
 	 */
 	protected $relations = [
 		'user' => [DefaultUser::class, 'user']

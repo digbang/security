@@ -40,7 +40,7 @@ class LazyStrictPermissions implements PermissionsInterface
 	{
         foreach ($secondaryPermissions as $rolePermissions)
         {
-            /** @type Collection $rolePermissions */
+            /** @var Collection $rolePermissions */
 	        $rolePermissions->map(function(Permission $permission){
 		        $this->add($permission, ! $permission->isAllowed());
 	        });

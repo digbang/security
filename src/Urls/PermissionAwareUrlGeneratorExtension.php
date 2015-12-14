@@ -5,7 +5,7 @@ use Illuminate\Routing\UrlGenerator;
 class PermissionAwareUrlGeneratorExtension extends UrlGenerator
 {
 	/**
-	 * @type PermissionAwareUrlGenerator
+	 * @var PermissionAwareUrlGenerator
 	 */
 	private $urlGenerator;
 

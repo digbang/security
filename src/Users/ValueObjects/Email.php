@@ -3,7 +3,7 @@
 class Email
 {
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $address;
 

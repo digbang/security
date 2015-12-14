@@ -10,7 +10,7 @@ final class UserMapping extends SecurityUserMapping
 	use UserMappingTrait;
 
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $table;
 

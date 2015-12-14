@@ -4,12 +4,12 @@ namespace Digbang\Security\Support;
 trait TimestampsTrait
 {
 	/**
-	 * @type \Carbon\Carbon
+	 * @var \Carbon\Carbon
 	 */
 	private $createdAt;
 
 	/**
-	 * @type \Carbon\Carbon
+	 * @var \Carbon\Carbon
 	 */
 	private $updatedAt;
 

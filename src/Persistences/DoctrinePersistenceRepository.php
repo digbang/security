@@ -11,17 +11,17 @@ use Doctrine\ORM\Mapping;
 abstract class DoctrinePersistenceRepository extends EntityRepository implements PersistenceRepository
 {
 	/**
-	 * @type SessionInterface
+	 * @var SessionInterface
 	 */
 	private $session;
 
 	/**
-	 * @type CookieInterface
+	 * @var CookieInterface
 	 */
 	private $cookie;
 
 	/**
-	 * @type bool
+	 * @var bool
 	 */
 	private $single = false;
 

@@ -12,12 +12,12 @@ use Doctrine\ORM\NoResultException;
 abstract class DoctrineReminderRepository extends EntityRepository implements ReminderRepository
 {
 	/**
-	 * @type int
+	 * @var int
 	 */
 	private $expires;
 
 	/**
-	 * @type UserRepository
+	 * @var UserRepository
 	 */
 	private $users;
 

@@ -15,17 +15,17 @@ use Illuminate\Routing\UrlGenerator;
 class SecurityFactory
 {
 	/**
-	 * @type Container
+	 * @var Container
 	 */
 	private $container;
 
 	/**
-	 * @type RepositoryFactory
+	 * @var RepositoryFactory
 	 */
 	private $repositories;
 
 	/**
-	 * @type UrlGenerator
+	 * @var UrlGenerator
 	 */
 	private $url;
 

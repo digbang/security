@@ -7,7 +7,7 @@ use Doctrine\ORM\Events;
 class PermissionStrategyEventListener implements EventSubscriber
 {
 	/**
-	 * @type \Closure
+	 * @var \Closure
 	 */
 	private $permissionFactory;
 

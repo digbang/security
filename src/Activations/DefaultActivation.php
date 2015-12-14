@@ -9,27 +9,27 @@ class DefaultActivation implements Activation
 	use TimestampsTrait;
 
 	/**
-	 * @type int
+	 * @var int
 	 */
 	private $id;
 
 	/**
-	 * @type User
+	 * @var User
 	 */
 	private $user;
 
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $code;
 
 	/**
-	 * @type bool
+	 * @var bool
 	 */
 	private $completed = false;
 
 	/**
-	 * @type Carbon
+	 * @var Carbon
 	 */
 	private $completedAt;
 

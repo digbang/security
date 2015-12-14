@@ -39,22 +39,22 @@ use Digbang\Security\Users\UserRepository;
 final class Security implements SecurityApi
 {
 	/**
-	 * @type Sentinel
+	 * @var Sentinel
 	 */
 	private $sentinel;
 
 	/**
-	 * @type PermissionRepository
+	 * @var PermissionRepository
 	 */
 	private $permissions;
 
 	/**
-	 * @type PermissionAwareUrlGenerator
+	 * @var PermissionAwareUrlGenerator
 	 */
 	private $url;
 
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $loginRoute;
 

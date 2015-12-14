@@ -13,7 +13,7 @@ trait UserThrottleMappingTrait
 	 * IMPORTANT: Relations will NOT be iterated! Each object will access its specific
 	 *            relation keys.
 	 *
-	 * @type array
+	 * @var array
 	 */
 	private $relations = [
 		'user' => [DefaultUser::class, 'user']

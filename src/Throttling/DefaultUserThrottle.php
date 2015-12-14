@@ -5,7 +5,7 @@ use Digbang\Security\Users\User;
 class DefaultUserThrottle extends DefaultThrottle
 {
 	/**
-	 * @type User
+	 * @var User
 	 */
 	private $user;
 

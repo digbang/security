@@ -16,17 +16,17 @@ use Psr\Log\LoggerInterface;
 final class SecurityMiddleware
 {
 	/**
-	 * @type SecurityContext
+	 * @var SecurityContext
 	 */
 	private $securityContext;
 
 	/**
-	 * @type LoggerInterface
+	 * @var LoggerInterface
 	 */
 	private $logger;
 
 	/**
-	 * @type Redirector
+	 * @var Redirector
 	 */
 	private $redirector;
 

@@ -11,7 +11,7 @@ final class ReminderMapping extends EntityMapping implements CustomTableMapping
 	use ReminderMappingTrait;
 
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $table;
 

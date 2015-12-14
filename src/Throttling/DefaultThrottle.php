@@ -7,7 +7,7 @@ abstract class DefaultThrottle implements Throttle
 	use TimestampsTrait;
 
 	/**
-	 * @type int
+	 * @var int
 	 */
 	protected $id;
 

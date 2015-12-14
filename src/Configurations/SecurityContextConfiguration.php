@@ -88,7 +88,7 @@ class SecurityContextConfiguration
 {
 	/**
 	 * Mapping of each entity to its EntityMapping class or object.
-	 * @type array
+	 * @var array
 	 */
 	private $mappings = [
 		'user'           => Mappings\UserMapping::class,
@@ -107,7 +107,7 @@ class SecurityContextConfiguration
 	/**
 	 * Mapping of entities to custom repositories.
 	 *
-	 * @type array
+	 * @var array
 	 */
 	private $repositories = [
 		'user'        => null,
@@ -121,14 +121,14 @@ class SecurityContextConfiguration
 	/**
 	 * Single persistence flag.
 	 *
-	 * @type bool
+	 * @var bool
 	 */
 	private $singlePersistence = false;
 
 	/**
 	 * Modules that allow disabling.
 	 *
-	 * @type array
+	 * @var array
 	 */
 	private $enabled = [
 		'roles'       => true,
@@ -142,7 +142,7 @@ class SecurityContextConfiguration
 	 *
 	 * The permission repository is used to retrieve permissions based on route resources.
 	 * Security ships with two: InsecurePermissionRepository and RoutePermissionRepository.
-	 * @type array
+	 * @var array
 	 */
 	private $permissions = [
 		'factory'    => null,
@@ -151,7 +151,7 @@ class SecurityContextConfiguration
 
 	/**
 	 * Available checkpoints. Each checkpoint has to implement Sentinel's CheckpointInterface
-	 * @type array
+	 * @var array
 	 */
 	private $checkpoints = [
 		'throttle'   => ThrottleCheckpoint::class,
@@ -163,7 +163,7 @@ class SecurityContextConfiguration
 	 * Each throttling strategy can change the interval and set custom thresholds for
 	 * each amount of retries.
 	 *
-	 * @type array
+	 * @var array
 	 */
 	private $throttles = [
 		'global' => [
@@ -192,7 +192,7 @@ class SecurityContextConfiguration
 	 * Each of these modules may expire in a given time and has a lottery configuration,
 	 * which Sentinel will use to sweep expired codes.
 	 *
-	 * @type array
+	 * @var array
 	 */
 	private $expiring = [
 		'reminders' => [
@@ -208,7 +208,7 @@ class SecurityContextConfiguration
 	/**
 	 * Array of customized table names, one for each mapping.
 	 *
-	 * @type array
+	 * @var array
 	 */
 	private $customTables = [
 		'usersRoles'     => 'user_role',
@@ -223,17 +223,17 @@ class SecurityContextConfiguration
 	];
 
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $name;
 
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $prefix;
 
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $loginRoute;
 

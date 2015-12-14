@@ -8,7 +8,7 @@ use LaravelDoctrine\Fluent\Fluent;
 trait RoleMappingTrait
 {
 	/**
-	 * @type string
+	 * @var string
 	 */
 	protected $joinTable;
 
@@ -19,7 +19,7 @@ trait RoleMappingTrait
 	 * IMPORTANT: Relations will NOT be iterated! Each object will access its specific
 	 *            relation keys.
 	 *
-	 * @type array
+	 * @var array
 	 */
 	protected $relations = [
 		'users'       => [DefaultUser::class, 'users', 'roles'],
@@ -29,13 +29,13 @@ trait RoleMappingTrait
 	/**
 	 * Needed for inverse mapping of hasMany relations.
 	 *
-	 * @type string
+	 * @var string
 	 */
 	protected $name = 'role';
 
 	/**
 	 * Enables or disables permissions mapping.
-	 * @type bool
+	 * @var bool
 	 */
 	protected $permissions = true;
 

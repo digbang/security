@@ -5,12 +5,12 @@ use Digbang\Security\Contracts\SecurityApi;
 abstract class SecurityException extends \RuntimeException
 {
 	/**
-	 * @type SecurityApi
+	 * @var SecurityApi
 	 */
 	protected $security;
 
 	/**
-	 * @type string
+	 * @var string
 	 */
 	protected $context;
 

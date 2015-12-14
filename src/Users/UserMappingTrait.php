@@ -13,7 +13,7 @@ use LaravelDoctrine\Fluent\Relations\OneToMany;
 trait UserMappingTrait
 {
 	/**
-	 * @type string
+	 * @var string
 	 */
 	protected $joinTable;
 
@@ -26,7 +26,7 @@ trait UserMappingTrait
 	/**
 	 * Needed for inverse mapping of hasMany relations.
 	 *
-	 * @type string
+	 * @var string
 	 */
 	protected $name = 'user';
 
@@ -37,7 +37,7 @@ trait UserMappingTrait
 	 * IMPORTANT: Relations will NOT be iterated! Each object will access its specific
 	 *            relation keys.
 	 *
-	 * @type array
+	 * @var array
 	 */
 	protected $relations = [
 		'roles'        => [DefaultRole::class,           'roles', 'users'],

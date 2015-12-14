@@ -12,12 +12,12 @@ use Illuminate\Contracts\Container\Container;
 class ContainerBindingRepositoryFactory implements RepositoryFactory
 {
 	/**
-	 * @type Container
+	 * @var Container
 	 */
 	private $container;
 
 	/**
-	 * @type RepositoryFactory
+	 * @var RepositoryFactory
 	 */
 	private $repositories;
 

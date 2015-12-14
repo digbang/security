@@ -5,7 +5,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 trait ThrottleableTrait
 {
 	/**
-	 * @type ArrayCollection
+	 * @var ArrayCollection
 	 */
 	protected $throttles;
 

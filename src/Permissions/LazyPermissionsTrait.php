@@ -6,17 +6,17 @@ use Illuminate\Support\Str;
 trait LazyPermissionsTrait
 {
 	/**
-	 * @type Collection
+	 * @var Collection
 	 */
 	protected $permissions;
 
 	/**
-	 * @type Collection
+	 * @var Collection
 	 */
 	protected $userPermissions;
 
 	/**
-	 * @type array
+	 * @var array
 	 */
 	protected $rolePermissions;
 
@@ -112,7 +112,7 @@ trait LazyPermissionsTrait
 	{
 		foreach ($this->getMatchingPermissions($permissionName) as $key)
 		{
-			/** @type Permission $permission */
+			/** @var Permission $permission */
 			$permission = $this->permissions->get($key);
 
 			if ($permission->isAllowed())

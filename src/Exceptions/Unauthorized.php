@@ -9,7 +9,7 @@ use Digbang\Security\Contracts\SecurityApi;
 class Unauthorized extends SecurityException
 {
 	/**
-	 * @type string
+	 * @var string
 	 */
 	private $permission;
 

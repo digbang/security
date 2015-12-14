@@ -24,12 +24,12 @@ use Illuminate\Session\Store;
 class DefaultRepositoryFactory implements RepositoryFactory
 {
 	/**
-	 * @type Container
+	 * @var Container
 	 */
 	private $container;
 
 	/**
-	 * @type array
+	 * @var array
 	 */
 	private $instances = [];
 
