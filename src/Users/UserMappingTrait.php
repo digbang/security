@@ -72,9 +72,9 @@ trait UserMappingTrait
 		$builder->carbonDateTime('createdAt');
 		$builder->carbonDateTime('updatedAt');
 
-		$builder->embed(ValueObjects\Email::class);
-		$builder->embed(ValueObjects\Name::class);
-		$builder->embed(ValueObjects\Password::class);
+		$builder->embed(ValueObjects\Email::class)->noPrefix();
+		$builder->embed(ValueObjects\Name::class)->noPrefix();
+		$builder->embed(ValueObjects\Password::class)->noPrefix();
 	}
 
 	/**
