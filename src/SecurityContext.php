@@ -165,6 +165,7 @@ class SecurityContext
 			}
 		}
 
+		$mappingObjects = [];
 		foreach ($mappings as $entity => $mapping)
 		{
 			$entityMapping = $this->makeMapping($mapping);
@@ -174,8 +175,10 @@ class SecurityContext
 				$entityMapping->setTable($table);
 			}
 
-			$this->getMappingDriver()->addMapping($entityMapping);
+			$mappingObjects[] = $entityMapping;
 		}
+
+		$this->addMappings($mappingObjects);
 	}
 
 	/**
@@ -235,19 +238,6 @@ class SecurityContext
 	}
 
 	/**
-	 * @return FluentDriver
-	 */
-	private function getMappingDriver()
-	{
-		if (! array_key_exists(FluentDriver::class, $this->dependencies))
-		{
-			$this->dependencies[FluentDriver::class] = $this->extractFluentDriverFromEntityManager();
-		}
-
-		return $this->dependencies[FluentDriver::class];
-	}
-
-	/**
 	 * @return SecurityFactory
 	 */
 	private function getSecurityFactory()
@@ -261,32 +251,44 @@ class SecurityContext
 	}
 
 	/**
-	 * @return FluentDriver
-	 * @throw \UnexpectedValueException
+	 * @param Mapping[] $mappings
 	 */
-	public function extractFluentDriverFromEntityManager()
+	private function addMappings($mappings)
+	{
+		$fluent = $this->getOrCreateFluentDriver();
+
+		foreach ($mappings as $mapping)
+		{
+			$fluent->addMapping($mapping);
+		}
+	}
+
+	/**
+	 * @return FluentDriver
+	 */
+	public function getOrCreateFluentDriver()
 	{
 		/** @var EntityManagerInterface $entityManager */
 		$entityManager = $this->container->make(EntityManagerInterface::class);
 
-		$driver = $entityManager->getConfiguration()->getMetadataDriverImpl();
+		/** @var MappingDriverChain $chain */
+		$chain = $entityManager->getConfiguration()->getMetadataDriverImpl();
 
-		if ($driver instanceof FluentDriver)
+		$drivers = $chain->getDrivers();
+
+		if (array_key_exists('Digbang\\Security', $drivers))
 		{
-			return $driver;
+			return $drivers['Digbang\\Security'];
 		}
 
-		if ($driver instanceof MappingDriverChain)
-		{
-			foreach ($driver->getDrivers() as $chain)
-			{
-				if ($chain instanceof FluentDriver)
-				{
-					return $chain;
-				}
-			}
-		}
+		/** @var MetaDataManager $metaDataManager */
+		$metaDataManager = $this->container->make(MetaDataManager::class);
 
-		throw new \UnexpectedValueException("The security context needs a FluentDriver as metadata mapping.");
+		/** @var FluentDriver $fluent */
+		$fluent = $metaDataManager->driver('fluent', ['mappings' => []]);
+
+		$chain->addDriver($fluent, 'Digbang\\Security');
+
+		return $fluent;
 	}
 }

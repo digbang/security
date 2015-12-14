@@ -1,9 +1,7 @@
 <?php
 namespace Digbang\Security\Mappings;
 
-use LaravelDoctrine\Fluent\EntityMapping;
-
-abstract class SecurityRoleMapping extends EntityMapping implements CustomTableMapping, PermissibleMapping
+abstract class SecurityRoleMapping extends CustomTableMapping implements PermissibleMapping
 {
 	/**
 	 * Change the roles join table name.

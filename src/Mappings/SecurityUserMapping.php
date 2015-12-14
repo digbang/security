@@ -1,9 +1,7 @@
 <?php
 namespace Digbang\Security\Mappings;
 
-use LaravelDoctrine\Fluent\EntityMapping;
-
-abstract class SecurityUserMapping extends EntityMapping implements CustomTableMapping, PermissibleMapping
+abstract class SecurityUserMapping extends CustomTableMapping implements PermissibleMapping
 {
 	/**
 	 * Disable the roles relation.
