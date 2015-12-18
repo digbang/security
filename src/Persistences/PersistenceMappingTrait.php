@@ -41,6 +41,10 @@ trait PersistenceMappingTrait
 		$builder->string('code');
 		$builder->carbonDateTime('createdAt');
 		$builder->carbonDateTime('updatedAt');
+
+		$builder->events()
+			->prePersist('onPrePersist')
+			->preUpdate('onPreUpdate');
 	}
 
 	/**

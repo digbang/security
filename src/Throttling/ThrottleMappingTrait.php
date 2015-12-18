@@ -9,5 +9,11 @@ trait ThrottleMappingTrait
 	{
 		$builder->bigIncrements('id');
 		$builder->singleTableInheritance()->column('type');
+		$builder->carbonDateTime('createdAt');
+		$builder->carbonDateTime('updatedAt');
+
+		$builder->events()
+			->prePersist('onPrePersist')
+			->preUpdate('onPreUpdate');
 	}
 }

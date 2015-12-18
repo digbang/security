@@ -71,6 +71,9 @@ trait UserMappingTrait
 		$builder->carbonDateTime('lastLogin')->nullable();
 		$builder->carbonDateTime('createdAt');
 		$builder->carbonDateTime('updatedAt');
+		$builder->events()
+			->prePersist('onPrePersist')
+			->preUpdate('onPreUpdate');
 
 		$builder->embed(ValueObjects\Email::class)->noPrefix();
 		$builder->embed(ValueObjects\Name::class)->noPrefix();

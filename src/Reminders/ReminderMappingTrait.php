@@ -43,6 +43,10 @@ trait ReminderMappingTrait
 		$builder->carbonDateTime('completedAt')->nullable();
 		$builder->carbonDateTime('createdAt');
 		$builder->carbonDateTime('updatedAt');
+
+		$builder->events()
+			->prePersist('onPrePersist')
+			->preUpdate('onPreUpdate');
 	}
 
 	/**
