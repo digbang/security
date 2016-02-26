@@ -126,4 +126,14 @@ class PermissionAwareUrlGenerator implements UrlGenerator
 
 		throw Unauthorized::permissionDenied($permission, $this->securityApi);
 	}
+
+	/**
+	 * Get the current URL for the request.
+	 *
+	 * @return string
+	 */
+	public function current()
+	{
+		return $this->url->current();
+	}
 }
