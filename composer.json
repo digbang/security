@@ -10,7 +10,7 @@
 	"require": {
 		"php": ">=5.6",
 		"laravel-doctrine/orm": "~1.0",
-		"laravel-doctrine/fluent": "dev-master",
+		"laravel-doctrine/fluent": "^1.0",
 		"illuminate/support":   "~5.1",
 		"illuminate/contracts": "~5.1",
 		"illuminate/events":    "~5.1",
