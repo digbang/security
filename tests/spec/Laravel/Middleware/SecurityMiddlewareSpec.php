@@ -23,11 +23,10 @@ use Psr\Log\LoggerInterface;
  */
 class SecurityMiddlewareSpec extends ObjectBehavior
 {
-	function let(SecurityContext $securityContext, LoggerInterface $logger, Request $request, SecurityApi $security, Route $route, UrlGenerator $url, SecurityContextConfiguration $config, Redirector $redirector, RedirectResponse $redirect)
+	function let(SecurityContext $securityContext, LoggerInterface $logger, SecurityApi $security, UrlGenerator $url, SecurityContextConfiguration $config, Redirector $redirector, RedirectResponse $redirect)
     {
 	    $securityContext->getSecurity('a_context')->willReturn($security);
 	    $securityContext->getConfigurationFor('a_context')->willReturn($config);
-	    $request->route()->willReturn($route);
 	    $security->url()->willReturn($url);
 	    $security->getUser(Argument::any())->willReturn(null);
 	    $security->getLoginUrl()->willReturn('/auth/login');
@@ -42,14 +41,16 @@ class SecurityMiddlewareSpec extends ObjectBehavior
         $this->shouldHaveType('Digbang\Security\Laravel\Middleware\SecurityMiddleware');
     }
 
-	function it_should_handle_a_request_for_a_given_context(SecurityContext $securityContext, Request $request, SecurityApi $security, User $user, UrlGenerator $url)
+	function it_should_handle_a_request_for_a_given_context(SecurityContext $securityContext, Request $request, SecurityApi $security, User $user, UrlGenerator $url, Route $route)
 	{
 		$securityContext->bindContext('a_context', Argument::any())
 			->shouldBeCalled();
 
 		$security->getUser(Argument::any())->willReturn($user);
 
-		$url->action(Argument::cetera())->willReturn('/a/valid/url');
+		$request->route()->willReturn($route);
+		$route->getPath()->shouldBeCalled()->willReturn('/a/valid/url');
+		$url->to('/a/valid/url')->willReturn('/a/valid/url');
 
 		$next = function(){
 			return 'Hello!';
@@ -72,14 +73,16 @@ class SecurityMiddlewareSpec extends ObjectBehavior
 			->shouldBeAnInstanceOf(RedirectResponse::class);
 	}
 
-	function it_should_throw_an_unauthorized_exception_when_user_does_not_have_permissions(SecurityContext $securityContext, Request $request, SecurityApi $security, User $user, UrlGenerator $url)
+	function it_should_throw_an_unauthorized_exception_when_user_does_not_have_permissions(SecurityContext $securityContext, Request $request, SecurityApi $security, User $user, UrlGenerator $url, Route $route)
 	{
 		$securityContext->bindContext('a_context', Argument::any())
 			->shouldBeCalled();
 
 		$security->getUser(Argument::any())->willReturn($user);
 
-		$url->action(Argument::cetera())->willThrow(Unauthorized::class);
+		$request->route()->willReturn($route);
+		$route->getPath()->shouldBeCalled()->willReturn('/a/valid/url');
+		$url->to('/a/valid/url')->willThrow(Unauthorized::class);
 
 		$next = function(){
 			return 'Hello!';

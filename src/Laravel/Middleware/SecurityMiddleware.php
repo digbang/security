@@ -162,9 +162,10 @@ final class SecurityMiddleware
 
 			if ($route instanceof Route)
 			{
-				$security->url()->action($route->getActionName());
+				$route = $route->getPath();
 			}
-			elseif ($route)
+
+			if ($route)
 			{
 				$security->url()->to($route);
 			}
