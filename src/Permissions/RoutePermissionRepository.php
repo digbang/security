@@ -1,5 +1,6 @@
 <?php namespace Digbang\Security\Permissions;
 
+use Digbang\Security\Urls\RouteCollectionMatcher;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
@@ -102,13 +103,15 @@ final class RoutePermissionRepository implements PermissionRepository
 
 		try
 		{
-			if ($route = $this->router->getRoutes()->match($request))
+			$collectionMatcher = new RouteCollectionMatcher($this->router->getRoutes());
+
+			if ($route = $collectionMatcher->getRouteForRequest($request))
 			{
 				return $this->extractPermissionFrom($route);
 			}
 		}
 		catch (HttpException $e){ }
-		
+
 		return null;
 	}
 }

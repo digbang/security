@@ -85,13 +85,4 @@ class RoutePermissionRepositorySpec extends ObjectBehavior
 
 		$this->all()->shouldReturn([self::VALID_PERMISSION]);
 	}
-
-	function it_should_return_null_when_asked_for_a_permission_for_an_unmapped_url(Router $router, RouteCollection $routeCollection)
-	{
-		$router->getRoutes()->shouldBeCalled();
-		$routeCollection->match(Argument::any())->shouldBeCalled()
-			->willThrow(HttpException::class);
-
-		$this->getForPath('/unmapped_path')->shouldBe(null);
-	}
 }
