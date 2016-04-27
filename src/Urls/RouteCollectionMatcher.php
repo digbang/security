@@ -28,7 +28,7 @@ class RouteCollectionMatcher extends RouteCollection
      */
     public function getRouteForRequest(Request $request)
     {
-        $routes = $this->get($request->getMethod());
+        $routes = $this->collection->get($request->getMethod());
 
         return $this->collection->check($routes, $request);
     }
