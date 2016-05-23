@@ -6,7 +6,7 @@ use Digbang\Security\Permissions\DefaultUserPermission;
 use Digbang\Security\Roles\DefaultRole;
 use Digbang\Security\Persistences\DefaultPersistence;
 use Digbang\Security\Reminders\DefaultReminder;
-use Digbang\Security\Throttling\DefaultThrottle;
+use Digbang\Security\Throttling\DefaultUserThrottle;
 use LaravelDoctrine\Fluent\Fluent;
 use LaravelDoctrine\Fluent\Relations\OneToMany;
 
@@ -44,7 +44,7 @@ trait UserMappingTrait
 		'persistences' => [DefaultPersistence::class,    'persistences'],
 		'activations'  => [DefaultActivation::class,     'activations'],
 		'reminders'    => [DefaultReminder::class,       'reminders'],
-		'throttles'    => [DefaultThrottle::class,       'throttles'],
+		'throttles'    => [DefaultUserThrottle::class,   'throttles'],
 		'permissions'  => [DefaultUserPermission::class, 'permissions'],
 	];
 
@@ -102,7 +102,9 @@ trait UserMappingTrait
 
 		if ($this->enabled['throttles'])
 		{
-			$this->hasMany('throttles', $builder);
+			$this->hasMany('throttles', $builder)
+				->cascadeAll()
+				->orphanRemoval();
 		}
 
 		if ($this->enabled['roles'])
