@@ -87,9 +87,18 @@ trait UserMappingTrait
 	 */
 	public function addRelations(Fluent $builder)
 	{
-		$this->hasMany('persistences', $builder);
-		$this->hasMany('reminders',    $builder);
-		$this->hasMany('activations', $builder)->orderBy('createdAt', 'desc');
+		$this->hasMany('persistences', $builder)
+			->cascadeAll()
+			->orphanRemoval();
+
+		$this->hasMany('reminders', $builder)
+			->cascadeAll()
+			->orphanRemoval();
+
+		$this->hasMany('activations', $builder)
+			->cascadeAll()
+			->orphanRemoval()
+			->orderBy('createdAt', 'desc');
 
 		if ($this->enabled['throttles'])
 		{
