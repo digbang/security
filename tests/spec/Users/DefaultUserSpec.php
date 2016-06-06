@@ -275,4 +275,15 @@ class DefaultUserSpec extends ObjectBehavior
 			return $permission->getName() == 'role.foo' && $permission->isAllowed();
 		})->isEmpty()->shouldBe(true);
 	}
+
+	function it_should_clear_permissions_when_updated_with_an_empty_permissions_value()
+	{
+		$this->setPermissionsFactory(LazyStandardPermissions::getFactory());
+
+		$this->allow(['role.foo', 'role.bar']);
+		$this->hasAccess('role.foo')->shouldBe(true);
+
+		$this->update(['permissions' => null]);
+		$this->hasAccess('role.foo')->shouldBe(false);
+	}
 }

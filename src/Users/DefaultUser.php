@@ -160,7 +160,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
 
 		if (array_key_exists('permissions', $credentials))
 		{
-			$this->syncPermissions($credentials['permissions']);
+			$this->syncPermissions((array) $credentials['permissions']);
 		}
 	}
 
