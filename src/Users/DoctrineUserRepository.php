@@ -9,6 +9,8 @@ use Digbang\Security\Roles\RoleRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use InvalidArgumentException;
 
 abstract class DoctrineUserRepository extends EntityRepository implements UserRepository
@@ -80,9 +82,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 	{
 		$queryBuilder = $this->createQueryBuilder('u');
 
-		$queryBuilder->addCriteria(
-			$this->createCredentialsCriteria($credentials)
-		);
+		$this->createCredentialsCriteria($queryBuilder, $credentials);
 
 		$queryBuilder->setMaxResults(1);
 
@@ -297,16 +297,19 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 		}
 	}
 
-	protected function createCredentialsCriteria(array $credentials)
+	protected function createCredentialsCriteria(QueryBuilder $queryBuilder, array $credentials)
 	{
-		$criteria = Criteria::create();
+		$expr = $queryBuilder->expr();
+		$alias = $queryBuilder->getRootAliases()[0];
 
 		if (array_key_exists('login', $credentials))
 		{
-			$criteria->andWhere($criteria->expr()->orX(
-				$criteria->expr()->eq('email.address', $credentials['login']),
-				$criteria->expr()->eq('username', $credentials['login'])
+			$queryBuilder->andWhere($expr->orX(
+				$expr->eq($expr->lower($alias . '.email.address'), $expr->lower(':login')),
+				$expr->eq($expr->lower($alias . '.username'), $expr->lower(':login'))
 			));
+
+			$queryBuilder->setParameter('login', $credentials['login']);
 		}
 		else
 		{
@@ -317,15 +320,18 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 
 			if (isset($credentials['email']))
 			{
-				$criteria->andWhere($criteria->expr()->eq('email.address', $credentials['email']));
+				$queryBuilder->andWhere($expr->eq($expr->lower($alias . '.email.address'), $expr->lower(':email')));
+				$queryBuilder->setParameter('email', $credentials['email']);
 			}
 
 			if (isset($credentials['username']))
 			{
-				$criteria->andWhere($criteria->expr()->eq('username', $credentials['username']));
+				$queryBuilder->andWhere($expr->eq($expr->lower($alias . '.username'), $expr->lower(':username')));
+				$queryBuilder->setParameter('username', $credentials['username']);
 			}
+
 		}
 
-		return $criteria;
+		return $queryBuilder;
 	}
 }
