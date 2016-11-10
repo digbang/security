@@ -145,7 +145,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
 			$this->username = $credentials['username'];
 		}
 
-		if (array_key_exists('password', $credentials))
+		if (array_key_exists('password', $credentials) && !empty($credentials['password']))
 		{
 			$this->password = new ValueObjects\Password($credentials['password']);
 		}

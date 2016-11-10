@@ -286,4 +286,13 @@ class DefaultUserSpec extends ObjectBehavior
 		$this->update(['permissions' => null]);
 		$this->hasAccess('role.foo')->shouldBe(false);
 	}
+
+	function it_should_ignore_updating_a_password_with_an_empty_value(Password $password)
+    {
+        $password->getHash()->willReturn('a-hash');
+
+        $this->update(['password' => '']);
+
+        $this->getUserPassword()->shouldBe('a-hash');
+    }
 }
