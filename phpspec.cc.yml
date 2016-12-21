@@ -1,0 +1,18 @@
+suites:
+  security_suite:
+    namespace: Digbang\Security
+    psr4_prefix: Digbang\Security
+    spec_path: tests
+extensions:
+  PhpSpecCodeCoverage\CodeCoverageExtension:
+    blacklist:
+      - tests
+      - build
+      - public
+      - vendor
+    format:
+      - html
+      - clover
+    output:
+      html: build/coverage
+      clover: build/logs/coverage.xml
