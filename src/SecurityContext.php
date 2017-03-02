@@ -81,13 +81,15 @@ class SecurityContext
 		    return $security->url();
 	    });
 
-	    $this->container->bind([UrlGenerator::class => 'url'], function(Container $container) use ($security){
-		    /** @var PermissionAwareUrlGeneratorExtension $url */
-		    $url = $container->make(PermissionAwareUrlGeneratorExtension::class);
-		    $url->setUrlGenerator($security->url());
+        $this->container->bind(UrlGenerator::class, function(Container $container) use ($security){
+            /** @var PermissionAwareUrlGeneratorExtension $url */
+            $url = $container->make(PermissionAwareUrlGeneratorExtension::class);
+            $url->setUrlGenerator($security->url());
 
-		    return $url;
-	    });
+            return $url;
+        });
+
+        $this->container->alias(UrlGenerator::class, 'url');
 
 		$request->setUserResolver(function() use ($security){
             return $security->getUser();
