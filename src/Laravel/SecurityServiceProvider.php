@@ -45,11 +45,11 @@ class SecurityServiceProvider extends ServiceProvider
 		$this->addMiddleware($router);
 	}
 
-	/**
-	 * @param FluentDriver $mappingDriver
-	 *
-	 * @throws \Doctrine\Common\Persistence\Mapping\MappingException
-	 */
+    /**
+     * @param FluentDriver $mappingDriver
+     *
+     * @throws \Doctrine\ORM\Mapping\MappingException
+     */
 	private function addMappings(FluentDriver $mappingDriver)
 	{
 		$mappingDriver->addMapping(new NameMapping);
@@ -62,6 +62,12 @@ class SecurityServiceProvider extends ServiceProvider
 	 */
 	private function addMiddleware(Router $router)
 	{
-		$router->middleware('security', Middleware\SecurityMiddleware::class);
+	    if (method_exists($router, 'aliasMiddleware')) {
+	        // Laravel >= 5.4
+		    $router->aliasMiddleware('security', Middleware\SecurityMiddleware::class);
+        } else {
+	        // Laravel <= 5.3
+		    $router->middleware('security', Middleware\SecurityMiddleware::class);
+        }
 	}
 }
