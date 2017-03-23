@@ -111,7 +111,9 @@ trait UserMappingTrait
 		{
 			$roles = $builder
 				->belongsToMany($this->relations['roles'][0], $this->relations['roles'][1])
-				->inversedBy($this->relations['roles'][2]);
+				->inversedBy($this->relations['roles'][2])
+                ->source('user_id')
+                ->target('role_id');
 
 			if ($this->joinTable)
 			{

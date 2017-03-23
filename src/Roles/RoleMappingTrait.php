@@ -86,15 +86,14 @@ trait RoleMappingTrait
 	{
 		$users = $builder
 			->belongsToMany($this->relations['users'][0], $this->relations['users'][1])
-			->mappedBy($this->relations['users'][2]);
+			->mappedBy($this->relations['users'][2])
+            ->source('role_id')->target('user_id');
 
-		if ($this->joinTable)
-		{
+		if ($this->joinTable) {
 			$users->joinTable($this->joinTable);
 		}
 
-		if ($this->permissions)
-		{
+		if ($this->permissions) {
 			$builder
 				->hasMany($this->relations['permissions'][0], $this->relations['permissions'][1])
 				->mappedBy($this->name)
