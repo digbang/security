@@ -1,8 +1,8 @@
-<?php namespace spec\Digbang\Security\Users;
+<?php
+namespace spec\Digbang\Security\Users;
 
 use Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface;
 use Cartalyst\Sentinel\Users\UserRepositoryInterface;
-use Digbang\Security\Permissions\LazyStandardPermissions;
 use Digbang\Security\Persistences\PersistenceRepository;
 use Digbang\Security\Roles\Role;
 use Digbang\Security\Roles\RoleRepository;
@@ -13,6 +13,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -248,6 +249,8 @@ class DefaultDoctrineUserRepositorySpec extends ObjectBehavior
 
 		$entityManager->createQueryBuilder()->shouldBeCalled()->willReturn($queryBuilder);
 
+		$queryBuilder->expr()->willReturn(new Expr());
+		$queryBuilder->getRootAliases()->willReturn(['u']);
 		$queryBuilder->select(Argument::any())->willReturn($queryBuilder);
 		$queryBuilder->from(Argument::cetera())->willReturn($queryBuilder);
 		$queryBuilder->where(Argument::any())->willReturn($queryBuilder);
