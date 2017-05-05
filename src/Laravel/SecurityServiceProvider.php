@@ -8,6 +8,7 @@ use Digbang\Security\Mappings\EmailMapping;
 use Digbang\Security\Mappings\NameMapping;
 use Digbang\Security\Mappings\PasswordMapping;
 use Digbang\Security\SecurityContext;
+use Doctrine\ORM\EntityManagerInterface;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
@@ -41,7 +42,12 @@ class SecurityServiceProvider extends ServiceProvider
 	 */
 	public function boot(SecurityContext $securityContext, Router $router)
 	{
-		$this->addMappings($securityContext->getOrCreateFluentDriver());
+	    $this->app->extend(EntityManagerInterface::class, function (EntityManagerInterface $entityManager) use ($securityContext) {
+		    $this->addMappings($securityContext->getOrCreateFluentDriver($entityManager));
+
+		    return $entityManager;
+        });
+
 		$this->addMiddleware($router);
 	}
 

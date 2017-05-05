@@ -62,7 +62,11 @@ class SecurityContext
 	{
 		$this->contexts[$configuration->getName()] = $configuration;
 
-		$this->updateMappings($configuration);
+		$this->container->extend(EntityManagerInterface::class, function (EntityManagerInterface $entityManager) use ($configuration) {
+		    $this->updateMappings($configuration, $entityManager);
+
+		    return $entityManager;
+        });
 	}
 
 	/**
@@ -129,11 +133,11 @@ class SecurityContext
 		return $this->contexts[$context];
 	}
 
-	/**
-	 * @param SecurityContextConfiguration $configuration
-	 * @throws \BadMethodCallException
-	 */
-	private function updateMappings(SecurityContextConfiguration $configuration)
+    /**
+     * @param SecurityContextConfiguration $configuration
+     * @param EntityManagerInterface $entityManager
+     */
+	private function updateMappings(SecurityContextConfiguration $configuration, EntityManagerInterface $entityManager)
 	{
 		$mappings = $configuration->getMappings();
 
@@ -180,7 +184,7 @@ class SecurityContext
 			$mappingObjects[] = $entityMapping;
 		}
 
-		$this->addMappings($mappingObjects);
+		$this->addMappings($mappingObjects, $entityManager);
 	}
 
 	/**
@@ -252,34 +256,31 @@ class SecurityContext
 		return $this->dependencies[SecurityFactory::class];
 	}
 
-	/**
-	 * @param Mapping[] $mappings
-	 */
-	private function addMappings($mappings)
+    /**
+     * @param Mapping[] $mappings
+     * @param EntityManagerInterface $entityManager
+     */
+	private function addMappings($mappings, EntityManagerInterface $entityManager)
 	{
-		$fluent = $this->getOrCreateFluentDriver();
+		$fluent = $this->getOrCreateFluentDriver($entityManager);
 
-		foreach ($mappings as $mapping)
-		{
+		foreach ($mappings as $mapping) {
 			$fluent->addMapping($mapping);
 		}
 	}
 
-	/**
-	 * @return FluentDriver
-	 */
-	public function getOrCreateFluentDriver()
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @return FluentDriver
+     */
+	public function getOrCreateFluentDriver(EntityManagerInterface $entityManager)
 	{
-		/** @var EntityManagerInterface $entityManager */
-		$entityManager = $this->container->make(EntityManagerInterface::class);
-
 		/** @var MappingDriverChain $chain */
 		$chain = $entityManager->getConfiguration()->getMetadataDriverImpl();
 
 		$drivers = $chain->getDrivers();
 
-		if (array_key_exists('Digbang\\Security', $drivers))
-		{
+		if (array_key_exists('Digbang\\Security', $drivers)) {
 			return $drivers['Digbang\\Security'];
 		}
 
