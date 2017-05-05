@@ -49,7 +49,7 @@ class SecurityMiddlewareSpec extends ObjectBehavior
 		$security->getUser(Argument::any())->willReturn($user);
 
 		$request->route()->willReturn($route);
-		$route->getPath()->shouldBeCalled()->willReturn('/a/valid/url');
+		$route->uri()->shouldBeCalled()->willReturn('/a/valid/url');
 		$url->to('/a/valid/url')->willReturn('/a/valid/url');
 
 		$next = function(){
@@ -81,7 +81,7 @@ class SecurityMiddlewareSpec extends ObjectBehavior
 		$security->getUser(Argument::any())->willReturn($user);
 
 		$request->route()->willReturn($route);
-		$route->getPath()->shouldBeCalled()->willReturn('/a/valid/url');
+		$route->uri()->shouldBeCalled()->willReturn('/a/valid/url');
 		$url->to('/a/valid/url')->willThrow(Unauthorized::class);
 
 		$next = function(){
