@@ -40,14 +40,9 @@ class SecurityServiceProvider extends ServiceProvider
 	 * @param SecurityContext $securityContext
 	 * @param Router          $router
 	 */
-	public function boot(SecurityContext $securityContext, Router $router)
+	public function boot(SecurityContext $securityContext, Router $router, EntityManagerInterface $entityManager)
 	{
-	    $this->app->extend(EntityManagerInterface::class, function (EntityManagerInterface $entityManager) use ($securityContext) {
-		    $this->addMappings($securityContext->getOrCreateFluentDriver($entityManager));
-
-		    return $entityManager;
-        });
-
+        $this->addMappings($securityContext->getOrCreateFluentDriver($entityManager));
 		$this->addMiddleware($router);
 	}
 

@@ -62,11 +62,10 @@ class SecurityContext
 	{
 		$this->contexts[$configuration->getName()] = $configuration;
 
-		$this->container->extend(EntityManagerInterface::class, function (EntityManagerInterface $entityManager) use ($configuration) {
-		    $this->updateMappings($configuration, $entityManager);
-
-		    return $entityManager;
-        });
+        $this->updateMappings(
+            $configuration,
+            $this->container->make(EntityManagerInterface::class)
+        );
 	}
 
 	/**
