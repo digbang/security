@@ -42,7 +42,7 @@ class RouteCollectionMatcher extends RouteCollection
      * @param  bool  $includingMethod
      * @return Route|null
      */
-    private function check(array $routes, $request, $includingMethod = true)
+    protected function check(array $routes, $request, $includingMethod = true)
     {
         $methodName = $this->getCheckMethodName();
 
@@ -55,9 +55,11 @@ class RouteCollectionMatcher extends RouteCollection
     private function getCheckMethodName()
     {
         if (method_exists($this->collection, 'matchAgainstRoutes')) {
-            return 'matchAgainstRoutes'; // Laravel 5.4
+            // Laravel >= 5.4
+            return 'matchAgainstRoutes';
         }
 
-        return 'check'; //Laravel < 5.4
+        //Laravel <= 5.3
+        return 'check';
     }
 }
