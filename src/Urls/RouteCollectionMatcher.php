@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace Digbang\Security\Urls;
 
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 use Illuminate\Routing\RouteCollection;
 
 class RouteCollectionMatcher extends RouteCollection
@@ -24,12 +25,39 @@ class RouteCollectionMatcher extends RouteCollection
     /**
      * @param Request $request
      *
-     * @return \Illuminate\Routing\Route|null
+     * @return Route|null
      */
     public function getRouteForRequest(Request $request)
     {
         $routes = $this->collection->get($request->getMethod());
 
-        return $this->collection->check($routes, $request);
+        return $this->check($routes, $request);
+    }
+
+    /**
+     * Determine if a route in the array matches the request.
+     *
+     * @param  array  $routes
+     * @param  Request  $request
+     * @param  bool  $includingMethod
+     * @return Route|null
+     */
+    private function check(array $routes, $request, $includingMethod = true)
+    {
+        $methodName = $this->getCheckMethodName();
+
+        return $this->collection->$methodName($routes, $request, $includingMethod);
+    }
+
+    /**
+     * @return string
+     */
+    private function getCheckMethodName()
+    {
+        if (method_exists($this->collection, 'matchAgainstRoutes')) {
+            return 'matchAgainstRoutes'; // Laravel 5.4
+        }
+
+        return 'check'; //Laravel < 5.4
     }
 }
