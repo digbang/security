@@ -136,4 +136,11 @@ class PermissionAwareUrlGenerator implements UrlGenerator
 	{
 		return $this->url->current();
 	}
+
+	public function __call($name, $args)
+    {
+        if (\is_callable([$this->url, $name])) {
+            return \call_user_func_array([$this->url, $name], $args);
+        }
+    }
 }
