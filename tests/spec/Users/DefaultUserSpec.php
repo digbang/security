@@ -25,7 +25,7 @@ use Prophecy\Prophet;
  */
 class DefaultUserSpec extends ObjectBehavior
 {
-	function let(Email $email, Password $password)
+	function let(string $email, string $password)
 	{
 		$this->beConstructedWith(
 			$email, $password, 'testing_username'

@@ -33,7 +33,7 @@ class DefaultRole implements Role, Permissible
     /** @var ArrayCollection */
     protected $users;
 
-    public function __construct($name, string $userType, $slug = null )
+    public function __construct($name, $slug = null)
     {
         $this->name = $name;
         $this->slug = $slug ?: Str::slug($name);
