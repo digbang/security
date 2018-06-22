@@ -1,19 +1,20 @@
-<?php namespace Digbang\Security\Roles;
+<?php
+
+namespace Digbang\Security\Roles;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Mapping;
 use Illuminate\Support\Collection;
 
 abstract class DoctrineRoleRepository extends EntityRepository implements RoleRepository
 {
-	/**
-	 * @param EntityManager $entityManager
-	 */
+    /**
+     * @param EntityManager $entityManager
+     */
     public function __construct(EntityManager $entityManager)
     {
         parent::__construct($entityManager, $entityManager->getClassMetadata(
-	        $this->entityName()
+            $this->entityName()
         ));
     }
 
@@ -25,12 +26,12 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
      */
     abstract protected function entityName();
 
-	/**
-	 * @param string      $name
-	 * @param string|null $slug
-	 *
-	 * @return Role
-	 */
+    /**
+     * @param string      $name
+     * @param string|null $slug
+     *
+     * @return Role
+     */
     abstract protected function createRole($name, $slug = null);
 
     /**
@@ -73,14 +74,14 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
     /**
      * {@inheritdoc}
      */
-	public function create($name, $slug = null)
-	{
-		$role = $this->createRole($name, $slug);
+    public function create($name, $slug = null)
+    {
+        $role = $this->createRole($name, $slug);
 
-		$this->save($role);
+        $this->save($role);
 
-		return $role;
-	}
+        return $role;
+    }
 
     /**
      * {@inheritdoc}

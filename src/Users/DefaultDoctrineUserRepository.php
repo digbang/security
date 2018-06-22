@@ -1,43 +1,50 @@
-<?php namespace Digbang\Security\Users;
+<?php
 
-final class DefaultDoctrineUserRepository extends DoctrineUserRepository
+namespace Digbang\Security\Users;
+
+class DefaultDoctrineUserRepository extends DoctrineUserRepository
 {
-	/**
-	 * Get the User class name.
-	 *
-	 * @return string
-	 */
-	protected function entityName()
-	{
-		return DefaultUser::class;
-	}
+    protected const ENTITY_CLASSNAME = DefaultUser::class;
 
-	/**
-	 * Create a new user based on the given credentials.
-	 *
-	 * @param array $credentials
-	 *
-	 * @return DefaultUser
-	 */
-	protected function createUser(array $credentials)
-	{
-		if (count(array_only($credentials, ['email', 'password', 'username'])) < 3)
-		{
-			throw new \InvalidArgumentException("Missing arguments.");
-		}
+    /**
+     * Get the User class name.
+     *
+     * @return string
+     */
+    protected function entityName()
+    {
+        return static::ENTITY_CLASSNAME;
+    }
 
-		$user = new DefaultUser(
-			new ValueObjects\Email($credentials['email']),
-			new ValueObjects\Password($credentials['password']),
-			$credentials['username']
-		);
+    /**
+     * Create a new user based on the given credentials.
+     *
+     * @param array $credentials
+     *
+     * @return User
+     */
+    protected function createUser(array $credentials)
+    {
+        $entity = static::ENTITY_CLASSNAME;
 
-		$rest = array_except($credentials, ['email', 'username', 'password']);
-		if (! empty($rest))
-		{
-			$user->update($rest);
-		}
+        if (count(array_only($credentials, ['email', 'password', 'username'])) < 3)
+        {
+            throw new \InvalidArgumentException("Missing arguments.");
+        }
 
-		return $user;
-	}
+        /** @var User $user */
+        $user = new $entity(
+            $credentials['email'],
+            $credentials['password'],
+            $credentials['username']
+        );
+
+        $rest = array_except($credentials, ['email', 'username', 'password']);
+        if (! empty($rest))
+        {
+            $user->update($rest);
+        }
+
+        return $user;
+    }
 }

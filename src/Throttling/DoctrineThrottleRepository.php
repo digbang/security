@@ -1,11 +1,12 @@
-<?php namespace Digbang\Security\Throttling;
+<?php
+
+namespace Digbang\Security\Throttling;
 
 use Carbon\Carbon;
 use Cartalyst\Sentinel\Users\UserInterface;
 use Digbang\Security\Users\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Mapping;
 use Illuminate\Support\Collection;
 
 abstract class DoctrineThrottleRepository extends EntityRepository implements ThrottleRepository
@@ -87,13 +88,13 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
      */
     protected $userThrottles;
 
-	/**
-	 * @param EntityManager $entityManager
-	 */
+    /**
+     * @param EntityManager $entityManager
+     */
     public function __construct(EntityManager $entityManager)
     {
         parent::__construct($entityManager, $entityManager->getClassMetadata(
-	        $this->entityName()
+            $this->entityName()
         ));
 
         $this->ipThrottles   = new Collection;
@@ -113,27 +114,27 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
      */
     abstract protected function entityName($type = null);
 
-	/**
-	 * Create a GlobalThrottle object
-	 * @return Throttle
-	 */
-	abstract protected function createGlobalThrottle();
+    /**
+     * Create a GlobalThrottle object
+     * @return Throttle
+     */
+    abstract protected function createGlobalThrottle();
 
-	/**
-	 * Create an IpThrottle object
-	 *
-	 * @param string $ipAddress
-	 * @return Throttle
-	 */
-	abstract protected function createIpThrottle($ipAddress);
+    /**
+     * Create an IpThrottle object
+     *
+     * @param string $ipAddress
+     * @return Throttle
+     */
+    abstract protected function createIpThrottle($ipAddress);
 
-	/**
-	 * Create a UserThrottle object
-	 *
-	 * @param User $user
-	 * @return Throttle
-	 */
-	abstract protected function createUserThrottle(User $user);
+    /**
+     * Create a UserThrottle object
+     *
+     * @param User $user
+     * @return Throttle
+     */
+    abstract protected function createUserThrottle(User $user);
 
     /**
      * Sets the global interval.
@@ -225,10 +226,10 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
         return $this->delay('user', $user);
     }
 
-	/**
-	 * @param string|null $ipAddress
-	 * @param User|null   $user
-	 */
+    /**
+     * @param string|null $ipAddress
+     * @param User|null   $user
+     */
     public function log($ipAddress = null, UserInterface $user = null)
     {
         $throttles = [
@@ -326,7 +327,7 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
     {
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
         $queryBuilder
-	        ->select('t')
+            ->select('t')
             ->from($this->entityName('global'), 't')
             ->where('t.createdAt > :interval')
             ->setParameter('interval', Carbon::now()->subSeconds($this->globalInterval));
@@ -361,8 +362,8 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
 
         $queryBuilder
-	        ->select('t')
-	        ->from($this->entityName('ip'), 't')
+            ->select('t')
+            ->from($this->entityName('ip'), 't')
             ->where('t.createdAt > :interval')
             ->andWhere('t.ip = :ip')
             ->setParameters([
@@ -381,7 +382,7 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
      */
     protected function getUserThrottles(UserInterface $user)
     {
-	    if (! $this->userThrottles->has($user->getUserId()))
+        if (! $this->userThrottles->has($user->getUserId()))
         {
             $this->userThrottles[$user->getUserId()] = $this->loadUserThrottles($user);
         }
@@ -399,8 +400,8 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
     {
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
         $queryBuilder
-	        ->select('t')
-	        ->from($this->entityName('user'), 't')
+            ->select('t')
+            ->from($this->entityName('user'), 't')
             ->where('t.createdAt > :interval')
             ->andWhere('t.user = :user')
             ->setParameters([
@@ -425,11 +426,11 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
         return $throttle->getCreatedAt()->addSeconds($interval)->diffInSeconds();
     }
 
-	/**
-	 * Persist an array of Throttles and flush them together.
-	 *
-	 * @param array $throttles
-	 */
+    /**
+     * Persist an array of Throttles and flush them together.
+     *
+     * @param array $throttles
+     */
     protected function bulkSave(array $throttles)
     {
         $entityManager = $this->getEntityManager();

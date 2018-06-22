@@ -1,5 +1,6 @@
 {
 	"name": "digbang/security",
+	"license": "MIT",
 	"description": "Security package for Laravel 5 projects in Digbang.",
 	"authors": [
 		{
@@ -8,14 +9,14 @@
 		}
 	],
 	"require": {
-		"php": ">=5.6",
-		"laravel-doctrine/orm": "~1.0",
-		"laravel-doctrine/fluent": "*",
-		"illuminate/support":   "~5.1",
-		"illuminate/contracts": "~5.1",
-		"illuminate/events":    "~5.1",
-		"illuminate/cookie":    "~5.1",
-		"illuminate/routing":   "~5.1",
+		"php": ">=7.1",
+		"laravel-doctrine/orm": "^1.4",
+		"laravel-doctrine/fluent": "^1.1",
+		"illuminate/support":   "5.4.*|5.5.*|5.6.*",
+		"illuminate/contracts": "5.4.*|5.5.*|5.6.*",
+		"illuminate/events":    "5.4.*|5.5.*|5.6.*",
+		"illuminate/cookie":    "5.4.*|5.5.*|5.6.*",
+		"illuminate/routing":   "5.4.*|5.5.*|5.6.*",
 		"cartalyst/sentinel":   "~2.0",
 		"doctrine/dbal":        "~2.5"
 	},
@@ -28,12 +29,7 @@
 			"Digbang\\Security\\": "src/"
 		}
 	},
-	"repositories": [
-		{
-			"type": "vcs",
-			"url": "git@github.com:laravel-doctrine/fluent.git"
-		}
-	],
+	"repositories": [],
 	"minimum-stability": "dev",
 	"prefer-stable": true
 }

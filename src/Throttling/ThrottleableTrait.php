@@ -1,19 +1,21 @@
-<?php namespace Digbang\Security\Throttling;
+<?php
+
+namespace Digbang\Security\Throttling;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
 trait ThrottleableTrait
 {
-	/**
-	 * @var ArrayCollection
-	 */
-	protected $throttles;
+    /**
+     * @var ArrayCollection
+     */
+    protected $throttles;
 
-	/**
-	 * @return ArrayCollection
-	 */
-	public function getThrottles()
-	{
-		return $this->throttles;
-	}
+    /**
+     * @return ArrayCollection
+     */
+    public function getThrottles()
+    {
+        return $this->throttles;
+    }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Digbang\Security\Laravel\Middleware;
 
 use Cartalyst\Sentinel\Activations\ActivationRepositoryInterface;

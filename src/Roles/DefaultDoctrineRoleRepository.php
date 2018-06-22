@@ -1,20 +1,26 @@
-<?php namespace Digbang\Security\Roles;
+<?php
+
+namespace Digbang\Security\Roles;
 
 class DefaultDoctrineRoleRepository extends DoctrineRoleRepository
 {
-	/**
-	 * {@inheritdoc}
-	 */
-	protected function entityName()
-	{
-		return DefaultRole::class;
-	}
+    protected const ENTITY_CLASSNAME = DefaultRole::class;
 
-	/**
-	 * {@inheritdoc}
-	 */
-	protected function createRole($name, $slug = null)
-	{
-		return new DefaultRole($name, $slug);
-	}
+    /**
+     * {@inheritdoc}
+     */
+    protected function entityName()
+    {
+        return static::ENTITY_CLASSNAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createRole($name, $slug = null)
+    {
+        $entity = static::ENTITY_CLASSNAME;
+
+        return new $entity($name, $slug);
+    }
 }

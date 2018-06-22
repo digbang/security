@@ -1,27 +1,29 @@
-<?php namespace Digbang\Security\Throttling;
+<?php
+
+namespace Digbang\Security\Throttling;
 
 class DefaultIpThrottle extends DefaultThrottle
 {
-	/**
-	 * @var string
-	 */
-	private $ip;
+    /**
+     * @var string
+     */
+    private $ip;
 
-	/**
-	 * IpThrottle constructor.
-	 *
-	 * @param string $ip
-	 */
-	public function __construct($ip)
-	{
-		$this->ip = $ip;
-	}
+    /**
+     * IpThrottle constructor.
+     *
+     * @param string $ip
+     */
+    public function __construct($ip)
+    {
+        $this->ip = $ip;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getIp()
-	{
-		return $this->ip;
-	}
+    /**
+     * @return string
+     */
+    public function getIp()
+    {
+        return $this->ip;
+    }
 }

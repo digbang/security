@@ -1,4 +1,6 @@
-<?php namespace Digbang\Security\Users;
+<?php
+
+namespace Digbang\Security\Users;
 
 use Carbon\Carbon;
 use Digbang\Security\Support\TimestampsTrait;
@@ -15,375 +17,381 @@ use Digbang\Security\Roles\Roleable;
 use Digbang\Security\Roles\RoleableTrait;
 use Digbang\Security\Throttling\Throttleable;
 use Digbang\Security\Throttling\ThrottleableTrait;
+use Digbang\Security\Users\ValueObjects;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class DefaultUser implements User, Roleable, Permissible, Persistable, Throttleable
 {
-	use TimestampsTrait;
-	use PersistableTrait;
-	use PermissibleTrait;
-	use ThrottleableTrait;
-	use RoleableTrait {
-		addRole    as _addRole;
-		removeRole as _removeRole;
-	}
+    use TimestampsTrait;
+    use PersistableTrait;
+    use PermissibleTrait;
+    use ThrottleableTrait;
+    use RoleableTrait {
+        addRole    as _addRole;
+        removeRole as _removeRole;
+    }
 
-	/**
-	 * @var int
-	 */
-	private $id;
+    /** @var int */
+    protected $id;
+    /** @var ValueObjects\Email */
+    protected $email;
+    /** @var string */
+    protected $username;
+    /** @var ValueObjects\Password */
+    protected $password;
+    /** @var ValueObjects\Name */
+    protected $name;
+    /** @var Carbon */
+    protected $lastLogin;
+    /** @var ArrayCollection */
+    protected $activations;
+    /** @var ArrayCollection */
+    protected $reminders;
 
-	/**
-	 * @var ValueObjects\Email
-	 */
-	private $email;
+    public function __construct(string $email, string $password, string $username)
+    {
+        $this->email    = new ValueObjects\Email(strtolower($email));
+        $this->password = new ValueObjects\Password($password);
+        $this->changeUsername($username);
 
-	/**
-	 * @var string
-	 */
-	private $username;
+        $this->roles        = new ArrayCollection;
+        $this->permissions  = new ArrayCollection;
+        $this->persistences = new ArrayCollection;
+        $this->activations  = new ArrayCollection;
+        $this->reminders    = new ArrayCollection;
+        $this->throttles    = new ArrayCollection;
+        $this->name         = new ValueObjects\Name;
+        $this->permissionsFactory = function(){
+            return new NullPermissions;
+        };
+    }
 
-	/**
-	 * @var ValueObjects\Password
-	 */
-	private $password;
+    protected function createPermission($permission, $value)
+    {
+        return new DefaultUserPermission($this, $permission, $value);
+    }
 
-	/**
-	 * @var ValueObjects\Name
-	 */
-	private $name;
+    /**
+     * @param ValueObjects\Name $name
+     */
+    public function setName(ValueObjects\Name $name)
+    {
+        $this->name = $name;
+    }
 
-	/**
-	 * @var Carbon
-	 */
-	private $lastLogin;
+    public function changeName(string $firstName, string $lastName)
+    {
+        $this->setName(new ValueObjects\Name($firstName, $lastName));
+    }
 
-	/**
-	 * @var ArrayCollection
-	 */
-	private $activations;
+    /**
+     * @return ValueObjects\Name
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
-	/**
-	 * @var ArrayCollection
-	 */
-	private $reminders;
+    /**
+     * @return string
+     */
+    public function getFirstName()
+    {
+        return $this->name->getFirstName();
+    }
 
-	/**
-	 * @param ValueObjects\Email    $email
-	 * @param ValueObjects\Password $password
-	 * @param string                $username
-	 */
-	public function __construct(ValueObjects\Email $email, ValueObjects\Password $password, $username)
-	{
-		$this->email    = $email;
-		$this->username = $username;
-		$this->password = $password;
+    /**
+     * @return string
+     */
+    public function getLastName()
+    {
+        return $this->name->getLastName();
+    }
 
-		$this->roles        = new ArrayCollection;
-		$this->permissions  = new ArrayCollection;
-		$this->persistences = new ArrayCollection;
-		$this->activations  = new ArrayCollection;
-		$this->reminders    = new ArrayCollection;
-		$this->throttles    = new ArrayCollection;
-		$this->name         = new ValueObjects\Name;
-		$this->permissionsFactory = function(){
-			return new NullPermissions;
-		};
-	}
+    /**
+     * {@inheritdoc}
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function update(array $credentials)
+    {
+        if (array_key_exists('email', $credentials))
+        {
+            $this->email = new ValueObjects\Email(strtolower($credentials['email']));
+        }
 
-	protected function createPermission($permission, $value)
-	{
-		return new DefaultUserPermission($this, $permission, $value);
-	}
+        if (array_key_exists('username', $credentials))
+        {
+            $this->changeUsername($credentials['username']);
+        }
 
-	/**
-	 * @param ValueObjects\Name $name
-	 */
-	public function setName(ValueObjects\Name $name)
-	{
-		$this->name = $name;
-	}
+        if (array_key_exists('password', $credentials) && !empty($credentials['password']))
+        {
+            $this->password = new ValueObjects\Password($credentials['password']);
+        }
 
-	/**
-	 * @return ValueObjects\Name
-	 */
-	public function getName()
-	{
-		return $this->name;
-	}
+        if (array_key_exists('firstName', $credentials) || array_key_exists('lastName', $credentials))
+        {
+            $firstName = array_get($credentials, 'firstName', $this->name->getFirstName());
+            $lastName  = array_get($credentials, 'lastName',  $this->name->getLastName());
 
-	/**
-	 * @return string
-	 */
-	public function getFirstName()
-	{
-		return $this->name->getFirstName();
-	}
+            $this->changeName($firstName, $lastName);
+        }
 
-	/**
-	 * @return string
-	 */
-	public function getLastName()
-	{
-		return $this->name->getLastName();
-	}
+        if (array_key_exists('permissions', $credentials))
+        {
+            $this->syncPermissions((array) $credentials['permissions']);
+        }
+    }
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @throws \InvalidArgumentException
-	 */
-	public function update(array $credentials)
-	{
-		if (array_key_exists('email', $credentials))
-		{
-			$this->email = new ValueObjects\Email($credentials['email']);
-		}
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserId()
+    {
+        return $this->id;
+    }
 
-		if (array_key_exists('username', $credentials))
-		{
-			$this->username = $credentials['username'];
-		}
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->getUserId();
+    }
 
-		if (array_key_exists('password', $credentials) && !empty($credentials['password']))
-		{
-			$this->password = new ValueObjects\Password($credentials['password']);
-		}
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserLogin()
+    {
+        return $this->getEmail();
+    }
 
-		if (array_key_exists('firstName', $credentials) || array_key_exists('lastName', $credentials))
-		{
-			$firstName = array_get($credentials, 'firstName', $this->name->getFirstName());
-			$lastName  = array_get($credentials, 'lastName',  $this->name->getLastName());
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserLoginName()
+    {
+        return 'email';
+    }
 
-			$this->name = new ValueObjects\Name($firstName, $lastName);
-		}
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserPassword()
+    {
+        return $this->password->getHash();
+    }
 
-		if (array_key_exists('permissions', $credentials))
-		{
-			$this->syncPermissions((array) $credentials['permissions']);
-		}
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function checkPassword($password)
+    {
+        return $this->password->check($password);
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getUserId()
-	{
-		return $this->id;
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function getPersistableId()
+    {
+        return $this->getUserId();
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getUserLogin()
-	{
-		return $this->getEmail();
-	}
+    /**
+     * @return Carbon
+     */
+    public function getLastLogin()
+    {
+        return $this->lastLogin;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getUserLoginName()
-	{
-		return 'email';
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function recordLogin()
+    {
+        $this->lastLogin = Carbon::now();
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getUserPassword()
-	{
-		return $this->password->getHash();
-	}
+    /**
+     * {@inheritdoc}
+     */
+    protected function makePermissionsInstance()
+    {
+        $permissionsFactory = $this->getPermissionsFactory();
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function checkPassword($password)
-	{
-		return $this->password->check($password);
-	}
+        if (! is_callable($permissionsFactory))
+        {
+            throw new \InvalidArgumentException("No PermissionFactory callable given. PermissionFactory callable should be set by the DoctrineUserRepository on instance creation. New instances will use a NullPermissions implementation until persisted.");
+        }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getPersistableId()
-	{
-		return $this->getUserId();
-	}
+        $secondary = $this->roles->map(function(Permissible $role){
+            return $role->getPermissions();
+        });
 
-	/**
-	 * @return Carbon
-	 */
-	public function getLastLogin()
-	{
-		return $this->lastLogin;
-	}
+        return $permissionsFactory($this->permissions, $secondary->getValues());
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function recordLogin()
-	{
-		$this->lastLogin = Carbon::now();
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function syncPermissions(array $permissions)
+    {
+        foreach ($this->permissions as $current)
+        {
+            /** @var Permission $current */
+            if ($current->isAllowed() && ! in_array($current->getName(), $permissions))
+            {
+                $current->deny();
+            }
+            elseif (! $current->isAllowed() && in_array($current->getName(), $permissions))
+            {
+                $current->allow();
+            }
+        }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	protected function makePermissionsInstance()
-	{
-		$permissionsFactory = $this->getPermissionsFactory();
+        $this->roles->map(function(Role $role) use ($permissions) {
+            if ($role instanceof Permissible)
+            {
+                $rolePermissions = $role->getPermissions();
+                $rolePermissions
+                    ->filter(function(Permission $permission) use ($permissions) {
+                        return $permission->isAllowed() && ! in_array($permission->getName(), $permissions);
+                    })
+                    ->map(function(Permission $permission){
+                        $this->addPermission($permission->getName(), false);
+                    });
 
-		if (! is_callable($permissionsFactory))
-		{
-			throw new \InvalidArgumentException("No PermissionFactory callable given. PermissionFactory callable should be set by the DoctrineUserRepository on instance creation. New instances will use a NullPermissions implementation until persisted.");
-		}
+                $rolePermissions->map(function(Permission $permission){
+                    $this->permissions->filter(function(Permission $current) use ($permission){
+                        return $current->equals($permission);
+                    })->map(function(Permission $repeated){
+                        $this->permissions->removeElement($repeated);
+                    });
+                });
+            }
+        });
 
-		$secondary = $this->roles->map(function(Permissible $role){
-			return $role->getPermissions();
-		});
+        $this->refreshPermissionsInstance();
 
-		return $permissionsFactory($this->permissions, $secondary->getValues());
-	}
+        $this->allow($permissions);
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function syncPermissions(array $permissions)
-	{
-		foreach ($this->permissions as $current)
-		{
-			/** @var Permission $current */
-			if ($current->isAllowed() && ! in_array($current->getName(), $permissions))
-			{
-				$current->deny();
-			}
-			elseif (! $current->isAllowed() && in_array($current->getName(), $permissions))
-			{
-				$current->allow();
-			}
-		}
+    /**
+     * {@inheritdoc}
+     */
+    public function addRole(Role $role)
+    {
+        $this->_addRole($role);
 
-		$this->roles->map(function(Role $role) use ($permissions) {
-			if ($role instanceof Permissible)
-			{
-				$rolePermissions = $role->getPermissions();
-				$rolePermissions
-					->filter(function(Permission $permission) use ($permissions) {
-						return $permission->isAllowed() && ! in_array($permission->getName(), $permissions);
-					})
-					->map(function(Permission $permission){
-						$this->addPermission($permission->getName(), false);
-					});
+        $this->refreshPermissionsInstance();
+    }
 
-				$rolePermissions->map(function(Permission $permission){
-					$this->permissions->filter(function(Permission $current) use ($permission){
-						return $current->equals($permission);
-					})->map(function(Permission $repeated){
-						$this->permissions->removeElement($repeated);
-					});
-				});
-			}
-		});
+    /**
+     * {@inheritdoc}
+     */
+    public function removeRole(Role $role)
+    {
+        $this->_removeRole($role);
 
-		$this->refreshPermissionsInstance();
+        $this->refreshPermissionsInstance();
+    }
 
-		$this->allow($permissions);
-	}
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email->getAddress();
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function addRole(Role $role)
-	{
-		$this->_addRole($role);
+    /**
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
 
-		$this->refreshPermissionsInstance();
-	}
+    /**
+     * @return \Carbon\Carbon
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function removeRole(Role $role)
-	{
-		$this->_removeRole($role);
+    /**
+     * @return \Carbon\Carbon
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
 
-		$this->refreshPermissionsInstance();
-	}
+    /**
+     * @return ArrayCollection
+     */
+    public function getActivations()
+    {
+        return $this->activations;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getEmail()
-	{
-		return $this->email->getAddress();
-	}
+    /**
+     * @return ArrayCollection
+     */
+    public function getReminders()
+    {
+        return $this->reminders;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getUsername()
-	{
-		return $this->username;
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function isActivated()
+    {
+        return $this->activations->exists(function($id, Activation $activation){
+            return $activation->isCompleted();
+        });
+    }
 
-	/**
-	 * @return \Carbon\Carbon
-	 */
-	public function getCreatedAt()
-	{
-		return $this->createdAt;
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function getActivatedAt()
+    {
+        $completed = $this->activations->filter(function(Activation $activation){
+            return $activation->isCompleted();
+        });
 
-	/**
-	 * @return \Carbon\Carbon
-	 */
-	public function getUpdatedAt()
-	{
-		return $this->updatedAt;
-	}
+        if ($completed->isEmpty())
+        {
+            return null;
+        }
 
-	/**
-	 * @return ArrayCollection
-	 */
-	public function getActivations()
-	{
-		return $this->activations;
-	}
+        return $completed->first()->getCompletedAt();
+    }
 
-	/**
-	 * @return ArrayCollection
-	 */
-	public function getReminders()
-	{
-		return $this->reminders;
-	}
+    private function changeUsername(string $username): void
+    {
+        $this->username = strtolower($username);
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function isActivated()
-	{
-		return $this->activations->exists(function($id, Activation $activation){
-			return $activation->isCompleted();
-		});
-	}
+    public static function getShortIdentifier(): string
+    {
+        return str_slug(class_basename(static::class));
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getActivatedAt()
-	{
-		$completed = $this->activations->filter(function(Activation $activation){
-			return $activation->isCompleted();
-		});
+    public static function getIdentifier(): string
+    {
+        return class_basename(static::class);
+    }
 
-		if ($completed->isEmpty())
-		{
-			return null;
-		}
-
-		return $completed->first()->getCompletedAt();
-	}
+    public function __toString(): string
+    {
+        return (string) $this->getName()->getFullName();
+    }
 }

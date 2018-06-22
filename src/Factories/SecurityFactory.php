@@ -1,4 +1,6 @@
-<?php namespace Digbang\Security\Factories;
+<?php
+
+namespace Digbang\Security\Factories;
 
 use Cartalyst\Sentinel\Checkpoints\ActivationCheckpoint;
 use Cartalyst\Sentinel\Checkpoints\CheckpointInterface;
@@ -14,63 +16,63 @@ use Illuminate\Routing\UrlGenerator;
 
 class SecurityFactory
 {
-	/**
-	 * @var Container
-	 */
-	private $container;
+    /**
+     * @var Container
+     */
+    private $container;
 
-	/**
-	 * @var RepositoryFactory
-	 */
-	private $repositories;
+    /**
+     * @var RepositoryFactory
+     */
+    private $repositories;
 
-	/**
-	 * @var UrlGenerator
-	 */
-	private $url;
+    /**
+     * @var UrlGenerator
+     */
+    private $url;
 
-	/**
-	 * @param Container         $container
-	 * @param RepositoryFactory $repositories
-	 * @param UrlGenerator      $url
-	 */
-	public function __construct(Container $container, RepositoryFactory $repositories, UrlGenerator $url)
-	{
-		$this->container    = $container;
-		$this->repositories = $repositories;
-		$this->url = $url;
-	}
+    /**
+     * @param Container         $container
+     * @param RepositoryFactory $repositories
+     * @param UrlGenerator      $url
+     */
+    public function __construct(Container $container, RepositoryFactory $repositories, UrlGenerator $url)
+    {
+        $this->container    = $container;
+        $this->repositories = $repositories;
+        $this->url = $url;
+    }
 
-	/**
-	 * @param string $context
-	 * @param SecurityContextConfiguration $configuration
-	 * @return Security
-	 */
-	public function create($context, SecurityContextConfiguration $configuration)
-	{
-		$persistences = $this->repositories->createPersistenceRepository($context);
-		$roles        = $this->repositories->createRoleRepository($context);
-		$users        = $this->repositories->createUserRepository($context, $persistences, $roles);
+    /**
+     * @param string $context
+     * @param SecurityContextConfiguration $configuration
+     * @return Security
+     */
+    public function create($context, SecurityContextConfiguration $configuration)
+    {
+        $persistences = $this->repositories->createPersistenceRepository($context);
+        $roles        = $this->repositories->createRoleRepository($context);
+        $users        = $this->repositories->createUserRepository($context, $persistences, $roles);
 
 
-		$sentinel = new Sentinel(
-			$persistences,
-			$users,
-			$roles,
-			$this->repositories->createActivationRepository($context),
-			$this->container->make(Dispatcher::class)
-		);
+        $sentinel = new Sentinel(
+            $persistences,
+            $users,
+            $roles,
+            $this->repositories->createActivationRepository($context),
+            $this->container->make(Dispatcher::class)
+        );
 
-		foreach ($configuration->listCheckpoints() as $key => $checkpoint)
-		{
-			$sentinel->addCheckpoint($key, $this->makeCheckpoint($checkpoint, $configuration));
-		}
+        foreach ($configuration->listCheckpoints() as $key => $checkpoint)
+        {
+            $sentinel->addCheckpoint($key, $this->makeCheckpoint($checkpoint, $configuration));
+        }
 
-		$sentinel->setReminderRepository(
-			$this->repositories->createReminderRepository($context, $users)
-		);
+        $sentinel->setReminderRepository(
+            $this->repositories->createReminderRepository($context, $users)
+        );
 
-		$sentinel->setRequestCredentials(function(){
+        $sentinel->setRequestCredentials(function(){
             $request = $this->container->make('request');
 
             $login    = $request->getUser();
@@ -83,54 +85,54 @@ class SecurityFactory
             return compact('login', 'password');
         });
 
-		$sentinel->creatingBasicResponse(function(){
+        $sentinel->creatingBasicResponse(function(){
             $headers = ['WWW-Authenticate' => 'Basic'];
 
             return new Response('Invalid credentials.', 401, $headers);
         });
 
-		$security = new Security(
-			$sentinel,
-			$this->repositories->createPermissionRepository($context)
-		);
+        $security = new Security(
+            $sentinel,
+            $this->repositories->createPermissionRepository($context)
+        );
 
-		$this->bindUrlGenerator($security);
-		$security->setLoginRoute($configuration->getLoginRoute());
+        $this->bindUrlGenerator($security);
+        $security->setLoginRoute($configuration->getLoginRoute());
 
-		return $security;
-	}
+        return $security;
+    }
 
-	/**
-	 * @param CheckpointInterface|string $checkpoint
-	 * @param string $context
-	 *
-	 * @return ActivationCheckpoint|ThrottleCheckpoint|CheckpointInterface
-	 */
-	private function makeCheckpoint($checkpoint, $context)
-	{
-		switch ($checkpoint)
-		{
-			case ThrottleCheckpoint::class:
-				return new ThrottleCheckpoint(
-					$this->repositories->createThrottleRepository($context),
-					$this->container->make('request')->getClientIp()
-				);
-			case ActivationCheckpoint::class:
-				return new ActivationCheckpoint(
-					$this->repositories->createActivationRepository($context)
-				);
-			default:
-				return $this->container->make($checkpoint);
-		}
-	}
+    /**
+     * @param CheckpointInterface|string $checkpoint
+     * @param string $context
+     *
+     * @return ActivationCheckpoint|ThrottleCheckpoint|CheckpointInterface
+     */
+    private function makeCheckpoint($checkpoint, $context)
+    {
+        switch ($checkpoint)
+        {
+            case ThrottleCheckpoint::class:
+                return new ThrottleCheckpoint(
+                    $this->repositories->createThrottleRepository($context),
+                    $this->container->make('request')->getClientIp()
+                );
+            case ActivationCheckpoint::class:
+                return new ActivationCheckpoint(
+                    $this->repositories->createActivationRepository($context)
+                );
+            default:
+                return $this->container->make($checkpoint);
+        }
+    }
 
-	/**
-	 * @param Security $security
-	 */
-	private function bindUrlGenerator(Security $security)
-	{
-		$urls = new PermissionAwareUrlGenerator($this->url, $security);
+    /**
+     * @param Security $security
+     */
+    private function bindUrlGenerator(Security $security)
+    {
+        $urls = new PermissionAwareUrlGenerator($this->url, $security);
 
-		$security->setUrlGenerator($urls);
-	}
+        $security->setUrlGenerator($urls);
+    }
 }

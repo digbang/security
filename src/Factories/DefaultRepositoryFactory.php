@@ -1,10 +1,10 @@
-<?php namespace Digbang\Security\Factories;
+<?php
+
+namespace Digbang\Security\Factories;
 
 use Cartalyst\Sentinel\Cookies\IlluminateCookie;
 use Cartalyst\Sentinel\Sessions\IlluminateSession;
 use Digbang\Security\Activations\DefaultDoctrineActivationRepository;
-use Digbang\Security\Permissions\InsecurePermissionRepository;
-use Digbang\Security\Permissions\LazyStandardPermissions;
 use Digbang\Security\Permissions\RoutePermissionRepository;
 use Digbang\Security\Persistences\DefaultDoctrinePersistenceRepository;
 use Digbang\Security\Persistences\PersistenceRepository;
@@ -23,128 +23,128 @@ use Illuminate\Session\Store;
 
 class DefaultRepositoryFactory implements RepositoryFactory
 {
-	/**
-	 * @var Container
-	 */
-	private $container;
+    /**
+     * @var Container
+     */
+    private $container;
 
-	/**
-	 * @var array
-	 */
-	private $instances = [];
+    /**
+     * @var array
+     */
+    private $instances = [];
 
-	/**
-	 * DefaultRepositoryFactory constructor.
-	 * @param Container $container
-	 */
-	public function __construct(Container $container)
-	{
-		$this->container = $container;
-	}
+    /**
+     * DefaultRepositoryFactory constructor.
+     * @param Container $container
+     */
+    public function __construct(Container $container)
+    {
+        $this->container = $container;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function createPersistenceRepository($context)
-	{
-		if (array_key_exists('persistence', $this->instances))
-		{
-			return $this->instances['persistence'];
-		}
+    /**
+     * {@inheritdoc}
+     */
+    public function createPersistenceRepository($context)
+    {
+        if (array_key_exists('persistence', $this->instances))
+        {
+            return $this->instances['persistence'];
+        }
 
-		$entityManager = $this->container->make(EntityManager::class);
-		$session = new IlluminateSession($this->container->make(Store::class), "persistence:$context");
-		$cookie = new IlluminateCookie(
-			$this->container->make(Request::class),
-			$this->container->make(CookieJar::class),
-			$context
-		);
+        $entityManager = $this->container->make(EntityManager::class);
+        $session = new IlluminateSession($this->container->make(Store::class), "persistence:$context");
+        $cookie = new IlluminateCookie(
+            $this->container->make(Request::class),
+            $this->container->make(CookieJar::class),
+            $context
+        );
 
-		return $this->instances['persistence'] = new DefaultDoctrinePersistenceRepository($entityManager, $session, $cookie);
-	}
+        return $this->instances['persistence'] = new DefaultDoctrinePersistenceRepository($entityManager, $session, $cookie);
+    }
 
-	/**
-	 * {@inheritdoc]
-	 */
-	public function createUserRepository($context, PersistenceRepository $persistenceRepository, RoleRepository $roleRepository)
-	{
-		if (array_key_exists('user', $this->instances))
-		{
-			return $this->instances['user'];
-		}
+    /**
+     * {@inheritdoc]
+     */
+    public function createUserRepository($context, PersistenceRepository $persistenceRepository, RoleRepository $roleRepository)
+    {
+        if (array_key_exists('user', $this->instances))
+        {
+            return $this->instances['user'];
+        }
 
-		$entityManager = $this->container->make(EntityManager::class);
+        $entityManager = $this->container->make(EntityManager::class);
 
-		return $this->instances['user'] = new DefaultDoctrineUserRepository(
-			$entityManager, $persistenceRepository, $roleRepository
-		);
-	}
+        return $this->instances['user'] = new DefaultDoctrineUserRepository(
+            $entityManager, $persistenceRepository, $roleRepository
+        );
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function createRoleRepository($context)
-	{
-		if (array_key_exists('role', $this->instances))
-		{
-			return $this->instances['role'];
-		}
+    /**
+     * {@inheritdoc}
+     */
+    public function createRoleRepository($context)
+    {
+        if (array_key_exists('role', $this->instances))
+        {
+            return $this->instances['role'];
+        }
 
-		$entityManager = $this->container->make(EntityManager::class);
-		return $this->instances['role'] = new DefaultDoctrineRoleRepository($entityManager);
-	}
+        $entityManager = $this->container->make(EntityManager::class);
+        return $this->instances['role'] = new DefaultDoctrineRoleRepository($entityManager);
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function createActivationRepository($context)
-	{
-		if (array_key_exists('activation', $this->instances))
-		{
-			return $this->instances['activation'];
-		}
+    /**
+     * {@inheritdoc}
+     */
+    public function createActivationRepository($context)
+    {
+        if (array_key_exists('activation', $this->instances))
+        {
+            return $this->instances['activation'];
+        }
 
-		$entityManager = $this->container->make(EntityManager::class);
-		return $this->instances['activation'] = new DefaultDoctrineActivationRepository($entityManager);
-	}
+        $entityManager = $this->container->make(EntityManager::class);
+        return $this->instances['activation'] = new DefaultDoctrineActivationRepository($entityManager);
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function createReminderRepository($context, UserRepository $userRepository)
-	{
-		if (array_key_exists('reminder', $this->instances))
-		{
-			return $this->instances['reminder'];
-		}
+    /**
+     * {@inheritdoc}
+     */
+    public function createReminderRepository($context, UserRepository $userRepository)
+    {
+        if (array_key_exists('reminder', $this->instances))
+        {
+            return $this->instances['reminder'];
+        }
 
-		$entityManager = $this->container->make(EntityManager::class);
-		return $this->instances['reminder'] = new DefaultDoctrineReminderRepository(
-			$entityManager,
-			$userRepository
-		);
-	}
+        $entityManager = $this->container->make(EntityManager::class);
+        return $this->instances['reminder'] = new DefaultDoctrineReminderRepository(
+            $entityManager,
+            $userRepository
+        );
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function createPermissionRepository($context)
-	{
-		return new RoutePermissionRepository($this->container->make(Router::class));
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function createPermissionRepository($context)
+    {
+        return new RoutePermissionRepository($this->container->make(Router::class));
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function createThrottleRepository($context)
-	{
-		if (array_key_exists('throttle', $this->instances))
-		{
-			return $this->instances['throttle'];
-		}
+    /**
+     * {@inheritdoc}
+     */
+    public function createThrottleRepository($context)
+    {
+        if (array_key_exists('throttle', $this->instances))
+        {
+            return $this->instances['throttle'];
+        }
 
-		$entityManager = $this->container->make(EntityManager::class);
+        $entityManager = $this->container->make(EntityManager::class);
 
-		return $this->instances['throttle'] = new DefaultDoctrineThrottleRepository($entityManager);
-	}
+        return $this->instances['throttle'] = new DefaultDoctrineThrottleRepository($entityManager);
+    }
 }

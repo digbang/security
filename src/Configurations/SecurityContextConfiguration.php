@@ -1,4 +1,5 @@
 <?php
+
 namespace Digbang\Security\Configurations;
 
 use Cartalyst\Sentinel\Checkpoints\ActivationCheckpoint;
@@ -97,12 +98,12 @@ class SecurityContextConfiguration
      * @var array
      */
     private $repositories = [
-		'user'        => null,
-		'activation'  => null,
-		'persistence' => null,
-		'reminder'    => null,
-		'role'        => null,
-		'throttle'    => null,
+        'user'        => null,
+        'activation'  => null,
+        'persistence' => null,
+        'reminder'    => null,
+        'role'        => null,
+        'throttle'    => null,
     ];
 
     /**
@@ -118,23 +119,23 @@ class SecurityContextConfiguration
      * @var array
      */
     private $enabled = [
-		'roles'       => true,
-		'permissions' => true,
+        'roles'       => true,
+        'permissions' => true,
     ];
 
     /**
      * Permissions configuration.
      * Permission classes have to implement Sentinel's PermissionInterface. Sentinel ships
      * with two: StandardPermissions and StrictPermissions.
-	 *
+     *
      * The permission repository is used to retrieve permissions based on route resources.
      * Security ships with two: InsecurePermissionRepository and RoutePermissionRepository.
      *
      * @var array
      */
     private $permissions = [
-		'factory'    => null,
-		'repository' => null,
+        'factory'    => null,
+        'repository' => null,
     ];
 
     /**
@@ -143,8 +144,8 @@ class SecurityContextConfiguration
      * @var array
      */
     private $checkpoints = [
-		'throttle'   => ThrottleCheckpoint::class,
-		'activation' => ActivationCheckpoint::class,
+        'throttle'   => ThrottleCheckpoint::class,
+        'activation' => ActivationCheckpoint::class,
     ];
 
     /**
@@ -158,22 +159,22 @@ class SecurityContextConfiguration
         'global'  => [
             'interval' => 900,
             'thresholds' => [
-				10 => 1,
-	            20 => 2,
-	            30 => 4,
-	            40 => 8,
-	            50 => 16,
-	            60 => 12,
-			]
+                10 => 1,
+                20 => 2,
+                30 => 4,
+                40 => 8,
+                50 => 16,
+                60 => 12,
+            ]
             ],
-		'ip'     => [
-			'interval' => 900,
-			'thresholds' => 5,
+        'ip'     => [
+            'interval' => 900,
+            'thresholds' => 5,
         ],
-		'user'   => [
-			'interval' => 900,
-			'thresholds' => 5,
-		]
+        'user'   => [
+            'interval' => 900,
+            'thresholds' => 5,
+        ]
     ];
 
     /**
@@ -185,13 +186,13 @@ class SecurityContextConfiguration
      */
     private $expiring = [
         'reminders'      => [
-			'expires' => 14400,
-			'lottery' => [2,100],
+            'expires' => 14400,
+            'lottery' => [2,100],
         ],
-		'activations' => [
-			'expires' => 259200,
-			'lottery' => [2,100],
-		]
+        'activations' => [
+            'expires' => 259200,
+            'lottery' => [2,100],
+        ]
     ];
 
     /**
@@ -259,7 +260,7 @@ class SecurityContextConfiguration
      * Set the global table prefix. By default, the context name will be used, with
      * a trailing underscore.
      * A trailing underscore will be added to the given prefix automatically, if needed.
-	 *
+     *
      * To unset the global prefix, use an empty string as prefix.
      *
      * @param string $prefix
@@ -289,13 +290,13 @@ class SecurityContextConfiguration
             unset($mappings['rolePermission']);
         }
 
-		if (! $this->isThrottlesEnabled()) {
-			unset(
-				$mappings['throttle'],
-				$mappings['ipThrottle'],
-				$mappings['globalThrottle'],
-				$mappings['userThrottle']
-			);
+        if (! $this->isThrottlesEnabled()) {
+            unset(
+                $mappings['throttle'],
+                $mappings['ipThrottle'],
+                $mappings['globalThrottle'],
+                $mappings['userThrottle']
+            );
         }
 
         if (!$this->isPermissionsEnabled()) {

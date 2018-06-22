@@ -1,4 +1,6 @@
-<?php namespace Digbang\Security\Throttling;
+<?php
+
+namespace Digbang\Security\Throttling;
 
 class DefaultGlobalThrottle extends DefaultThrottle
 {

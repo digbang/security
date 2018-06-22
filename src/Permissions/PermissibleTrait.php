@@ -1,4 +1,6 @@
-<?php namespace Digbang\Security\Permissions;
+<?php
+
+namespace Digbang\Security\Permissions;
 
 use Cartalyst\Sentinel\Permissions\PermissionsInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -10,207 +12,207 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 trait PermissibleTrait
 {
-	/**
-	 * @var ArrayCollection|Permission[]
-	 */
-	protected $permissions;
+    /**
+     * @var ArrayCollection|Permission[]
+     */
+    protected $permissions;
 
-	/**
-	 * @var PermissionsInterface
-	 */
-	private $permissionsInstance;
+    /**
+     * @var PermissionsInterface
+     */
+    private $permissionsInstance;
 
-	/**
-	 * @var \Closure
-	 */
-	protected $permissionsFactory;
+    /**
+     * @var \Closure
+     */
+    protected $permissionsFactory;
 
-	/**
-	 * @return PermissionsInterface
-	 */
-	abstract protected function makePermissionsInstance();
+    /**
+     * @return PermissionsInterface
+     */
+    abstract protected function makePermissionsInstance();
 
-	/**
-	 * @param string $permission
-	 * @param bool   $value
-	 *
-	 * @return Permission
-	 */
-	abstract protected function createPermission($permission, $value);
+    /**
+     * @param string $permission
+     * @param bool   $value
+     *
+     * @return Permission
+     */
+    abstract protected function createPermission($permission, $value);
 
-	/**
-	 * @param array $permissions
-	 *
-	 * @return void
-	 */
-	abstract public function syncPermissions(array $permissions);
+    /**
+     * @param array $permissions
+     *
+     * @return void
+     */
+    abstract public function syncPermissions(array $permissions);
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function hasAccess($permissions)
-	{
-		return $this->getPermissionsInstance()->hasAccess($permissions);
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function hasAccess($permissions)
+    {
+        return $this->getPermissionsInstance()->hasAccess($permissions);
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function hasAnyAccess($permissions)
-	{
-		return $this->getPermissionsInstance()->hasAnyAccess($permissions);
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function hasAnyAccess($permissions)
+    {
+        return $this->getPermissionsInstance()->hasAnyAccess($permissions);
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function allow($permissions, $force = false)
-	{
-		foreach ((array) $permissions as $permission)
-		{
-			if ($force || !$this->hasAccess($permission))
-			{
-				$this->addPermission($permission);
-			}
-		}
+    /**
+     * {@inheritdoc}
+     */
+    public function allow($permissions, $force = false)
+    {
+        foreach ((array) $permissions as $permission)
+        {
+            if ($force || !$this->hasAccess($permission))
+            {
+                $this->addPermission($permission);
+            }
+        }
 
-		$this->refreshPermissionsInstance();
-	}
+        $this->refreshPermissionsInstance();
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function deny($permissions, $force = false)
-	{
-		foreach ((array) $permissions as $permission)
-		{
-			if ($force || $this->hasAccess($permission))
-			{
-				$this->addPermission($permission, false);
-			}
-		}
+    /**
+     * {@inheritdoc}
+     */
+    public function deny($permissions, $force = false)
+    {
+        foreach ((array) $permissions as $permission)
+        {
+            if ($force || $this->hasAccess($permission))
+            {
+                $this->addPermission($permission, false);
+            }
+        }
 
-		$this->refreshPermissionsInstance();
-	}
+        $this->refreshPermissionsInstance();
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getPermissionsInstance()
-	{
-		if (! $this->permissionsInstance)
-		{
-			$this->refreshPermissionsInstance();
-		}
+    /**
+     * {@inheritdoc}
+     */
+    public function getPermissionsInstance()
+    {
+        if (! $this->permissionsInstance)
+        {
+            $this->refreshPermissionsInstance();
+        }
 
-		return $this->permissionsInstance;
-	}
+        return $this->permissionsInstance;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function addPermission($permission, $value = true)
-	{
-		return $this->updatePermission($permission, $value, true);
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function addPermission($permission, $value = true)
+    {
+        return $this->updatePermission($permission, $value, true);
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function updatePermission($permission, $allow = true, $create = false)
-	{
-		if ($existing = $this->getPermission($permission))
-		{
-			if ($allow && ! $existing->isAllowed())
-			{
-				$existing->allow();
-			}
-			elseif (! $allow && $existing->isAllowed())
-			{
-				$existing->deny();
-			}
-		}
-		elseif ($create)
-		{
-			$this->permissions->add($this->createPermission($permission, $allow));
-		}
+    /**
+     * {@inheritdoc}
+     */
+    public function updatePermission($permission, $allow = true, $create = false)
+    {
+        if ($existing = $this->getPermission($permission))
+        {
+            if ($allow && ! $existing->isAllowed())
+            {
+                $existing->allow();
+            }
+            elseif (! $allow && $existing->isAllowed())
+            {
+                $existing->deny();
+            }
+        }
+        elseif ($create)
+        {
+            $this->permissions->add($this->createPermission($permission, $allow));
+        }
 
-		$this->refreshPermissionsInstance();
+        $this->refreshPermissionsInstance();
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function removePermission($permission)
-	{
-		if ($object = $this->getPermission($permission))
-		{
-			$this->permissions->removeElement($object);
-			$this->refreshPermissionsInstance();
-		}
+    /**
+     * {@inheritdoc}
+     */
+    public function removePermission($permission)
+    {
+        if ($object = $this->getPermission($permission))
+        {
+            $this->permissions->removeElement($object);
+            $this->refreshPermissionsInstance();
+        }
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * @param Permission|string $permission
-	 *
-	 * @return Permission|null
-	 */
-	protected function getPermission($permission)
-	{
-		$name = $permission instanceof Permission
-			? $permission->getName()
-			: $permission;
+    /**
+     * @param Permission|string $permission
+     *
+     * @return Permission|null
+     */
+    protected function getPermission($permission)
+    {
+        $name = $permission instanceof Permission
+            ? $permission->getName()
+            : $permission;
 
-		return $this->permissions->filter(function(Permission $current) use ($name) {
-			return $current->getName() == $name;
-		})->first();
-	}
+        return $this->permissions->filter(function(Permission $current) use ($name) {
+            return $current->getName() == $name;
+        })->first();
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getPermissions()
-	{
-		return $this->permissions;
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function getPermissions()
+    {
+        return $this->permissions;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function setPermissionsFactory(\Closure $permissionsFactory)
-	{
-		$this->permissionsFactory = $permissionsFactory;
+    /**
+     * {@inheritdoc}
+     */
+    public function setPermissionsFactory(\Closure $permissionsFactory)
+    {
+        $this->permissionsFactory = $permissionsFactory;
 
-		$this->refreshPermissionsInstance();
-	}
+        $this->refreshPermissionsInstance();
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function clearPermissions()
-	{
-		$this->permissions->clear();
+    /**
+     * {@inheritdoc}
+     */
+    public function clearPermissions()
+    {
+        $this->permissions->clear();
 
-		$this->refreshPermissionsInstance();
-	}
+        $this->refreshPermissionsInstance();
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	protected function getPermissionsFactory()
-	{
-		return $this->permissionsFactory;
-	}
+    /**
+     * {@inheritdoc}
+     */
+    protected function getPermissionsFactory()
+    {
+        return $this->permissionsFactory;
+    }
 
-	/**
-	 * Forces a refresh on the PermissionsInterface instance.
-	 */
-	protected function refreshPermissionsInstance()
-	{
-		$this->permissionsInstance = $this->makePermissionsInstance();
-	}
+    /**
+     * Forces a refresh on the PermissionsInterface instance.
+     */
+    protected function refreshPermissionsInstance()
+    {
+        $this->permissionsInstance = $this->makePermissionsInstance();
+    }
 }

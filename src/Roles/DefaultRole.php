@@ -1,4 +1,6 @@
-<?php namespace Digbang\Security\Roles;
+<?php
+
+namespace Digbang\Security\Roles;
 
 use Digbang\Security\Support\TimestampsTrait;
 use Digbang\Security\Permissions\DefaultRolePermission;
@@ -12,187 +14,177 @@ use Illuminate\Support\Str;
 
 class DefaultRole implements Role, Permissible
 {
-	use TimestampsTrait;
-	use PermissibleTrait;
+    use TimestampsTrait;
+    use PermissibleTrait;
 
-	/**
-	 * Probably unused, but part of the sentinel interface...
-	 *
-	 * @var string
-	 */
-	private static $usersModel = DefaultUser::class;
+    /**
+     * Probably unused, but part of the sentinel interface...
+     *
+     * @var string
+     */
+    protected static $usersModel = DefaultUser::class;
 
-	/**
-	 * @var int
-	 */
-	private $id;
+    /** @var int */
+    protected $id;
+    /** @var string */
+    protected $name;
+    /** @var string */
+    protected $slug;
+    /** @var ArrayCollection */
+    protected $users;
 
-	/**
-	 * @var string
-	 */
-	private $name;
+    public function __construct($name, string $userType, $slug = null )
+    {
+        $this->name = $name;
+        $this->slug = $slug ?: Str::slug($name);
 
-	/**
-	 * @var string
-	 */
-	private $slug;
+        $this->permissions = new ArrayCollection;
+        $this->users = new ArrayCollection;
 
-	/**
-	 * @var ArrayCollection
-	 */
-	private $users;
+        $this->permissionsFactory = function(){
+            return new NullPermissions;
+        };
+    }
 
-	/**
-	 * DefaultRole constructor.
-	 *
-	 * @param string      $name
-	 * @param string|null $slug
-	 */
-	public function __construct($name, $slug = null)
-	{
-		$this->name = $name;
-		$this->slug = $slug ?: Str::slug($name);
+    /**
+     * {@inheritdoc}
+     */
+    public function getRoleId()
+    {
+        return $this->id;
+    }
 
-		$this->permissions = new ArrayCollection;
-		$this->users       = new ArrayCollection;
+    /**
+     * {@inheritdoc}
+     */
+    public function getRoleSlug()
+    {
+        return $this->slug;
+    }
 
-		$this->permissionsFactory = function(){
-			return new NullPermissions;
-		};
-	}
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getRoleId()
-	{
-		return $this->id;
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function getUsers()
+    {
+        return $this->users;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getRoleSlug()
-	{
-		return $this->slug;
-	}
+    /**
+     * @return \Carbon\Carbon
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getName()
-	{
-		return $this->name;
-	}
+    /**
+     * @return \Carbon\Carbon
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getUsers()
-	{
-		return $this->users;
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 
-	/**
-	 * @return \Carbon\Carbon
-	 */
-	public function getCreatedAt()
-	{
-		return $this->createdAt;
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function setRoleSlug($slug)
+    {
+        $this->slug = $slug;
+    }
 
-	/**
-	 * @return \Carbon\Carbon
-	 */
-	public function getUpdatedAt()
-	{
-		return $this->updatedAt;
-	}
+    /**
+     * @param array $permissions
+     *
+     * @return void
+     */
+    public function syncPermissions(array $permissions)
+    {
+        foreach ($this->permissions as $current)
+        {
+            /** @var Permission $current */
+            if ($current->isAllowed() && ! in_array($current->getName(), $permissions))
+            {
+                $this->removePermission($current);
+            }
+        }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function is($role)
-	{
-		if ($role instanceof Role)
-		{
-			return $this->getRoleId() == $role->getRoleId();
-		}
+        $this->allow($permissions);
+    }
 
-		return $this->getRoleSlug() == $role;
-	}
+    public function update(string $name, array $permissions)
+    {
+        $this->setName($name);
+        $this->syncPermissions($permissions);
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public static function getUsersModel()
-	{
-		return static::$usersModel;
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function is($role)
+    {
+        if ($role instanceof Role)
+        {
+            return $this->getRoleId() == $role->getRoleId();
+        }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public static function setUsersModel($usersModel)
-	{
-		static::$usersModel = $usersModel;
-	}
+        return $this->getRoleSlug() == $role;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	protected function createPermission($permission, $value)
-	{
-		return new DefaultRolePermission($this, $permission, $value);
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public static function getUsersModel()
+    {
+        return static::$usersModel;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	protected function makePermissionsInstance()
-	{
-		$permissionsFactory = $this->getPermissionsFactory();
+    /**
+     * {@inheritdoc}
+     */
+    public static function setUsersModel($usersModel)
+    {
+        static::$usersModel = $usersModel;
+    }
 
-		if (! is_callable($permissionsFactory))
-		{
-			throw new \InvalidArgumentException("No PermissionsFactory callable given. PermissionFactory callable should be set by the DoctrineRoleRepository on instance creation. New instances will use a NullPermissions implementation until persisted.");
-		}
+    /**
+     * {@inheritdoc}
+     */
+    protected function createPermission($permission, $value)
+    {
+        return new DefaultRolePermission($this, $permission, $value);
+    }
 
-		return $permissionsFactory(null, [$this->permissions]);
-	}
+    /**
+     * {@inheritdoc}
+     */
+    protected function makePermissionsInstance()
+    {
+        $permissionsFactory = $this->getPermissionsFactory();
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function setName($name)
-	{
-		$this->name = $name;
-	}
+        if (! is_callable($permissionsFactory))
+        {
+            throw new \InvalidArgumentException("No PermissionsFactory callable given. PermissionFactory callable should be set by the DoctrineRoleRepository on instance creation. New instances will use a NullPermissions implementation until persisted.");
+        }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function setRoleSlug($slug)
-	{
-		$this->slug = $slug;
-	}
-
-	/**
-	 * @param array $permissions
-	 *
-	 * @return void
-	 */
-	public function syncPermissions(array $permissions)
-	{
-		foreach ($this->permissions as $current)
-		{
-			/** @var Permission $current */
-			if ($current->isAllowed() && ! in_array($current->getName(), $permissions))
-			{
-				$this->removePermission($current);
-			}
-		}
-
-		$this->allow($permissions);
-	}
+        return $permissionsFactory(null, [$this->permissions]);
+    }
 }
+
