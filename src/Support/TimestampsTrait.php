@@ -7,12 +7,12 @@ trait TimestampsTrait
     /**
      * @var \Carbon\Carbon
      */
-    private $createdAt;
+    protected $createdAt;
 
     /**
      * @var \Carbon\Carbon
      */
-    private $updatedAt;
+    protected $updatedAt;
 
     public function onPrePersist()
     {

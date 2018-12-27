@@ -20,7 +20,7 @@ trait PermissibleTrait
     /**
      * @var PermissionsInterface
      */
-    private $permissionsInstance;
+    protected $permissionsInstance;
 
     /**
      * @var \Closure
