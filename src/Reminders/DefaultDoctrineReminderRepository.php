@@ -6,13 +6,15 @@ use Cartalyst\Sentinel\Users\UserInterface;
 
 class DefaultDoctrineReminderRepository extends DoctrineReminderRepository
 {
+    protected const ENTITY_CLASSNAME = DefaultReminder::class;
+
     /**
      * Get the Reminder class name.
      * @return string
      */
     protected function entityName()
     {
-        return DefaultReminder::class;
+        return static::ENTITY_CLASSNAME;
     }
 
     /**
@@ -24,7 +26,9 @@ class DefaultDoctrineReminderRepository extends DoctrineReminderRepository
      */
     public function create(UserInterface $user)
     {
-        $reminder = new DefaultReminder($user);
+        $entity = static::ENTITY_CLASSNAME;
+
+        $reminder = new $entity($user);
 
         $this->save($reminder);
 

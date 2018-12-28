@@ -6,6 +6,10 @@ use Digbang\Security\Users\User;
 
 class DefaultDoctrineThrottleRepository extends DoctrineThrottleRepository
 {
+    protected const ENTITY_CLASSNAME_GLOBAL = DefaultGlobalThrottle::class;
+    protected const ENTITY_CLASSNAME_IP = DefaultIpThrottle::class;
+    protected const ENTITY_CLASSNAME_USER = DefaultUserThrottle::class;
+
     /**
      * {@inheritdoc}
      */
@@ -19,11 +23,11 @@ class DefaultDoctrineThrottleRepository extends DoctrineThrottleRepository
         switch ($type)
         {
             case 'global':
-                return DefaultGlobalThrottle::class;
+                return static::ENTITY_CLASSNAME_GLOBAL;
             case 'ip':
-                return DefaultIpThrottle::class;
+                return static::ENTITY_CLASSNAME_IP;
             case 'user':
-                return DefaultUserThrottle::class;
+                return static::ENTITY_CLASSNAME_USER;
         }
 
         throw new \InvalidArgumentException("Invalid throttle type: [$type]");
@@ -34,7 +38,9 @@ class DefaultDoctrineThrottleRepository extends DoctrineThrottleRepository
      */
     protected function createGlobalThrottle()
     {
-        return new DefaultGlobalThrottle;
+        $entity = static::ENTITY_CLASSNAME_GLOBAL;
+
+        return new $entity();
     }
 
     /**
@@ -42,7 +48,9 @@ class DefaultDoctrineThrottleRepository extends DoctrineThrottleRepository
      */
     protected function createIpThrottle($ipAddress)
     {
-        return new DefaultIpThrottle($ipAddress);
+        $entity = static::ENTITY_CLASSNAME_IP;
+
+        return new $entity($ipAddress);
     }
 
     /**
@@ -50,6 +58,8 @@ class DefaultDoctrineThrottleRepository extends DoctrineThrottleRepository
      */
     protected function createUserThrottle(User $user)
     {
-        return new DefaultUserThrottle($user);
+        $entity = static::ENTITY_CLASSNAME_USER;
+
+        return new $entity($user);
     }
 }

@@ -3,19 +3,22 @@
 namespace Digbang\Security\Activations;
 
 use Cartalyst\Sentinel\Users\UserInterface;
-use Digbang\Security\Users\User;
 
 class DefaultDoctrineActivationRepository extends DoctrineActivationRepository
 {
+    protected const ENTITY_CLASSNAME = DefaultActivation::class;
+
     /**
      * Create a new activation record and code.
      *
-     * @param User $user
+     * @param UserInterface $user
      * @return DefaultActivation
      */
     public function create(UserInterface $user)
     {
-        $activation = new DefaultActivation($user);
+        $entity = static::ENTITY_CLASSNAME;
+
+        $activation = new $entity($user);
 
         $this->save($activation);
 
@@ -27,6 +30,6 @@ class DefaultDoctrineActivationRepository extends DoctrineActivationRepository
      */
     protected function entityName()
     {
-        return DefaultActivation::class;
+        return static::ENTITY_CLASSNAME;
     }
 }

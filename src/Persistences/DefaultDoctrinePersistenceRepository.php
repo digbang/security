@@ -4,14 +4,16 @@ namespace Digbang\Security\Persistences;
 
 use Digbang\Security\Users\User;
 
-final class DefaultDoctrinePersistenceRepository extends DoctrinePersistenceRepository
+class DefaultDoctrinePersistenceRepository extends DoctrinePersistenceRepository
 {
+    protected const ENTITY_CLASSNAME = DefaultPersistence::class;
+
     /**
      * {@inheritdoc}
      */
     protected function entityName()
     {
-        return DefaultPersistence::class;
+        return static::ENTITY_CLASSNAME;
     }
 
     /**
@@ -19,6 +21,8 @@ final class DefaultDoctrinePersistenceRepository extends DoctrinePersistenceRepo
      */
     protected function create(User $user, $code)
     {
-        return new DefaultPersistence($user, $code);
+        $entity = static::ENTITY_CLASSNAME;
+
+        return new $entity($user, $code);
     }
 }
