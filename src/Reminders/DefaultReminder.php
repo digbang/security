@@ -13,27 +13,27 @@ class DefaultReminder implements Reminder
     /**
      * @var int
      */
-    private $id;
+    protected $id;
 
     /**
      * @var User
      */
-    private $user;
+    protected $user;
 
     /**
      * @var string
      */
-    private $code;
+    protected $code;
 
     /**
      * @var bool
      */
-    private $completed = false;
+    protected $completed = false;
 
     /**
      * @var Carbon
      */
-    private $completedAt;
+    protected $completedAt;
 
     /**
      * DefaultReminder constructor.

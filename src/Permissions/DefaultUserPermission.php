@@ -9,7 +9,7 @@ class DefaultUserPermission extends DefaultPermission
     /**
      * @var User
      */
-    private $user;
+    protected $user;
 
     /**
      * @param User   $user

@@ -12,17 +12,17 @@ class DefaultPersistence implements Persistence
     /**
      * @var int
      */
-    private $id;
+    protected $id;
 
     /**
      * @var User
      */
-    private $user;
+    protected $user;
 
     /**
      * @var string
      */
-    private $code;
+    protected $code;
 
     /**
      * Persistence constructor.

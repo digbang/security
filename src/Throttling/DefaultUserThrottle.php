@@ -9,7 +9,7 @@ class DefaultUserThrottle extends DefaultThrottle
     /**
      * @var User
      */
-    private $user;
+    protected $user;
 
     /**
      * @param User $user

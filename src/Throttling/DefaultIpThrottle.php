@@ -7,7 +7,7 @@ class DefaultIpThrottle extends DefaultThrottle
     /**
      * @var string
      */
-    private $ip;
+    protected $ip;
 
     /**
      * IpThrottle constructor.
