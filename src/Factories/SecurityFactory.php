@@ -54,7 +54,6 @@ class SecurityFactory
         $roles        = $this->repositories->createRoleRepository($context);
         $users        = $this->repositories->createUserRepository($context, $persistences, $roles);
 
-
         $sentinel = new Sentinel(
             $persistences,
             $users,
@@ -65,7 +64,7 @@ class SecurityFactory
 
         foreach ($configuration->listCheckpoints() as $key => $checkpoint)
         {
-            $sentinel->addCheckpoint($key, $this->makeCheckpoint($checkpoint, $configuration));
+            $sentinel->addCheckpoint($key, $this->makeCheckpoint($checkpoint, $configuration->getName()));
         }
 
         $sentinel->setReminderRepository(

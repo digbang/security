@@ -27,9 +27,9 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
     private $container;
 
     /**
-     * @var SecurityContextConfiguration
+     * @var SecurityContextConfiguration[]
      */
-    private $config;
+    private $config = [];
 
     /**
      * ConfigurationRepositoryFactory constructor.
@@ -184,6 +184,6 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
      */
     private function configuration($context)
     {
-        return $this->config ?: $this->config = $this->container->make(SecurityContext::class)->getConfigurationFor($context);
+        return $this->config[$context] = $this->container->make(SecurityContext::class)->getConfigurationFor($context);
     }
 }
