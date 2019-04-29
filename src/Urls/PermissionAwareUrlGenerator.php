@@ -139,6 +139,17 @@ class PermissionAwareUrlGenerator implements UrlGenerator
         return $this->url->current();
     }
 
+    /**
+      * Get the URL for the previous request.
+      *
+      * @param  mixed $fallback
+      * @return string
+    */
+    public function previous($fallback = false)
+    {
+        return $this->url->previous($fallback);
+    }
+
     public function __call($name, $args)
     {
         if (\is_callable([$this->url, $name])) {
