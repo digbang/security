@@ -1,4 +1,6 @@
-<?php namespace spec\Digbang\Security\Factories;
+<?php
+
+namespace spec\Digbang\Security\Factories;
 
 use Digbang\Security\Activations\ActivationRepository;
 use Digbang\Security\Factories\RepositoryFactory;
@@ -16,77 +18,76 @@ use Prophecy\Argument;
 use Prophecy\Prophet;
 
 /**
- * Class DefaultRepositoryFactorySpec
+ * Class DefaultRepositoryFactorySpec.
  *
- * @package spec\Digbang\Security\Factories
  * @mixin \Digbang\Security\Factories\DefaultRepositoryFactory
  */
 class DefaultRepositoryFactorySpec extends ObjectBehavior
 {
-    function let(Container $container, EntityManager $entityManager, ClassMetadata $metadata)
+    public function let(Container $container, EntityManager $entityManager, ClassMetadata $metadata)
     {
-	    $container->make(EntityManager::class, Argument::any())
-		    ->willReturn($entityManager);
+        $container->make(EntityManager::class, Argument::any())
+            ->willReturn($entityManager);
 
-	    $entityManager->getClassMetadata(Argument::any())->willReturn($metadata);
+        $entityManager->getClassMetadata(Argument::any())->willReturn($metadata);
 
-	    $container->make(Argument::type('string'), Argument::cetera())
-		    ->will(function($args){
-			    return (new Prophet)->prophesize($args[0]);
-		    });
+        $container->make(Argument::type('string'), Argument::cetera())
+            ->will(function ($args) {
+                return (new Prophet)->prophesize($args[0]);
+            });
 
-	    $this->beConstructedWith($container);
+        $this->beConstructedWith($container);
     }
 
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->shouldHaveType('Digbang\Security\Factories\DefaultRepositoryFactory');
     }
 
-	function it_is_a_repository_factory()
-	{
-		$this->shouldHaveType(RepositoryFactory::class);
-	}
+    public function it_is_a_repository_factory()
+    {
+        $this->shouldHaveType(RepositoryFactory::class);
+    }
 
-	function it_should_make_user_repositories(PersistenceRepository $persistences, RoleRepository $roles)
-	{
-		$this->createUserRepository('a_context', $persistences, $roles)
-			->shouldBeAnInstanceOf(UserRepository::class);
-	}
+    public function it_should_make_user_repositories(PersistenceRepository $persistences, RoleRepository $roles)
+    {
+        $this->createUserRepository('a_context', $persistences, $roles)
+            ->shouldBeAnInstanceOf(UserRepository::class);
+    }
 
-	function it_should_make_role_repositories()
-	{
-		$this->createRoleRepository('a_context')
-			->shouldBeAnInstanceOf(RoleRepository::class);
-	}
+    public function it_should_make_role_repositories()
+    {
+        $this->createRoleRepository('a_context')
+            ->shouldBeAnInstanceOf(RoleRepository::class);
+    }
 
-	function it_should_make_permission_repositories()
-	{
-		$this->createPermissionRepository('a_context')
-			->shouldBeAnInstanceOf(PermissionRepository::class);
-	}
+    public function it_should_make_permission_repositories()
+    {
+        $this->createPermissionRepository('a_context')
+            ->shouldBeAnInstanceOf(PermissionRepository::class);
+    }
 
-	function it_should_make_persistence_repositories()
-	{
-		$this->createPersistenceRepository('a_context')
-			->shouldBeAnInstanceOf(PersistenceRepository::class);
-	}
+    public function it_should_make_persistence_repositories()
+    {
+        $this->createPersistenceRepository('a_context')
+            ->shouldBeAnInstanceOf(PersistenceRepository::class);
+    }
 
-	function it_should_make_activation_repositories()
-	{
-		$this->createActivationRepository('a_context')
-			->shouldBeAnInstanceOf(ActivationRepository::class);
-	}
+    public function it_should_make_activation_repositories()
+    {
+        $this->createActivationRepository('a_context')
+            ->shouldBeAnInstanceOf(ActivationRepository::class);
+    }
 
-	function it_should_make_reminder_repositories(UserRepository $users)
-	{
-		$this->createReminderRepository('a_context', $users)
-			->shouldBeAnInstanceOf(ReminderRepository::class);
-	}
+    public function it_should_make_reminder_repositories(UserRepository $users)
+    {
+        $this->createReminderRepository('a_context', $users)
+            ->shouldBeAnInstanceOf(ReminderRepository::class);
+    }
 
-	function it_should_make_throttle_repositories()
-	{
-		$this->createThrottleRepository('a_context')
-			->shouldBeAnInstanceOf(ThrottleRepository::class);
-	}
+    public function it_should_make_throttle_repositories()
+    {
+        $this->createThrottleRepository('a_context')
+            ->shouldBeAnInstanceOf(ThrottleRepository::class);
+    }
 }

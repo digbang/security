@@ -37,8 +37,7 @@ class PermissionStrategyEventListener implements EventSubscriber
     {
         $entity = $eventArgs->getEntity();
 
-        if ($entity instanceof Permissible)
-        {
+        if ($entity instanceof Permissible) {
             $entity->setPermissionsFactory($this->permissionFactory);
         }
     }

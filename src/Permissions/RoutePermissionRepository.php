@@ -16,7 +16,8 @@ final class RoutePermissionRepository implements PermissionRepository
     private $router;
 
     /**
-     * Flyweight Pattern
+     * Flyweight Pattern.
+     *
      * @var array
      */
     private $permissions = [];
@@ -34,8 +35,7 @@ final class RoutePermissionRepository implements PermissionRepository
      */
     public function getForRoute($routeName)
     {
-        if ($route = $this->router->getRoutes()->getByName($routeName))
-        {
+        if ($route = $this->router->getRoutes()->getByName($routeName)) {
             return $this->extractPermissionFrom($route);
         }
 
@@ -47,8 +47,7 @@ final class RoutePermissionRepository implements PermissionRepository
      */
     public function getForAction($action)
     {
-        if ($route = $this->router->getRoutes()->getByAction($action))
-        {
+        if ($route = $this->router->getRoutes()->getByAction($action)) {
             return $this->extractPermissionFrom($route);
         }
 
@@ -60,13 +59,10 @@ final class RoutePermissionRepository implements PermissionRepository
      */
     public function all()
     {
-        if (empty($this->permissions))
-        {
-            foreach ($this->router->getRoutes() as $route)
-            {
+        if (empty($this->permissions)) {
+            foreach ($this->router->getRoutes() as $route) {
                 /* @var $route \Illuminate\Routing\Route */
-                if ($permission = $this->extractPermissionFrom($route))
-                {
+                if ($permission = $this->extractPermissionFrom($route)) {
                     $this->permissions[] = $permission;
                 }
             }
@@ -78,24 +74,6 @@ final class RoutePermissionRepository implements PermissionRepository
     }
 
     /**
-     * Extracts the permission configured inside the route action array.
-     *
-     * @param Route $route
-     * @return string|null
-     */
-    private function extractPermissionFrom(Route $route)
-    {
-        $parameters = $route->getAction();
-
-        if (isset($parameters['permission']))
-        {
-            return $parameters['permission'];
-        }
-
-        return null;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getForPath($path)
@@ -103,16 +81,32 @@ final class RoutePermissionRepository implements PermissionRepository
         /** @var Request $request */
         $request = Request::create($path);
 
-        try
-        {
+        try {
             $collectionMatcher = new RouteCollectionMatcher($this->router->getRoutes());
 
-            if ($route = $collectionMatcher->getRouteForRequest($request))
-            {
+            if ($route = $collectionMatcher->getRouteForRequest($request)) {
                 return $this->extractPermissionFrom($route);
             }
+        } catch (HttpException $e) {
         }
-        catch (HttpException $e){ }
+
+        return null;
+    }
+
+    /**
+     * Extracts the permission configured inside the route action array.
+     *
+     * @param Route $route
+     *
+     * @return string|null
+     */
+    private function extractPermissionFrom(Route $route)
+    {
+        $parameters = $route->getAction();
+
+        if (isset($parameters['permission'])) {
+            return $parameters['permission'];
+        }
 
         return null;
     }

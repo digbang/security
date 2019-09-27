@@ -2,6 +2,7 @@
 
 namespace Digbang\Security\Activations;
 
+use Cartalyst\Sentinel\Activations\ActivationInterface;
 use Cartalyst\Sentinel\Users\UserInterface;
 
 class DefaultDoctrineActivationRepository extends DoctrineActivationRepository
@@ -12,9 +13,10 @@ class DefaultDoctrineActivationRepository extends DoctrineActivationRepository
      * Create a new activation record and code.
      *
      * @param UserInterface $user
-     * @return DefaultActivation
+     *
+     * @return ActivationInterface
      */
-    public function create(UserInterface $user)
+    public function create(UserInterface $user): ActivationInterface
     {
         $entity = static::ENTITY_CLASSNAME;
 
@@ -31,5 +33,18 @@ class DefaultDoctrineActivationRepository extends DoctrineActivationRepository
     protected function entityName()
     {
         return static::ENTITY_CLASSNAME;
+    }
+
+    /**
+     * Gets the activation for the given user.
+     *
+     * @param \Cartalyst\Sentinel\Users\UserInterface $user
+     * @param string|null $code
+     *
+     * @return \Cartalyst\Sentinel\Activations\ActivationInterface|null
+     */
+    public function get(UserInterface $user, string $code = null): ?ActivationInterface
+    {
+        // TODO: Implement get() method.
     }
 }

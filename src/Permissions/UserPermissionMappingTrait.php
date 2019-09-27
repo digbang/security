@@ -17,11 +17,11 @@ trait UserPermissionMappingTrait
      * @var array
      */
     protected $relations = [
-        'user' => [DefaultUser::class, 'user']
+        'user' => [DefaultUser::class, 'user'],
     ];
 
     /**
-     * Adds all mappings: properties and relations
+     * Adds all mappings: properties and relations.
      *
      * @param Fluent $builder
      */
@@ -32,7 +32,7 @@ trait UserPermissionMappingTrait
     }
 
     /**
-     * Adds only properties
+     * Adds only properties.
      *
      * @param Fluent $builder
      */
@@ -43,7 +43,7 @@ trait UserPermissionMappingTrait
     }
 
     /**
-     * Adds only relations
+     * Adds only relations.
      *
      * @param Fluent $builder
      */

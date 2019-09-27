@@ -10,7 +10,6 @@ interface UserRepository extends ObjectRepository, UserRepositoryInterface, Sele
 {
     /**
      * @param User $user
-     * @return void
      */
     public function destroy(User $user);
 }

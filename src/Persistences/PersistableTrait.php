@@ -3,6 +3,7 @@
 namespace Digbang\Security\Persistences;
 
 use Doctrine\Common\Collections\Collection;
+use Illuminate\Support\Str;
 
 trait PersistableTrait
 {
@@ -19,11 +20,10 @@ trait PersistableTrait
         return $this->persistences;
     }
 
-
     /**
      * {@inheritdoc}
      */
-    public function getPersistableKey()
+    public function getPersistableKey(): string
     {
         return 'user_id';
     }
@@ -31,7 +31,7 @@ trait PersistableTrait
     /**
      * {@inheritdoc}
      */
-    public function getPersistableRelationship()
+    public function getPersistableRelationship(): string
     {
         return 'persistences';
     }
@@ -39,8 +39,8 @@ trait PersistableTrait
     /**
      * {@inheritdoc}
      */
-    public function generatePersistenceCode()
+    public function generatePersistenceCode(): string
     {
-        return str_random(32);
+        return Str::random(32);
     }
 }

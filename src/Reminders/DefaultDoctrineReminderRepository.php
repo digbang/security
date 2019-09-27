@@ -9,15 +9,6 @@ class DefaultDoctrineReminderRepository extends DoctrineReminderRepository
     protected const ENTITY_CLASSNAME = DefaultReminder::class;
 
     /**
-     * Get the Reminder class name.
-     * @return string
-     */
-    protected function entityName()
-    {
-        return static::ENTITY_CLASSNAME;
-    }
-
-    /**
      * Create a new reminder record and code.
      *
      * @param \Digbang\Security\Users\User $user
@@ -33,5 +24,28 @@ class DefaultDoctrineReminderRepository extends DoctrineReminderRepository
         $this->save($reminder);
 
         return $reminder;
+    }
+
+    /**
+     * Get the Reminder class name.
+     *
+     * @return string
+     */
+    protected function entityName()
+    {
+        return static::ENTITY_CLASSNAME;
+    }
+
+    /**
+     * Gets the reminder for the given user.
+     *
+     * @param \Cartalyst\Sentinel\Users\UserInterface $user
+     * @param string|null $code
+     *
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function get(UserInterface $user, string $code = null)
+    {
+        // TODO: Implement get() method.
     }
 }

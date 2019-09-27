@@ -16,15 +16,11 @@ interface Permission
 
     /**
      * Allow this permission.
-     *
-     * @return void
      */
     public function allow();
 
     /**
      * Deny this permission.
-     *
-     * @return void
      */
     public function deny();
 
@@ -33,7 +29,7 @@ interface Permission
      *
      * @param Permission $permission
      *
-     * @return boolean
+     * @return bool
      */
     public function equals(Permission $permission);
 }

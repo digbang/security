@@ -2,15 +2,16 @@
 
 namespace Digbang\Security\Roles;
 
-use Digbang\Security\Support\TimestampsTrait;
 use Digbang\Security\Permissions\DefaultRolePermission;
 use Digbang\Security\Permissions\NullPermissions;
 use Digbang\Security\Permissions\Permissible;
 use Digbang\Security\Permissions\PermissibleTrait;
 use Digbang\Security\Permissions\Permission;
+use Digbang\Security\Support\TimestampsTrait;
 use Digbang\Security\Users\DefaultUser;
 use Doctrine\Common\Collections\ArrayCollection;
 use Illuminate\Support\Str;
+use IteratorAggregate;
 
 class DefaultRole implements Role, Permissible
 {
@@ -41,7 +42,7 @@ class DefaultRole implements Role, Permissible
         $this->permissions = new ArrayCollection;
         $this->users = new ArrayCollection;
 
-        $this->permissionsFactory = function(){
+        $this->permissionsFactory = function () {
             return new NullPermissions;
         };
     }
@@ -49,7 +50,7 @@ class DefaultRole implements Role, Permissible
     /**
      * {@inheritdoc}
      */
-    public function getRoleId()
+    public function getRoleId(): int
     {
         return $this->id;
     }
@@ -57,7 +58,7 @@ class DefaultRole implements Role, Permissible
     /**
      * {@inheritdoc}
      */
-    public function getRoleSlug()
+    public function getRoleSlug(): string
     {
         return $this->slug;
     }
@@ -73,7 +74,7 @@ class DefaultRole implements Role, Permissible
     /**
      * {@inheritdoc}
      */
-    public function getUsers()
+    public function getUsers(): IteratorAggregate
     {
         return $this->users;
     }
@@ -112,16 +113,12 @@ class DefaultRole implements Role, Permissible
 
     /**
      * @param array $permissions
-     *
-     * @return void
      */
     public function syncPermissions(array $permissions)
     {
-        foreach ($this->permissions as $current)
-        {
+        foreach ($this->permissions as $current) {
             /** @var Permission $current */
-            if ($current->isAllowed() && ! in_array($current->getName(), $permissions))
-            {
+            if ($current->isAllowed() && ! in_array($current->getName(), $permissions)) {
                 $this->removePermission($current);
             }
         }
@@ -140,8 +137,7 @@ class DefaultRole implements Role, Permissible
      */
     public function is($role)
     {
-        if ($role instanceof Role)
-        {
+        if ($role instanceof Role) {
             return $this->getRoleId() == $role->getRoleId();
         }
 
@@ -151,7 +147,7 @@ class DefaultRole implements Role, Permissible
     /**
      * {@inheritdoc}
      */
-    public static function getUsersModel()
+    public static function getUsersModel(): string
     {
         return static::$usersModel;
     }
@@ -159,7 +155,7 @@ class DefaultRole implements Role, Permissible
     /**
      * {@inheritdoc}
      */
-    public static function setUsersModel($usersModel)
+    public static function setUsersModel(string $usersModel): void
     {
         static::$usersModel = $usersModel;
     }
@@ -179,12 +175,10 @@ class DefaultRole implements Role, Permissible
     {
         $permissionsFactory = $this->getPermissionsFactory();
 
-        if (! is_callable($permissionsFactory))
-        {
-            throw new \InvalidArgumentException("No PermissionsFactory callable given. PermissionFactory callable should be set by the DoctrineRoleRepository on instance creation. New instances will use a NullPermissions implementation until persisted.");
+        if (! is_callable($permissionsFactory)) {
+            throw new \InvalidArgumentException('No PermissionsFactory callable given. PermissionFactory callable should be set by the DoctrineRoleRepository on instance creation. New instances will use a NullPermissions implementation until persisted.');
         }
 
         return $permissionsFactory(null, [$this->permissions]);
     }
 }
-

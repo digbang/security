@@ -25,14 +25,6 @@ abstract class SecurityException extends \RuntimeException
     }
 
     /**
-     * @param SecurityApi $security
-     */
-    protected function setSecurity($security)
-    {
-        $this->security = $security;
-    }
-
-    /**
      * @return string
      */
     public function getContext()
@@ -42,6 +34,7 @@ abstract class SecurityException extends \RuntimeException
 
     /**
      * @param string $context
+     *
      * @return static
      */
     public function inContext($context)
@@ -49,5 +42,13 @@ abstract class SecurityException extends \RuntimeException
         $this->context = $context;
 
         return $this;
+    }
+
+    /**
+     * @param SecurityApi $security
+     */
+    protected function setSecurity($security)
+    {
+        $this->security = $security;
     }
 }

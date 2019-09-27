@@ -5,8 +5,7 @@ namespace Digbang\Security\Exceptions;
 use Digbang\Security\Contracts\SecurityApi;
 
 /**
- * Class Unauthorized
- * @package Digbang\Security\Exceptions
+ * Class Unauthorized.
  */
 class Unauthorized extends SecurityException
 {
@@ -32,18 +31,18 @@ class Unauthorized extends SecurityException
     }
 
     /**
-     * @param string $permission
-     */
-    private function setPermission($permission)
-    {
-        $this->permission = $permission;
-    }
-
-    /**
      * @return string
      */
     public function getPermission()
     {
         return $this->permission;
+    }
+
+    /**
+     * @param string $permission
+     */
+    private function setPermission($permission)
+    {
+        $this->permission = $permission;
     }
 }

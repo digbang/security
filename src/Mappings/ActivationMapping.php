@@ -2,8 +2,8 @@
 
 namespace Digbang\Security\Mappings;
 
-use Digbang\Security\Activations\DefaultActivation;
 use Digbang\Security\Activations\ActivationMappingTrait;
+use Digbang\Security\Activations\DefaultActivation;
 use LaravelDoctrine\Fluent\Fluent;
 
 final class ActivationMapping extends CustomTableMapping

@@ -23,34 +23,24 @@ trait LazyPermissionsTrait
     protected $rolePermissions;
 
     /**
-     * @param Collection $permissions
-     * @param array      $secondaryPermissions
-     */
-    abstract protected function mergePermissions(Collection $permissions, array $secondaryPermissions = []);
-
-    /**
      * Returns if access is available for all given permissions.
      *
      * @param  array|string $permissions
      *
      * @return bool
      */
-    public function hasAccess($permissions)
+    public function hasAccess($permissions): bool
     {
-        if ($this->permissions->isEmpty())
-        {
+        if ($this->permissions->isEmpty()) {
             $this->mergePermissions($this->userPermissions, $this->rolePermissions);
         }
 
-        if (func_num_args() > 1)
-        {
+        if (func_num_args() > 1) {
             $permissions = func_get_args();
         }
 
-        foreach ((array) $permissions as $permissionName)
-        {
-            if (! $this->allows($permissionName))
-            {
+        foreach ((array) $permissions as $permissionName) {
+            if (! $this->allows($permissionName)) {
                 return false;
             }
         }
@@ -65,28 +55,30 @@ trait LazyPermissionsTrait
      *
      * @return bool
      */
-    public function hasAnyAccess($permissions)
+    public function hasAnyAccess($permissions): bool
     {
-        if ($this->permissions->isEmpty())
-        {
+        if ($this->permissions->isEmpty()) {
             $this->mergePermissions($this->userPermissions, $this->rolePermissions);
         }
 
-        if (func_num_args() > 1)
-        {
+        if (func_num_args() > 1) {
             $permissions = func_get_args();
         }
 
-        foreach ((array) $permissions as $permissionName)
-        {
-            if ($this->allows($permissionName))
-            {
+        foreach ((array) $permissions as $permissionName) {
+            if ($this->allows($permissionName)) {
                 return true;
             }
         }
 
         return false;
     }
+
+    /**
+     * @param Collection $permissions
+     * @param array      $secondaryPermissions
+     */
+    abstract protected function mergePermissions(Collection $permissions, array $secondaryPermissions = []);
 
     /**
      * Adds a permission to the merged permissions Collection.
@@ -97,8 +89,7 @@ trait LazyPermissionsTrait
      */
     protected function add(Permission $permission, $override = true)
     {
-        if ($override || ! $this->permissions->containsKey($permission->getName()))
-        {
+        if ($override || ! $this->permissions->containsKey($permission->getName())) {
             $this->permissions->set($permission->getName(), $permission);
         }
     }
@@ -108,17 +99,16 @@ trait LazyPermissionsTrait
      * Only explicitly allowed permissions will return true.
      *
      * @param string $permissionName
+     *
      * @return bool
      */
     protected function allows($permissionName)
     {
-        foreach ($this->getMatchingPermissions($permissionName) as $key)
-        {
+        foreach ($this->getMatchingPermissions($permissionName) as $key) {
             /** @var Permission $permission */
             $permission = $this->permissions->get($key);
 
-            if ($permission->isAllowed())
-            {
+            if ($permission->isAllowed()) {
                 return true;
             }
         }
@@ -128,11 +118,12 @@ trait LazyPermissionsTrait
 
     /**
      * @param string $permission
+     *
      * @return array
      */
     protected function getMatchingPermissions($permission)
     {
-        return array_filter($this->permissions->getKeys(), function($key) use ($permission){
+        return array_filter($this->permissions->getKeys(), function ($key) use ($permission) {
             return Str::is($permission, $key) || Str::is($key, $permission);
         });
     }

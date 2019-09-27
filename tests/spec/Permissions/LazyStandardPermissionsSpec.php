@@ -1,4 +1,6 @@
-<?php namespace spec\Digbang\Security\Permissions;
+<?php
+
+namespace spec\Digbang\Security\Permissions;
 
 use Cartalyst\Sentinel\Permissions\PermissionsInterface;
 use Digbang\Security\Permissions\DefaultRolePermission;
@@ -7,115 +9,114 @@ use Digbang\Security\Roles\Role;
 use Digbang\Security\Users\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class LazyStandardPermissionsSpec extends ObjectBehavior
 {
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->shouldHaveType('Digbang\Security\Permissions\LazyStandardPermissions');
     }
 
-    function it_is_a_permissions_implementation()
+    public function it_is_a_permissions_implementation()
     {
         $this->shouldHaveType(PermissionsInterface::class);
     }
 
-	function it_allows_a_given_permission(User $user)
-	{
-		$user = $user->getWrappedObject();
+    public function it_allows_a_given_permission(User $user)
+    {
+        $user = $user->getWrappedObject();
 
-		$permissions = [
-			new DefaultUserPermission($user, 'foo.bar'),
-			new DefaultUserPermission($user, 'bar.baz')
-		];
+        $permissions = [
+            new DefaultUserPermission($user, 'foo.bar'),
+            new DefaultUserPermission($user, 'bar.baz'),
+        ];
 
-		$this->beConstructedWith(new ArrayCollection($permissions));
+        $this->beConstructedWith(new ArrayCollection($permissions));
 
-		$this->hasAccess('foo.bar')->shouldBe(true);
-		$this->hasAccess('bar.baz')->shouldBe(true);
-		$this->hasAccess('bar.fooBar')->shouldBe(false);
-	}
+        $this->hasAccess('foo.bar')->shouldBe(true);
+        $this->hasAccess('bar.baz')->shouldBe(true);
+        $this->hasAccess('bar.fooBar')->shouldBe(false);
+    }
 
-	function it_denies_a_given_permission(User $user)
-	{
-		$user = $user->getWrappedObject();
+    public function it_denies_a_given_permission(User $user)
+    {
+        $user = $user->getWrappedObject();
 
-		$permissions = [
-			new DefaultUserPermission($user, 'foo.bar'),
-			new DefaultUserPermission($user, 'bar.baz', false)
-		];
+        $permissions = [
+            new DefaultUserPermission($user, 'foo.bar'),
+            new DefaultUserPermission($user, 'bar.baz', false),
+        ];
 
-		$this->beConstructedWith(new ArrayCollection($permissions));
+        $this->beConstructedWith(new ArrayCollection($permissions));
 
-		$this->hasAccess('bar.baz')->shouldBe(false);
-	}
+        $this->hasAccess('bar.baz')->shouldBe(false);
+    }
 
-	function it_allows_role_permissions(Role $role)
-	{
-		$role = $role->getWrappedObject();
+    public function it_allows_role_permissions(Role $role)
+    {
+        $role = $role->getWrappedObject();
 
-		$rolePermissions = [
-			new ArrayCollection([
-				new DefaultRolePermission($role, 'admin.permission'),
-				new DefaultRolePermission($role, 'admin.destroy_system', false)
-			])
-		];
+        $rolePermissions = [
+            new ArrayCollection([
+                new DefaultRolePermission($role, 'admin.permission'),
+                new DefaultRolePermission($role, 'admin.destroy_system', false),
+            ]),
+        ];
 
-		$this->beConstructedWith(null, $rolePermissions);
+        $this->beConstructedWith(null, $rolePermissions);
 
-		$this->hasAccess('admin.permission')->shouldBe(true);
-		$this->hasAccess('admin.destroy_system')->shouldBe(false);
-	}
+        $this->hasAccess('admin.permission')->shouldBe(true);
+        $this->hasAccess('admin.destroy_system')->shouldBe(false);
+    }
 
-	function it_overrides_role_permissions(User $user, Role $role)
-	{
-		$user = $user->getWrappedObject();
-		$role = $role->getWrappedObject();
-		$permissions = [
-			new DefaultUserPermission($user, 'admin.permission', false),
-			new DefaultUserPermission($user, 'admin.destroy_system')
-		];
+    public function it_overrides_role_permissions(User $user, Role $role)
+    {
+        $user = $user->getWrappedObject();
+        $role = $role->getWrappedObject();
+        $permissions = [
+            new DefaultUserPermission($user, 'admin.permission', false),
+            new DefaultUserPermission($user, 'admin.destroy_system'),
+        ];
 
-		$rolePermissions = [
-			new ArrayCollection([
-				new DefaultRolePermission($role, 'admin.permission'),
-				new DefaultRolePermission($role, 'admin.destroy_system', false),
-				new DefaultRolePermission($role, 'admin.dont_override')
-			])
-		];
+        $rolePermissions = [
+            new ArrayCollection([
+                new DefaultRolePermission($role, 'admin.permission'),
+                new DefaultRolePermission($role, 'admin.destroy_system', false),
+                new DefaultRolePermission($role, 'admin.dont_override'),
+            ]),
+        ];
 
-		$this->beConstructedWith(new ArrayCollection($permissions), $rolePermissions);
+        $this->beConstructedWith(new ArrayCollection($permissions), $rolePermissions);
 
-		$this->hasAccess('admin.permission')->shouldBe(false);
-		$this->hasAccess('admin.destroy_system')->shouldBe(true);
-		$this->hasAccess('admin.dont_override')->shouldBe(true);
-	}
+        $this->hasAccess('admin.permission')->shouldBe(false);
+        $this->hasAccess('admin.destroy_system')->shouldBe(true);
+        $this->hasAccess('admin.dont_override')->shouldBe(true);
+    }
 
-	function it_accepts_wildcard_permissions(User $user)
-	{
-		$user = $user->getWrappedObject();
+    public function it_accepts_wildcard_permissions(User $user)
+    {
+        $user = $user->getWrappedObject();
 
-		$permissions = [
-			new DefaultUserPermission($user, 'admin.*'),
-			new DefaultUserPermission($user, 'root.destroy_admin')
-		];
+        $permissions = [
+            new DefaultUserPermission($user, 'admin.*'),
+            new DefaultUserPermission($user, 'root.destroy_admin'),
+        ];
 
-		$this->beConstructedWith(new ArrayCollection($permissions));
+        $this->beConstructedWith(new ArrayCollection($permissions));
 
-		$this->hasAccess('admin.destroy_system')->shouldBe(true);
-		$this->hasAccess('root.*')->shouldBe(true);
-		$this->hasAccess('*.destroy_admin')->shouldBe(true);
-		$this->hasAccess('*.destroy_system')->shouldBe(false);
-		$this->hasAccess('*')->shouldBe(true);
-	}
+        $this->hasAccess('admin.destroy_system')->shouldBe(true);
+        $this->hasAccess('root.*')->shouldBe(true);
+        $this->hasAccess('*.destroy_admin')->shouldBe(true);
+        $this->hasAccess('*.destroy_system')->shouldBe(false);
+        $this->hasAccess('*')->shouldBe(true);
+    }
 
-	function it_means_that_wildcard_permissions_can_be_dangerous(User $user)
-	{
-		$user = $user->getWrappedObject();
+    public function it_means_that_wildcard_permissions_can_be_dangerous(User $user)
+    {
+        $user = $user->getWrappedObject();
 
-		$this->beConstructedWith(new ArrayCollection([new DefaultUserPermission($user, '*')]));
+        $this->beConstructedWith(new ArrayCollection([new DefaultUserPermission($user, '*')]));
 
-		$this->hasAccess(uniqid())->shouldBe(true);
-	}
+        $this->hasAccess(uniqid())->shouldBe(true);
+    }
 }

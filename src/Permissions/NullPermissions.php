@@ -13,7 +13,7 @@ final class NullPermissions implements PermissionsInterface
      *
      * @return bool
      */
-    public function hasAccess($permissions)
+    public function hasAccess($permissions): bool
     {
         return false;
     }
@@ -25,7 +25,7 @@ final class NullPermissions implements PermissionsInterface
      *
      * @return bool
      */
-    public function hasAnyAccess($permissions)
+    public function hasAnyAccess($permissions): bool
     {
         return false;
     }

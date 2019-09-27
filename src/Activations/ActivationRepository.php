@@ -9,7 +9,6 @@ interface ActivationRepository extends ObjectRepository, ActivationRepositoryInt
 {
     /**
      * @param int $expires
-     * @return void
      */
     public function setExpires($expires);
 }

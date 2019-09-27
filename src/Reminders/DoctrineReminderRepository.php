@@ -30,14 +30,8 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
     {
         parent::__construct($entityManager, $entityManager->getClassMetadata($this->entityName()));
 
-        $this->users   = $users;
+        $this->users = $users;
     }
-
-    /**
-     * Get the Reminder class name.
-     * @return string
-     */
-    abstract protected function entityName();
 
     /**
      * Check if a valid reminder exists.
@@ -47,7 +41,7 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
      *
      * @return bool
      */
-    public function exists(UserInterface $user, $code = null)
+    public function exists(UserInterface $user, string $code = null): bool
     {
         return $this->findIncomplete($user, $code) !== null;
     }
@@ -61,37 +55,33 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
      *
      * @return bool
      */
-    public function complete(UserInterface $user, $code, $password)
+    public function complete(UserInterface $user, string $code, string $password): bool
     {
         $reminder = $this->findIncomplete($user, $code);
 
-        if ($reminder === null)
-        {
+        if ($reminder === null) {
             return false;
         }
 
         $credentials = ['password' => $password];
 
-        if (! $this->users->validForUpdate($user, $credentials))
-        {
+        if (! $this->users->validForUpdate($user, $credentials)) {
             return false;
         }
 
         $entityManager = $this->getEntityManager();
         $entityManager->beginTransaction();
 
-        try
-        {
+        try {
             $this->users->update($user, $credentials);
 
             $reminder->complete();
             $this->save($reminder);
 
             $entityManager->commit();
+
             return true;
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             $entityManager->rollback();
 
             return false;
@@ -101,9 +91,9 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
     /**
      * Remove expired reminder codes.
      *
-     * @return int
+     * @return bool
      */
-    public function removeExpired()
+    public function removeExpired(): bool
     {
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
 
@@ -115,16 +105,13 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
 
         $queryBuilder->setParameters([
             'completed' => false,
-            'expires' => $this->expires()
+            'expires' => $this->expires(),
         ]);
 
-        try
-        {
-            return $queryBuilder->getQuery()->getSingleScalarResult();
-        }
-        catch (NoResultException $e)
-        {
-            return 0;
+        try {
+            return (bool) $queryBuilder->getQuery()->getSingleScalarResult();
+        } catch (NoResultException $e) {
+            return false;
         }
     }
 
@@ -135,6 +122,13 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
     {
         $this->expires = $expires;
     }
+
+    /**
+     * Get the Reminder class name.
+     *
+     * @return string
+     */
+    abstract protected function entityName();
 
     /**
      * @param Reminder $reminder
@@ -159,9 +153,9 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
      * @param UserInterface $user
      * @param string|null   $code
      *
-     * @return Reminder|null
-     *
      * @throws \Doctrine\ORM\NonUniqueResultException
+     *
+     * @return Reminder|null
      */
     protected function findIncomplete(UserInterface $user, $code = null)
     {
@@ -177,19 +171,15 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
             ->setParameter('completed', false)
             ->setParameter('expires', $this->expires());
 
-        if ($code)
-        {
+        if ($code) {
             $queryBuilder
                 ->andWhere('r.code = :code')
                 ->setParameter('code', $code);
         }
 
-        try
-        {
+        try {
             return $queryBuilder->getQuery()->getSingleResult();
-        }
-        catch (NoResultException $e)
-        {
+        } catch (NoResultException $e) {
             return null;
         }
     }

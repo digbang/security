@@ -35,6 +35,7 @@ class DefaultRepositoryFactory implements RepositoryFactory
 
     /**
      * DefaultRepositoryFactory constructor.
+     *
      * @param Container $container
      */
     public function __construct(Container $container)
@@ -47,8 +48,7 @@ class DefaultRepositoryFactory implements RepositoryFactory
      */
     public function createPersistenceRepository($context)
     {
-        if (array_key_exists('persistence', $this->instances))
-        {
+        if (array_key_exists('persistence', $this->instances)) {
             return $this->instances['persistence'];
         }
 
@@ -64,12 +64,11 @@ class DefaultRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * {@inheritdoc]
+     * {@inheritdoc].
      */
     public function createUserRepository($context, PersistenceRepository $persistenceRepository, RoleRepository $roleRepository)
     {
-        if (array_key_exists('user', $this->instances))
-        {
+        if (array_key_exists('user', $this->instances)) {
             return $this->instances['user'];
         }
 
@@ -85,12 +84,12 @@ class DefaultRepositoryFactory implements RepositoryFactory
      */
     public function createRoleRepository($context)
     {
-        if (array_key_exists('role', $this->instances))
-        {
+        if (array_key_exists('role', $this->instances)) {
             return $this->instances['role'];
         }
 
         $entityManager = $this->container->make(EntityManager::class);
+
         return $this->instances['role'] = new DefaultDoctrineRoleRepository($entityManager);
     }
 
@@ -99,12 +98,12 @@ class DefaultRepositoryFactory implements RepositoryFactory
      */
     public function createActivationRepository($context)
     {
-        if (array_key_exists('activation', $this->instances))
-        {
+        if (array_key_exists('activation', $this->instances)) {
             return $this->instances['activation'];
         }
 
         $entityManager = $this->container->make(EntityManager::class);
+
         return $this->instances['activation'] = new DefaultDoctrineActivationRepository($entityManager);
     }
 
@@ -113,12 +112,12 @@ class DefaultRepositoryFactory implements RepositoryFactory
      */
     public function createReminderRepository($context, UserRepository $userRepository)
     {
-        if (array_key_exists('reminder', $this->instances))
-        {
+        if (array_key_exists('reminder', $this->instances)) {
             return $this->instances['reminder'];
         }
 
         $entityManager = $this->container->make(EntityManager::class);
+
         return $this->instances['reminder'] = new DefaultDoctrineReminderRepository(
             $entityManager,
             $userRepository
@@ -138,8 +137,7 @@ class DefaultRepositoryFactory implements RepositoryFactory
      */
     public function createThrottleRepository($context)
     {
-        if (array_key_exists('throttle', $this->instances))
-        {
+        if (array_key_exists('throttle', $this->instances)) {
             return $this->instances['throttle'];
         }
 

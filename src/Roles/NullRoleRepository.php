@@ -2,6 +2,7 @@
 
 namespace Digbang\Security\Roles;
 
+use Cartalyst\Sentinel\Roles\RoleInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 
@@ -10,7 +11,7 @@ class NullRoleRepository implements RoleRepository
     /**
      * {@inheritdoc}
      */
-    public function findById($id)
+    public function findById(int $id): ?RoleInterface
     {
         return null;
     }
@@ -18,7 +19,7 @@ class NullRoleRepository implements RoleRepository
     /**
      * {@inheritdoc}
      */
-    public function findBySlug($slug)
+    public function findBySlug($slug): ?RoleInterface
     {
         return null;
     }
@@ -26,7 +27,7 @@ class NullRoleRepository implements RoleRepository
     /**
      * {@inheritdoc}
      */
-    public function findByName($name)
+    public function findByName($name): ?RoleInterface
     {
         return null;
     }
@@ -96,7 +97,7 @@ class NullRoleRepository implements RoleRepository
     {
         throw new \BadMethodCallException(
             "Cannot create role [$name], Roles are disabled. " .
-            "Enable Roles through the configuration and try again."
+            'Enable Roles through the configuration and try again.'
         );
     }
 
@@ -108,8 +109,8 @@ class NullRoleRepository implements RoleRepository
     public function save(Role $role)
     {
         throw new \BadMethodCallException(
-            "Cannot save role, Roles are disabled. " .
-            "Enable Roles through the configuration and try again."
+            'Cannot save role, Roles are disabled. ' .
+            'Enable Roles through the configuration and try again.'
         );
     }
 
@@ -121,8 +122,8 @@ class NullRoleRepository implements RoleRepository
     public function delete(Role $role)
     {
         throw new \BadMethodCallException(
-            "Cannot delete role, Roles are disabled. " .
-            "Enable Roles through the configuration and try again."
+            'Cannot delete role, Roles are disabled. ' .
+            'Enable Roles through the configuration and try again.'
         );
     }
 }

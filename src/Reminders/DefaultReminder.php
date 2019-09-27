@@ -5,6 +5,7 @@ namespace Digbang\Security\Reminders;
 use Carbon\Carbon;
 use Digbang\Security\Support\TimestampsTrait;
 use Digbang\Security\Users\User;
+use Illuminate\Support\Str;
 
 class DefaultReminder implements Reminder
 {
@@ -37,12 +38,13 @@ class DefaultReminder implements Reminder
 
     /**
      * DefaultReminder constructor.
+     *
      * @param User $user
      */
     public function __construct(User $user)
     {
         $this->user = $user;
-        $this->code = str_random(32);
+        $this->code = Str::random(32);
     }
 
     /**
@@ -63,7 +65,7 @@ class DefaultReminder implements Reminder
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isCompleted()
     {

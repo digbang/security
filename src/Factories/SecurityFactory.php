@@ -38,7 +38,7 @@ class SecurityFactory
      */
     public function __construct(Container $container, RepositoryFactory $repositories, UrlGenerator $url)
     {
-        $this->container    = $container;
+        $this->container = $container;
         $this->repositories = $repositories;
         $this->url = $url;
     }
@@ -46,13 +46,14 @@ class SecurityFactory
     /**
      * @param string $context
      * @param SecurityContextConfiguration $configuration
+     *
      * @return Security
      */
     public function create($context, SecurityContextConfiguration $configuration)
     {
         $persistences = $this->repositories->createPersistenceRepository($context);
-        $roles        = $this->repositories->createRoleRepository($context);
-        $users        = $this->repositories->createUserRepository($context, $persistences, $roles);
+        $roles = $this->repositories->createRoleRepository($context);
+        $users = $this->repositories->createUserRepository($context, $persistences, $roles);
 
         $sentinel = new Sentinel(
             $persistences,
@@ -62,8 +63,7 @@ class SecurityFactory
             $this->container->make(Dispatcher::class)
         );
 
-        foreach ($configuration->listCheckpoints() as $key => $checkpoint)
-        {
+        foreach ($configuration->listCheckpoints() as $key => $checkpoint) {
             $sentinel->addCheckpoint($key, $this->makeCheckpoint($checkpoint, $configuration->getName()));
         }
 
@@ -71,10 +71,10 @@ class SecurityFactory
             $this->repositories->createReminderRepository($context, $users)
         );
 
-        $sentinel->setRequestCredentials(function(){
+        $sentinel->setRequestCredentials(function () {
             $request = $this->container->make('request');
 
-            $login    = $request->getUser();
+            $login = $request->getUser();
             $password = $request->getPassword();
 
             if ($login === null && $password === null) {
@@ -84,7 +84,7 @@ class SecurityFactory
             return compact('login', 'password');
         });
 
-        $sentinel->creatingBasicResponse(function(){
+        $sentinel->creatingBasicResponse(function () {
             $headers = ['WWW-Authenticate' => 'Basic'];
 
             return new Response('Invalid credentials.', 401, $headers);
@@ -109,8 +109,7 @@ class SecurityFactory
      */
     private function makeCheckpoint($checkpoint, $context)
     {
-        switch ($checkpoint)
-        {
+        switch ($checkpoint) {
             case ThrottleCheckpoint::class:
                 return new ThrottleCheckpoint(
                     $this->repositories->createThrottleRepository($context),

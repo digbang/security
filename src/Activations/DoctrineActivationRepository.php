@@ -24,33 +24,27 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
     }
 
     /**
-     * Get the Activation class name.
-     * @return string
-     */
-    abstract protected function entityName();
-
-    /**
      * Checks if a valid activation for the given user exists.
      *
      * @param  UserInterface  $user
      * @param  string         $code
-     * @return Activation|false
+     *
+     * @return bool|null
      */
-    public function exists(UserInterface $user, $code = null)
+    public function exists(UserInterface $user, string $code = null): bool
     {
-        return $this->findIncomplete($user, $code) ?: false;
+        return $this->findIncomplete($user, $code) ?: null;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function complete(UserInterface $user, $code)
+    public function complete(UserInterface $user, string $code): bool
     {
         /** @var Activation $activation */
         $activation = $this->findIncomplete($user, $code);
 
-        if ($activation === null)
-        {
+        if ($activation === null) {
             return false;
         }
 
@@ -68,7 +62,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
      *
      * @return bool|Activation
      */
-    public function completed(UserInterface $user)
+    public function completed(UserInterface $user): bool
     {
         $queryBuilder = $this->createQueryBuilder('a');
 
@@ -79,15 +73,12 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
         $queryBuilder
             ->setParameters([
                 'user' => $user,
-                'completed' => true
+                'completed' => true,
             ]);
 
-        try
-        {
-            return $queryBuilder->getQuery()->getSingleResult();
-        }
-        catch (NoResultException $e)
-        {
+        try {
+            return (bool) $queryBuilder->getQuery()->getSingleResult();
+        } catch (NoResultException $e) {
             return false;
         }
     }
@@ -95,7 +86,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
     /**
      * {@inheritdoc}
      */
-    public function remove(UserInterface $user)
+    public function remove(UserInterface $user): ?bool
     {
         $activation = $this->completed($user);
 
@@ -114,7 +105,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
     /**
      * {@inheritdoc}
      */
-    public function removeExpired()
+    public function removeExpired(): bool
     {
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
 
@@ -125,16 +116,13 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
 
         $queryBuilder->setParameters([
             'completed' => false,
-            'expires' => $this->expires()
+            'expires' => $this->expires(),
         ]);
 
-        try
-        {
-            return $queryBuilder->getQuery()->getSingleScalarResult();
-        }
-        catch (NoResultException $e)
-        {
-            return 0;
+        try {
+            return (bool) $queryBuilder->getQuery()->getSingleScalarResult();
+        } catch (NoResultException $e) {
+            return false;
         }
     }
 
@@ -145,6 +133,13 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
     {
         $this->expires = $expires;
     }
+
+    /**
+     * Get the Activation class name.
+     *
+     * @return string
+     */
+    abstract protected function entityName();
 
     /**
      * @return Carbon
@@ -158,9 +153,9 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
      * @param UserInterface $user
      * @param string|null   $code
      *
-     * @return Activation|null
-     *
      * @throws \Doctrine\ORM\NonUniqueResultException
+     *
+     * @return Activation|null
      */
     protected function findIncomplete(UserInterface $user, $code = null)
     {
@@ -176,19 +171,15 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
             ->setParameter('completed', false)
             ->setParameter('expires', $this->expires());
 
-        if ($code)
-        {
+        if ($code) {
             $queryBuilder
                 ->andWhere('a.code = :code')
                 ->setParameter('code', $code);
         }
 
-        try
-        {
+        try {
             return $queryBuilder->getQuery()->getSingleResult();
-        }
-        catch (NoResultException $e)
-        {
+        } catch (NoResultException $e) {
             return null;
         }
     }

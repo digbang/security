@@ -1,8 +1,11 @@
-<?php namespace Digbang\Security;
+<?php
+
+namespace Digbang\Security;
 
 use Cartalyst\Sentinel\Checkpoints\CheckpointInterface;
 use Cartalyst\Sentinel\Sentinel;
 use Digbang\Security\Activations\ActivationRepository;
+use Digbang\Security\Contracts\SecurityApi;
 use Digbang\Security\Permissions\InsecurePermissionRepository;
 use Digbang\Security\Permissions\PermissionRepository;
 use Digbang\Security\Persistences\PersistenceRepository;
@@ -11,13 +14,11 @@ use Digbang\Security\Roles\Role;
 use Digbang\Security\Roles\RoleRepository;
 use Digbang\Security\Urls\PermissionAwareUrlGenerator;
 use Digbang\Security\Users\User;
-use Digbang\Security\Contracts\SecurityApi;
 use Digbang\Security\Users\UserRepository;
 
 /**
- * Class Security
+ * Class Security.
  *
- * @package Digbang\Security
  *
  * @method User findById(int $id)
  * @method User findByCredentials(array $credentials)
@@ -71,6 +72,21 @@ final class Security implements SecurityApi
     }
 
     /**
+     * Dynamically pass missing methods to Sentinel.
+     *
+     * @param  string $method
+     * @param  array  $parameters
+     *
+     * @throws \BadMethodCallException
+     *
+     * @return mixed
+     */
+    public function __call($method, $parameters)
+    {
+        return call_user_func_array([$this->sentinel, $method], $parameters);
+    }
+
+    /**
      * @param PermissionAwareUrlGenerator $url
      */
     public function setUrlGenerator(PermissionAwareUrlGenerator $url)
@@ -85,8 +101,9 @@ final class Security implements SecurityApi
      * @param  array         $credentials
      * @param  \Closure|bool $callback
      *
-     * @return User|bool
      * @throws \InvalidArgumentException
+     *
+     * @return User|bool
      */
     public function register(array $credentials, $callback = null)
     {
@@ -110,8 +127,9 @@ final class Security implements SecurityApi
      *
      * @param  mixed $user
      *
-     * @return bool
      * @throws \InvalidArgumentException
+     *
+     * @return bool
      */
     public function activate($user)
     {
@@ -129,7 +147,7 @@ final class Security implements SecurityApi
     }
 
     /**
-     * Checks to see if a user is logged in, bypassing checkpoints
+     * Checks to see if a user is logged in, bypassing checkpoints.
      *
      * @return User|bool
      */
@@ -235,8 +253,6 @@ final class Security implements SecurityApi
      * Sets the closure which resolves the request credentials.
      *
      * @param  \Closure $requestCredentials
-     *
-     * @return void
      */
     public function setRequestCredentials(\Closure $requestCredentials)
     {
@@ -246,8 +262,9 @@ final class Security implements SecurityApi
     /**
      * Sends a response when HTTP basic authentication fails.
      *
-     * @return mixed
      * @throws \RuntimeException
+     *
+     * @return mixed
      */
     public function getBasicResponse()
     {
@@ -258,8 +275,6 @@ final class Security implements SecurityApi
      * Sets the callback which creates a basic response.
      *
      * @param \Closure $basicResponse
-     *
-     * @return void
      */
     public function creatingBasicResponse(\Closure $basicResponse)
     {
@@ -329,8 +344,6 @@ final class Security implements SecurityApi
 
     /**
      * Enables checkpoints.
-     *
-     * @return void
      */
     public function enableCheckpoints()
     {
@@ -339,8 +352,6 @@ final class Security implements SecurityApi
 
     /**
      * Disables checkpoints.
-     *
-     * @return void
      */
     public function disableCheckpoints()
     {
@@ -352,8 +363,6 @@ final class Security implements SecurityApi
      *
      * @param  string              $key
      * @param  CheckpointInterface $checkpoint
-     *
-     * @return void
      */
     public function addCheckpoint($key, CheckpointInterface $checkpoint)
     {
@@ -364,8 +373,6 @@ final class Security implements SecurityApi
      * Removes a checkpoint.
      *
      * @param  string $key
-     *
-     * @return void
      */
     public function removeCheckpoint($key)
     {
@@ -388,8 +395,6 @@ final class Security implements SecurityApi
      * Sets the user associated with Sentinel (does not log in).
      *
      * @param User $user
-     *
-     * @return void
      */
     public function setUser(User $user)
     {
@@ -467,27 +472,14 @@ final class Security implements SecurityApi
     }
 
     /**
-     * Dynamically pass missing methods to Sentinel.
-     *
-     * @param  string $method
-     * @param  array  $parameters
-     * @return mixed
-     * @throws \BadMethodCallException
-     */
-    public function __call($method, $parameters)
-    {
-        return call_user_func_array([$this->sentinel, $method], $parameters);
-    }
-
-    /**
      * @param array $permissions
      * @param string ...$permissions
+     *
      * @return bool
      */
     public function hasAccess($permissions)
     {
-        if ($this->permissions instanceof InsecurePermissionRepository)
-        {
+        if ($this->permissions instanceof InsecurePermissionRepository) {
             return true;
         }
 
@@ -497,12 +489,12 @@ final class Security implements SecurityApi
     /**
      * @param array $permissions
      * @param string ...$permissions
+     *
      * @return bool
      */
     public function hasAnyAccess($permissions)
     {
-        if ($this->permissions instanceof InsecurePermissionRepository)
-        {
+        if ($this->permissions instanceof InsecurePermissionRepository) {
             return true;
         }
 
@@ -518,7 +510,7 @@ final class Security implements SecurityApi
     }
 
     /**
-     * Returns the login url
+     * Returns the login url.
      *
      * @return string
      */
