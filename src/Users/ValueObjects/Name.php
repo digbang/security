@@ -23,7 +23,19 @@ class Name
     public function __construct($firstName = '', $lastName = '')
     {
         $this->firstName = $firstName;
-        $this->lastName  = $lastName;
+        $this->lastName = $lastName;
+    }
+
+    /**
+     * The __toString method allows a class to decide how it will react when it is converted to a string.
+     *
+     * @return string
+     *
+     * @see http://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.tostring
+     */
+    public function __toString()
+    {
+        return $this->getFullName();
     }
 
     /**
@@ -50,16 +62,5 @@ class Name
     public function getFullName($separator = ' ')
     {
         return $this->firstName . $separator . $this->lastName;
-    }
-
-    /**
-     * The __toString method allows a class to decide how it will react when it is converted to a string.
-     *
-     * @return string
-     * @link http://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.tostring
-     */
-    public function __toString()
-    {
-        return $this->getFullName();
     }
 }

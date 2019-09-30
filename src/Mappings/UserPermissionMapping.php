@@ -10,7 +10,6 @@ final class UserPermissionMapping extends CustomTableMapping
 {
     use UserPermissionMappingTrait;
 
-
     /**
      * Returns the fully qualified name of the class that this mapper maps.
      *

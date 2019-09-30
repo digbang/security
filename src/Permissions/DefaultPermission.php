@@ -20,8 +20,16 @@ abstract class DefaultPermission implements Permission
      */
     public function __construct($name, $allowed = true)
     {
-        $this->name    = $name;
+        $this->name = $name;
         $this->allowed = $allowed;
+    }
+
+    /**
+     * Return the name as the string representation.
+     */
+    public function __toString()
+    {
+        return $this->getName();
     }
 
     /**
@@ -58,20 +66,11 @@ abstract class DefaultPermission implements Permission
 
     public function equals(Permission $permission)
     {
-        if ($permission->getName() != $this->name)
-        {
+        if ($permission->getName() != $this->name) {
             return false;
         }
 
         // True if allow is equal ((true && true) || (false && false))
-        return !($this->isAllowed() XOR $permission->isAllowed());
-    }
-
-    /**
-     * Return the name as the string representation.
-     */
-    public function __toString()
-    {
-        return $this->getName();
+        return ! ($this->isAllowed() xor $permission->isAllowed());
     }
 }

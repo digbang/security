@@ -7,6 +7,7 @@ use Cartalyst\Sentinel\Checkpoints\ThrottleCheckpoint;
 use Digbang\Security\Mappings;
 use Digbang\Security\Permissions\LazyStandardPermissions;
 use Digbang\Security\Permissions\LazyStrictPermissions;
+use Illuminate\Support\Arr;
 
 /**
  * @method string getUserMapping()
@@ -44,12 +45,12 @@ use Digbang\Security\Permissions\LazyStrictPermissions;
  * @method array getRemindersLottery()
  * @method int getActivationsExpiration()
  * @method array getActivationsLottery()
- * @method null|string getUserRepository()
- * @method null|string getActivationRepository()
- * @method null|string getPersistenceRepository()
- * @method null|string getReminderRepository()
- * @method null|string getRoleRepository()
- * @method null|string getThrottleRepository()
+ * @method string|null getUserRepository()
+ * @method string|null getActivationRepository()
+ * @method string|null getPersistenceRepository()
+ * @method string|null getReminderRepository()
+ * @method string|null getRoleRepository()
+ * @method string|null getThrottleRepository()
  * @method SecurityContextConfiguration setUserTable(string $table)
  * @method SecurityContextConfiguration setUsersRolesTable(string $table)
  * @method SecurityContextConfiguration setUserPermissionTable(string $table)
@@ -98,12 +99,12 @@ class SecurityContextConfiguration
      * @var array
      */
     private $repositories = [
-        'user'        => null,
-        'activation'  => null,
+        'user' => null,
+        'activation' => null,
         'persistence' => null,
-        'reminder'    => null,
-        'role'        => null,
-        'throttle'    => null,
+        'reminder' => null,
+        'role' => null,
+        'throttle' => null,
     ];
 
     /**
@@ -119,7 +120,7 @@ class SecurityContextConfiguration
      * @var array
      */
     private $enabled = [
-        'roles'       => true,
+        'roles' => true,
         'permissions' => true,
     ];
 
@@ -134,17 +135,17 @@ class SecurityContextConfiguration
      * @var array
      */
     private $permissions = [
-        'factory'    => null,
+        'factory' => null,
         'repository' => null,
     ];
 
     /**
-     * Available checkpoints. Each checkpoint has to implement Sentinel's CheckpointInterface
+     * Available checkpoints. Each checkpoint has to implement Sentinel's CheckpointInterface.
      *
      * @var array
      */
     private $checkpoints = [
-        'throttle'   => ThrottleCheckpoint::class,
+        'throttle' => ThrottleCheckpoint::class,
         'activation' => ActivationCheckpoint::class,
     ];
 
@@ -156,7 +157,7 @@ class SecurityContextConfiguration
      * @var array
      */
     private $throttles = [
-        'global'  => [
+        'global' => [
             'interval' => 900,
             'thresholds' => [
                 10 => 1,
@@ -165,16 +166,16 @@ class SecurityContextConfiguration
                 40 => 8,
                 50 => 16,
                 60 => 12,
-            ]
             ],
-        'ip'     => [
+            ],
+        'ip' => [
             'interval' => 900,
             'thresholds' => 5,
         ],
-        'user'   => [
+        'user' => [
             'interval' => 900,
             'thresholds' => 5,
-        ]
+        ],
     ];
 
     /**
@@ -185,14 +186,14 @@ class SecurityContextConfiguration
      * @var array
      */
     private $expiring = [
-        'reminders'      => [
+        'reminders' => [
             'expires' => 14400,
-            'lottery' => [2,100],
+            'lottery' => [2, 100],
         ],
         'activations' => [
             'expires' => 259200,
-            'lottery' => [2,100],
-        ]
+            'lottery' => [2, 100],
+        ],
     ];
 
     /**
@@ -241,6 +242,89 @@ class SecurityContextConfiguration
     }
 
     /**
+     * is triggered when invoking inaccessible methods in an object context.
+     *
+     * @param $name      string
+     * @param $arguments array
+     *
+     * @return mixed
+     *
+     * @see http://php.net/manual/en/language.oop5.overloading.php#language.oop5.overloading.methods
+     */
+    public function __call($name, $arguments)
+    {
+        if (preg_match('/^set(.*)Table$/', $name, $matches)) {
+            if (empty($arguments)) {
+                throw new \InvalidArgumentException("$name expects 1 parameter, none given.");
+            }
+
+            return $this->setMappingTable(lcfirst($matches[1]), array_shift($arguments));
+        }
+
+        if (preg_match('/^get(.*)Table/', $name, $matches)) {
+            return $this->getTable(lcfirst($matches[1]));
+        }
+
+        if (preg_match('/^get(.*)Mapping$/', $name, $matches)) {
+            return $this->getMapping(lcfirst($matches[1]));
+        }
+
+        if (preg_match('/^get(.*)Repository$/', $name, $matches)) {
+            return $this->getRepository(lcfirst($matches[1]));
+        }
+
+        if (preg_match('/^enable(.*)$/', $name, $matches)) {
+            return $this->enable(lcfirst($matches[1]));
+        }
+
+        if (preg_match('/^disable(.*)$/', $name, $matches)) {
+            return $this->disable(lcfirst($matches[1]));
+        }
+
+        if (preg_match('/^is(.*)Enabled$/', $name, $matches)) {
+            return $this->isEnabled(lcfirst($matches[1]));
+        }
+
+        if (preg_match('/^set(.*)Throttle(.*)$/', $name, $matches)) {
+            if (empty($arguments)) {
+                throw new \InvalidArgumentException("$name expects 1 parameter, none given.");
+            }
+
+            return $this->setThrottle(lcfirst($matches[1]), lcfirst($matches[2]), array_shift($arguments));
+        }
+
+        if (preg_match('/^get(.*)Throttle(.*)$/', $name, $matches)) {
+            return $this->getThrottle(lcfirst($matches[1]), lcfirst($matches[2]));
+        }
+
+        if (preg_match('/^set(.*)Expiration$/', $name, $matches)) {
+            if (empty($arguments)) {
+                throw new \InvalidArgumentException("$name expects 1 parameter, none given.");
+            }
+
+            return $this->setExpiring(lcfirst($matches[1]), 'expires', array_shift($arguments));
+        }
+
+        if (preg_match('/^set(.*)Lottery$/', $name, $matches)) {
+            if (empty($arguments)) {
+                throw new \InvalidArgumentException("$name expects 1 parameter, none given.");
+            }
+
+            return $this->setExpiring(lcfirst($matches[1]), 'lottery', array_shift($arguments));
+        }
+
+        if (preg_match('/^get(.*)Expiration$/', $name, $matches)) {
+            return $this->getExpiring(lcfirst($matches[1]), 'expires');
+        }
+
+        if (preg_match('/^get(.*)Lottery$/', $name, $matches)) {
+            return $this->getExpiring(lcfirst($matches[1]), 'lottery');
+        }
+
+        throw new \BadMethodCallException("Invalid method [$name].");
+    }
+
+    /**
      * @return string
      */
     public function getName()
@@ -270,7 +354,7 @@ class SecurityContextConfiguration
     public function setPrefix($prefix)
     {
         if ($prefix != '') {
-            $prefix = rtrim($prefix, '_').'_';
+            $prefix = rtrim($prefix, '_') . '_';
         }
 
         $this->prefix = $prefix;
@@ -285,7 +369,7 @@ class SecurityContextConfiguration
     {
         $mappings = $this->mappings;
 
-        if (!$this->isRolesEnabled()) {
+        if (! $this->isRolesEnabled()) {
             unset($mappings['role']);
             unset($mappings['rolePermission']);
         }
@@ -299,7 +383,7 @@ class SecurityContextConfiguration
             );
         }
 
-        if (!$this->isPermissionsEnabled()) {
+        if (! $this->isPermissionsEnabled()) {
             unset($mappings['userPermission'], $mappings['rolePermission']);
         }
 
@@ -307,7 +391,7 @@ class SecurityContextConfiguration
     }
 
     /**
-     * Disable the throttling checkpoint
+     * Disable the throttling checkpoint.
      *
      * @return $this
      */
@@ -470,143 +554,13 @@ class SecurityContextConfiguration
      */
     public function isMultiplePersistence()
     {
-        return !$this->singlePersistence;
-    }
-
-    /**
-     * @param string $module
-     *
-     * @return $this
-     * @throws \InvalidArgumentException
-     */
-    private function enable($module)
-    {
-        if (!array_key_exists($module, $this->enabled)) {
-            throw new \InvalidArgumentException("Module '$module' cannot be enabled or disabled. Only [".implode(', ', array_keys($this->enabled)).'] can.');
-        }
-
-        $this->enabled[$module] = true;
-
-        return $this;
-    }
-
-    /**
-     * @param string $module
-     *
-     * @return $this
-     * @throws \InvalidArgumentException
-     */
-    private function disable($module)
-    {
-        if (!array_key_exists($module, $this->enabled)) {
-            throw new \InvalidArgumentException("Module '$module' cannot be enabled or disabled. Only [".implode(', ', array_keys($this->enabled)).'] can.');
-        }
-
-        $this->enabled[$module] = false;
-
-        return $this;
-    }
-
-    /**
-     * @param string $module
-     *
-     * @return bool
-     * @throws \InvalidArgumentException
-     */
-    private function isEnabled($module)
-    {
-        if (!array_key_exists($module, $this->enabled)) {
-            throw new \InvalidArgumentException("Module '$module' cannot be enabled or disabled. Only [".implode(', ', array_keys($this->enabled)).'] can.');
-        }
-
-        return $this->enabled[$module];
-    }
-
-    /**
-     * @param string $entity
-     *
-     * @return string An FQCN that implements \LaravelDoctrine\Fluent\Mapping
-     * @throws \InvalidArgumentException
-     */
-    private function getMapping($entity)
-    {
-        if (!array_key_exists($entity, $this->mappings)) {
-            throw new \InvalidArgumentException("'$entity' is not a valid mapping key. One of [".implode(', ', array_keys($this->mappings)).'] is expected.');
-        }
-
-        return $this->mappings[$entity];
-    }
-
-    /**
-     * @param string $type
-     * @param string $key
-     * @param int|array $value
-     *
-     * @return $this
-     */
-    private function setThrottle($type, $key, $value)
-    {
-        if (!isset($this->throttles[$type][$key])) {
-            throw new \InvalidArgumentException("Invalid throttle type or parameter given.");
-        }
-
-        $this->throttles[$type][$key] = $value;
-
-        return $this;
-    }
-
-    /**
-     * @param string $type
-     * @param string $key
-     *
-     * @return int|array
-     */
-    private function getThrottle($type, $key)
-    {
-        if (!isset($this->throttles[$type][$key])) {
-            throw new \InvalidArgumentException("Invalid throttle type or parameter given.");
-        }
-
-        return $this->throttles[$type][$key];
-    }
-
-    /**
-     * @param string $type
-     * @param string $subtype
-     * @param int|array $value
-     *
-     * @return $this
-     */
-    private function setExpiring($type, $subtype, $value)
-    {
-        if (!isset($this->expiring[$type][$subtype])) {
-            throw new \InvalidArgumentException("Invalid type or parameter given.");
-        }
-
-        $this->expiring[$type][$subtype] = $value;
-
-        return $this;
-    }
-
-    /**
-     * @param string $type
-     * @param string $subtype
-     *
-     * @return int|array
-     */
-    private function getExpiring($type, $subtype)
-    {
-        if (!isset($this->expiring[$type][$subtype])) {
-            throw new \InvalidArgumentException("Invalid type or parameter given.");
-        }
-
-        return $this->expiring[$type][$subtype];
+        return ! $this->singlePersistence;
     }
 
     /**
      * @param string $userRepository Must implement \Cartalyst\Sentinel\Users\UserRepositoryInterface
-     * @param string|null $userMapping Must implement \Digbang\Security\Mappings\SecurityUserMapping, null if
-     *                                 you want to keep the default user mapping.
+     * @param string|null $userMapping must implement \Digbang\Security\Mappings\SecurityUserMapping, null if
+     *                                 you want to keep the default user mapping
      *
      * @return $this
      */
@@ -686,9 +640,9 @@ class SecurityContextConfiguration
 
     /**
      * @param string $throttleRepository Must implement \Cartalyst\Sentinel\Throttling\ThrottleRepositoryInterface
-     * @param array $throttleMappings You may set mappings for the following keys:
+     * @param array $throttleMappings you may set mappings for the following keys:
      *                                 'throttle', 'ipThrottle', 'globalThrottle', 'userThrottle'
-     *                                 if not present, defaults will be used.
+     *                                 if not present, defaults will be used
      *
      * @return $this
      */
@@ -696,35 +650,8 @@ class SecurityContextConfiguration
     {
         $this->repositories['throttle'] = $throttleRepository;
         foreach (['throttle', 'ipThrottle', 'globalThrottle', 'userThrottle'] as $key) {
-            $this->mappings[$key] = array_get($throttleMappings, $key, $this->mappings[$key]);
+            $this->mappings[$key] = Arr::get($throttleMappings, $key, $this->mappings[$key]);
         }
-
-        return $this;
-    }
-
-    /**
-     * @param $entity
-     *
-     * @return mixed
-     */
-    private function getRepository($entity)
-    {
-        if (!array_key_exists($entity, $this->repositories)) {
-            throw new \InvalidArgumentException("'$entity' is not a valid repository. One of [".implode(', ', array_keys($this->repositories)).'] is expected.');
-        }
-
-        return $this->repositories[$entity];
-    }
-
-    /**
-     * @param string $entity
-     * @param string $table
-     *
-     * @return $this
-     */
-    private function setMappingTable($entity, $table)
-    {
-        $this->customTables[$entity] = $table;
 
         return $this;
     }
@@ -737,92 +664,10 @@ class SecurityContextConfiguration
     public function getTable($entity)
     {
         if (array_key_exists($entity, $this->customTables)) {
-            return $this->prefix.$this->customTables[$entity];
+            return $this->prefix . $this->customTables[$entity];
         }
 
         return null;
-    }
-
-    /**
-     * is triggered when invoking inaccessible methods in an object context.
-     *
-     * @param $name      string
-     * @param $arguments array
-     *
-     * @return mixed
-     * @link http://php.net/manual/en/language.oop5.overloading.php#language.oop5.overloading.methods
-     */
-    public function __call($name, $arguments)
-    {
-        if (preg_match('/^set(.*)Table$/', $name, $matches)) {
-            if (empty($arguments)) {
-                throw new \InvalidArgumentException("$name expects 1 parameter, none given.");
-            }
-
-            return $this->setMappingTable(lcfirst($matches[1]), array_shift($arguments));
-        }
-
-        if (preg_match('/^get(.*)Table/', $name, $matches)) {
-            return $this->getTable(lcfirst($matches[1]));
-        }
-
-        if (preg_match('/^get(.*)Mapping$/', $name, $matches)) {
-            return $this->getMapping(lcfirst($matches[1]));
-        }
-
-        if (preg_match('/^get(.*)Repository$/', $name, $matches)) {
-            return $this->getRepository(lcfirst($matches[1]));
-        }
-
-        if (preg_match('/^enable(.*)$/', $name, $matches)) {
-            return $this->enable(lcfirst($matches[1]));
-        }
-
-        if (preg_match('/^disable(.*)$/', $name, $matches)) {
-            return $this->disable(lcfirst($matches[1]));
-        }
-
-        if (preg_match('/^is(.*)Enabled$/', $name, $matches)) {
-            return $this->isEnabled(lcfirst($matches[1]));
-        }
-
-        if (preg_match('/^set(.*)Throttle(.*)$/', $name, $matches)) {
-            if (empty($arguments)) {
-                throw new \InvalidArgumentException("$name expects 1 parameter, none given.");
-            }
-
-            return $this->setThrottle(lcfirst($matches[1]), lcfirst($matches[2]), array_shift($arguments));
-        }
-
-        if (preg_match('/^get(.*)Throttle(.*)$/', $name, $matches)) {
-            return $this->getThrottle(lcfirst($matches[1]), lcfirst($matches[2]));
-        }
-
-        if (preg_match('/^set(.*)Expiration$/', $name, $matches)) {
-            if (empty($arguments)) {
-                throw new \InvalidArgumentException("$name expects 1 parameter, none given.");
-            }
-
-            return $this->setExpiring(lcfirst($matches[1]), 'expires', array_shift($arguments));
-        }
-
-        if (preg_match('/^set(.*)Lottery$/', $name, $matches)) {
-            if (empty($arguments)) {
-                throw new \InvalidArgumentException("$name expects 1 parameter, none given.");
-            }
-
-            return $this->setExpiring(lcfirst($matches[1]), 'lottery', array_shift($arguments));
-        }
-
-        if (preg_match('/^get(.*)Expiration$/', $name, $matches)) {
-            return $this->getExpiring(lcfirst($matches[1]), 'expires');
-        }
-
-        if (preg_match('/^get(.*)Lottery$/', $name, $matches)) {
-            return $this->getExpiring(lcfirst($matches[1]), 'lottery');
-        }
-
-        throw new \BadMethodCallException("Invalid method [$name].");
     }
 
     /**
@@ -839,5 +684,166 @@ class SecurityContextConfiguration
     public function setLoginRoute($loginRoute)
     {
         $this->loginRoute = $loginRoute;
+    }
+
+    /**
+     * @param string $module
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return $this
+     */
+    private function enable($module)
+    {
+        if (! array_key_exists($module, $this->enabled)) {
+            throw new \InvalidArgumentException("Module '$module' cannot be enabled or disabled. Only [" . implode(', ', array_keys($this->enabled)) . '] can.');
+        }
+
+        $this->enabled[$module] = true;
+
+        return $this;
+    }
+
+    /**
+     * @param string $module
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return $this
+     */
+    private function disable($module)
+    {
+        if (! array_key_exists($module, $this->enabled)) {
+            throw new \InvalidArgumentException("Module '$module' cannot be enabled or disabled. Only [" . implode(', ', array_keys($this->enabled)) . '] can.');
+        }
+
+        $this->enabled[$module] = false;
+
+        return $this;
+    }
+
+    /**
+     * @param string $module
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return bool
+     */
+    private function isEnabled($module)
+    {
+        if (! array_key_exists($module, $this->enabled)) {
+            throw new \InvalidArgumentException("Module '$module' cannot be enabled or disabled. Only [" . implode(', ', array_keys($this->enabled)) . '] can.');
+        }
+
+        return $this->enabled[$module];
+    }
+
+    /**
+     * @param string $entity
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return string An FQCN that implements \LaravelDoctrine\Fluent\Mapping
+     */
+    private function getMapping($entity)
+    {
+        if (! array_key_exists($entity, $this->mappings)) {
+            throw new \InvalidArgumentException("'$entity' is not a valid mapping key. One of [" . implode(', ', array_keys($this->mappings)) . '] is expected.');
+        }
+
+        return $this->mappings[$entity];
+    }
+
+    /**
+     * @param string $type
+     * @param string $key
+     * @param int|array $value
+     *
+     * @return $this
+     */
+    private function setThrottle($type, $key, $value)
+    {
+        if (! isset($this->throttles[$type][$key])) {
+            throw new \InvalidArgumentException('Invalid throttle type or parameter given.');
+        }
+
+        $this->throttles[$type][$key] = $value;
+
+        return $this;
+    }
+
+    /**
+     * @param string $type
+     * @param string $key
+     *
+     * @return int|array
+     */
+    private function getThrottle($type, $key)
+    {
+        if (! isset($this->throttles[$type][$key])) {
+            throw new \InvalidArgumentException('Invalid throttle type or parameter given.');
+        }
+
+        return $this->throttles[$type][$key];
+    }
+
+    /**
+     * @param string $type
+     * @param string $subtype
+     * @param int|array $value
+     *
+     * @return $this
+     */
+    private function setExpiring($type, $subtype, $value)
+    {
+        if (! isset($this->expiring[$type][$subtype])) {
+            throw new \InvalidArgumentException('Invalid type or parameter given.');
+        }
+
+        $this->expiring[$type][$subtype] = $value;
+
+        return $this;
+    }
+
+    /**
+     * @param string $type
+     * @param string $subtype
+     *
+     * @return int|array
+     */
+    private function getExpiring($type, $subtype)
+    {
+        if (! isset($this->expiring[$type][$subtype])) {
+            throw new \InvalidArgumentException('Invalid type or parameter given.');
+        }
+
+        return $this->expiring[$type][$subtype];
+    }
+
+    /**
+     * @param $entity
+     *
+     * @return mixed
+     */
+    private function getRepository($entity)
+    {
+        if (! array_key_exists($entity, $this->repositories)) {
+            throw new \InvalidArgumentException("'$entity' is not a valid repository. One of [" . implode(', ', array_keys($this->repositories)) . '] is expected.');
+        }
+
+        return $this->repositories[$entity];
+    }
+
+    /**
+     * @param string $entity
+     * @param string $table
+     *
+     * @return $this
+     */
+    private function setMappingTable($entity, $table)
+    {
+        $this->customTables[$entity] = $table;
+
+        return $this;
     }
 }

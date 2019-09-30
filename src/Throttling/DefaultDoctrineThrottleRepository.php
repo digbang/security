@@ -15,13 +15,11 @@ class DefaultDoctrineThrottleRepository extends DoctrineThrottleRepository
      */
     protected function entityName($type = null)
     {
-        if (!$type)
-        {
+        if (! $type) {
             return DefaultThrottle::class;
         }
 
-        switch ($type)
-        {
+        switch ($type) {
             case 'global':
                 return static::ENTITY_CLASSNAME_GLOBAL;
             case 'ip':

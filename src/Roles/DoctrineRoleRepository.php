@@ -2,6 +2,7 @@
 
 namespace Digbang\Security\Roles;
 
+use Cartalyst\Sentinel\Roles\RoleInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Illuminate\Support\Collection;
@@ -19,29 +20,13 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
     }
 
     /**
-     * Get the entity name for this repository.
-     * This entity MUST implement \Digbang\Security\Entities\Contracts\Role
-     *
-     * @return string
-     */
-    abstract protected function entityName();
-
-    /**
-     * @param string      $name
-     * @param string|null $slug
-     *
-     * @return Role
-     */
-    abstract protected function createRole($name, $slug = null);
-
-    /**
      * Find the role by ID.
      *
      * @param  int $id
      *
-     * @return Role $role
+     * @return Role|RoleInterface $role
      */
-    public function findById($id)
+    public function findById(int $id): ?RoleInterface
     {
         return $this->find($id);
     }
@@ -50,12 +35,12 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
      * Finds a role by the given slug.
      *
      * @param  string $slug
-     * @return Role
+     *
+     * @return Role|RoleInterface
      */
-    public function findBySlug($slug)
+    public function findBySlug(string $slug): ?RoleInterface
     {
         return $this->findOneBy(['slug' => $slug]);
-
     }
 
     /**
@@ -63,10 +48,11 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
      *
      * @param  string $name
      *
-     * @return Role  $role
      * @throws
+     *
+     * @return Role|RoleInterface  $role
      */
-    public function findByName($name)
+    public function findByName(string $name): ?RoleInterface
     {
         return $this->findOneBy(['name' => $name]);
     }
@@ -112,4 +98,20 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
     {
         return new Collection(parent::findAll());
     }
+
+    /**
+     * Get the entity name for this repository.
+     * This entity MUST implement \Digbang\Security\Entities\Contracts\Role.
+     *
+     * @return string
+     */
+    abstract protected function entityName();
+
+    /**
+     * @param string      $name
+     * @param string|null $slug
+     *
+     * @return Role
+     */
+    abstract protected function createRole($name, $slug = null);
 }

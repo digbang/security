@@ -17,11 +17,11 @@ trait RolePermissionMappingTrait
      * @var array
      */
     protected $relations = [
-        'role' => [DefaultRole::class, 'role']
+        'role' => [DefaultRole::class, 'role'],
     ];
 
     /**
-     * Adds all mappings: properties and relations
+     * Adds all mappings: properties and relations.
      *
      * @param Fluent $builder
      */
@@ -32,7 +32,7 @@ trait RolePermissionMappingTrait
     }
 
     /**
-     * Adds only properties
+     * Adds only properties.
      *
      * @param Fluent $builder
      */
@@ -43,7 +43,7 @@ trait RolePermissionMappingTrait
     }
 
     /**
-     * Adds only relations
+     * Adds only relations.
      *
      * @param Fluent $builder
      */

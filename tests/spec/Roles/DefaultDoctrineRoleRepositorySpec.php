@@ -1,8 +1,10 @@
-<?php namespace spec\Digbang\Security\Roles;
+<?php
+
+namespace spec\Digbang\Security\Roles;
 
 use Cartalyst\Sentinel\Roles\RoleRepositoryInterface;
-use Digbang\Security\Roles\Role;
 use Digbang\Security\Roles\DefaultRole;
+use Digbang\Security\Roles\Role;
 use Digbang\Security\Roles\RoleRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -12,14 +14,13 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 /**
- * Class DoctrineRoleRepositorySpec
+ * Class DoctrineRoleRepositorySpec.
  *
- * @package spec\Digbang\Security\Repositories
  * @mixin \Digbang\Security\Roles\DefaultDoctrineRoleRepository
  */
 class DefaultDoctrineRoleRepositorySpec extends ObjectBehavior
 {
-    function let(EntityManager $em, ClassMetadata $cm, UnitOfWork $uow, EntityPersister $ep)
+    public function let(EntityManager $em, ClassMetadata $cm, UnitOfWork $uow, EntityPersister $ep)
     {
         $role = new DefaultRole('Testing Role');
 
@@ -43,82 +44,82 @@ class DefaultDoctrineRoleRepositorySpec extends ObjectBehavior
         $this->beConstructedWith($em);
     }
 
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->shouldHaveType('Digbang\Security\Roles\DefaultDoctrineRoleRepository');
         $this->shouldHaveType('Digbang\Security\Roles\DoctrineRoleRepository');
     }
 
-    function it_should_implement_sentinels_role_repository_interface()
+    public function it_should_implement_sentinels_role_repository_interface()
     {
         $this->shouldHaveType(RoleRepositoryInterface::class);
         $this->shouldHaveType(RoleRepository::class);
     }
 
-    function it_should_find_roles_by_id()
+    public function it_should_find_roles_by_id()
     {
         $this->findById(1)->shouldBeAnInstanceOf(Role::class);
     }
 
-    function it_should_fail_when_the_role_is_not_found_by_id()
+    public function it_should_fail_when_the_role_is_not_found_by_id()
     {
         $this->findById(2)->shouldBe(null);
     }
 
-    function it_should_find_roles_by_slug()
+    public function it_should_find_roles_by_slug()
     {
         $this->findBySlug('testing-role')->shouldBeAnInstanceOf(Role::class);
     }
 
-    function it_should_fail_when_the_role_is_not_found_by_slug()
+    public function it_should_fail_when_the_role_is_not_found_by_slug()
     {
         $this->findById('this_role_is_fake')->shouldBe(null);
     }
 
-    function it_should_find_roles_by_name()
+    public function it_should_find_roles_by_name()
     {
         $this->findByName('Testing Role')->shouldBeAnInstanceOf(Role::class);
     }
 
-    function it_should_fail_when_the_role_is_not_found_by_name()
+    public function it_should_fail_when_the_role_is_not_found_by_name()
     {
         $this->findByName('Sarasa')->shouldBe(null);
     }
 
-    function it_should_create_roles(EntityManager $em)
+    public function it_should_create_roles(EntityManager $em)
     {
-        /** @type Double $em */
+        /* @type Double $em */
         $em->persist(Argument::type(Role::class))->shouldBeCalled();
         $em->flush()->shouldBeCalled();
 
         $ninjas = $this->create('Ninja devs');
 
-	    $ninjas->shouldBeAnInstanceOf(Role::class);
+        $ninjas->shouldBeAnInstanceOf(Role::class);
         $ninjas->getName()->shouldBe('Ninja devs');
-	    $ninjas->getRoleSlug()->shouldBe('ninja-devs');
+        $ninjas->getRoleSlug()->shouldBe('ninja-devs');
 
         $ops = $this->create('Operators', 'ops');
-	    $ops->shouldBeAnInstanceOf(Role::class);
-	    $ops->getName()->shouldBe('Operators');
-	    $ops->getRoleSlug()->shouldBe('ops');
+        $ops->shouldBeAnInstanceOf(Role::class);
+        $ops->getName()->shouldBe('Operators');
+        $ops->getRoleSlug()->shouldBe('ops');
     }
 
-    function it_should_save_roles(EntityManager $em)
+    public function it_should_save_roles(EntityManager $em)
     {
         $role = new DefaultRole('Samurais');
 
-        /** @type Double $em */
+        /* @type Double $em */
         $em->persist($role)->shouldBeCalled();
         $em->flush()->shouldBeCalled();
 
         $this->save($role);
     }
 
-    function it_should_delete_roles(EntityManager $em)
+    public function it_should_delete_roles(EntityManager $em)
     {
         $role = new DefaultRole('Samurais');
 
-        /** @type Double $em */
+        /* @type Double $em */
         $em->remove($role)->shouldBeCalled();
         $em->flush()->shouldBeCalled();
 

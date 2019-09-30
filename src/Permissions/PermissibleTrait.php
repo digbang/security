@@ -2,13 +2,12 @@
 
 namespace Digbang\Security\Permissions;
 
+use Cartalyst\Sentinel\Permissions\PermissibleInterface;
 use Cartalyst\Sentinel\Permissions\PermissionsInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Trait PermissibleTrait implements \Digbang\Security\Permissions\Permissible
- *
- * @package Digbang\Security\Permissions
+ * Trait PermissibleTrait implements \Digbang\Security\Permissions\Permissible.
  */
 trait PermissibleTrait
 {
@@ -28,29 +27,14 @@ trait PermissibleTrait
     protected $permissionsFactory;
 
     /**
-     * @return PermissionsInterface
-     */
-    abstract protected function makePermissionsInstance();
-
-    /**
-     * @param string $permission
-     * @param bool   $value
-     *
-     * @return Permission
-     */
-    abstract protected function createPermission($permission, $value);
-
-    /**
      * @param array $permissions
-     *
-     * @return void
      */
     abstract public function syncPermissions(array $permissions);
 
     /**
      * {@inheritdoc}
      */
-    public function hasAccess($permissions)
+    public function hasAccess($permissions): bool
     {
         return $this->getPermissionsInstance()->hasAccess($permissions);
     }
@@ -58,7 +42,7 @@ trait PermissibleTrait
     /**
      * {@inheritdoc}
      */
-    public function hasAnyAccess($permissions)
+    public function hasAnyAccess($permissions): bool
     {
         return $this->getPermissionsInstance()->hasAnyAccess($permissions);
     }
@@ -66,12 +50,10 @@ trait PermissibleTrait
     /**
      * {@inheritdoc}
      */
-    public function allow($permissions, $force = false)
+    public function allow($permissions, $force = false): void
     {
-        foreach ((array) $permissions as $permission)
-        {
-            if ($force || !$this->hasAccess($permission))
-            {
+        foreach ((array) $permissions as $permission) {
+            if ($force || ! $this->hasAccess($permission)) {
                 $this->addPermission($permission);
             }
         }
@@ -82,12 +64,10 @@ trait PermissibleTrait
     /**
      * {@inheritdoc}
      */
-    public function deny($permissions, $force = false)
+    public function deny($permissions, $force = false): void
     {
-        foreach ((array) $permissions as $permission)
-        {
-            if ($force || $this->hasAccess($permission))
-            {
+        foreach ((array) $permissions as $permission) {
+            if ($force || $this->hasAccess($permission)) {
                 $this->addPermission($permission, false);
             }
         }
@@ -98,10 +78,9 @@ trait PermissibleTrait
     /**
      * {@inheritdoc}
      */
-    public function getPermissionsInstance()
+    public function getPermissionsInstance(): PermissionsInterface
     {
-        if (! $this->permissionsInstance)
-        {
+        if (! $this->permissionsInstance) {
             $this->refreshPermissionsInstance();
         }
 
@@ -111,7 +90,7 @@ trait PermissibleTrait
     /**
      * {@inheritdoc}
      */
-    public function addPermission($permission, $value = true)
+    public function addPermission($permission, $value = true): PermissibleInterface
     {
         return $this->updatePermission($permission, $value, true);
     }
@@ -119,21 +98,15 @@ trait PermissibleTrait
     /**
      * {@inheritdoc}
      */
-    public function updatePermission($permission, $allow = true, $create = false)
+    public function updatePermission($permission, $allow = true, $create = false): PermissibleInterface
     {
-        if ($existing = $this->getPermission($permission))
-        {
-            if ($allow && ! $existing->isAllowed())
-            {
+        if ($existing = $this->getPermission($permission)) {
+            if ($allow && ! $existing->isAllowed()) {
                 $existing->allow();
-            }
-            elseif (! $allow && $existing->isAllowed())
-            {
+            } elseif (! $allow && $existing->isAllowed()) {
                 $existing->deny();
             }
-        }
-        elseif ($create)
-        {
+        } elseif ($create) {
             $this->permissions->add($this->createPermission($permission, $allow));
         }
 
@@ -145,31 +118,14 @@ trait PermissibleTrait
     /**
      * {@inheritdoc}
      */
-    public function removePermission($permission)
+    public function removePermission($permission): PermissibleInterface
     {
-        if ($object = $this->getPermission($permission))
-        {
+        if ($object = $this->getPermission($permission)) {
             $this->permissions->removeElement($object);
             $this->refreshPermissionsInstance();
         }
 
         return $this;
-    }
-
-    /**
-     * @param Permission|string $permission
-     *
-     * @return Permission|null
-     */
-    protected function getPermission($permission)
-    {
-        $name = $permission instanceof Permission
-            ? $permission->getName()
-            : $permission;
-
-        return $this->permissions->filter(function(Permission $current) use ($name) {
-            return $current->getName() == $name;
-        })->first();
     }
 
     /**
@@ -198,6 +154,35 @@ trait PermissibleTrait
         $this->permissions->clear();
 
         $this->refreshPermissionsInstance();
+    }
+
+    /**
+     * @return PermissionsInterface
+     */
+    abstract protected function makePermissionsInstance();
+
+    /**
+     * @param string $permission
+     * @param bool   $value
+     *
+     * @return Permission
+     */
+    abstract protected function createPermission($permission, $value);
+
+    /**
+     * @param Permission|string $permission
+     *
+     * @return Permission|null
+     */
+    protected function getPermission($permission)
+    {
+        $name = $permission instanceof Permission
+            ? $permission->getName()
+            : $permission;
+
+        return $this->permissions->filter(function (Permission $current) use ($name) {
+            return $current->getName() == $name;
+        })->first();
     }
 
     /**

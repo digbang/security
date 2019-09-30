@@ -1,4 +1,5 @@
 <?php
+
 namespace Digbang\Security;
 
 use Digbang\Security\Configurations\SecurityContextConfiguration;
@@ -10,8 +11,8 @@ use Digbang\Security\Urls\PermissionAwareUrlGeneratorExtension;
 use Doctrine\ORM\EntityManagerInterface;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Routing\UrlGenerator as UrlGeneratorContract;
-use Illuminate\Routing\UrlGenerator;
 use Illuminate\Http\Request;
+use Illuminate\Routing\UrlGenerator;
 use LaravelDoctrine\Fluent\FluentDriver;
 use LaravelDoctrine\Fluent\Mapping;
 use LaravelDoctrine\ORM\Configuration\MetaData\MetaDataManager;
@@ -25,19 +26,22 @@ class SecurityContext
     private $container;
 
     /**
-     * Configured contexts
+     * Configured contexts.
+     *
      * @var array
      */
     private $contexts = [];
 
     /**
      * Flyweight Security instances.
+     *
      * @var array
      */
     private $instances = [];
 
     /**
      * Flyweight dependencies.
+     *
      * @var array
      */
     private $dependencies = [];
@@ -56,6 +60,7 @@ class SecurityContext
      * Add a security context.
      *
      * @param SecurityContextConfiguration $configuration
+     *
      * @throws \BadMethodCallException
      */
     public function add(SecurityContextConfiguration $configuration)
@@ -80,11 +85,11 @@ class SecurityContext
 
         $this->container->instance(SecurityApi::class, $security);
 
-        $this->container->bind(UrlGeneratorContract::class, function() use ($security){
+        $this->container->bind(UrlGeneratorContract::class, function () use ($security) {
             return $security->url();
         });
 
-        $this->container->bind(UrlGenerator::class, function(Container $container) use ($security){
+        $this->container->bind(UrlGenerator::class, function (Container $container) use ($security) {
             /** @var PermissionAwareUrlGeneratorExtension $url */
             $url = $container->make(PermissionAwareUrlGeneratorExtension::class);
             $url->setUrlGenerator($security->url());
@@ -94,7 +99,7 @@ class SecurityContext
 
         $this->container->alias(UrlGenerator::class, 'url');
 
-        $request->setUserResolver(function() use ($security){
+        $request->setUserResolver(function () use ($security) {
             return $security->getUser();
         });
     }
@@ -103,12 +108,12 @@ class SecurityContext
      * Get the Security instance for the given context.
      *
      * @param string $context
+     *
      * @return Security
      */
     public function getSecurity($context)
     {
-        if (array_key_exists($context, $this->instances))
-        {
+        if (array_key_exists($context, $this->instances)) {
             return $this->instances[$context];
         }
 
@@ -120,12 +125,12 @@ class SecurityContext
 
     /**
      * @param $context
+     *
      * @return SecurityContextConfiguration
      */
     public function getConfigurationFor($context)
     {
-        if (! array_key_exists($context, $this->contexts))
-        {
+        if (! array_key_exists($context, $this->contexts)) {
             throw new \InvalidArgumentException("Context [$context] is not configured.");
         }
 
@@ -133,143 +138,8 @@ class SecurityContext
     }
 
     /**
-     * @param SecurityContextConfiguration $configuration
      * @param EntityManagerInterface $entityManager
-     */
-    private function updateMappings(SecurityContextConfiguration $configuration, EntityManagerInterface $entityManager)
-    {
-        $mappings = $configuration->getMappings();
-
-        if (! $configuration->isRolesEnabled())
-        {
-            $this->validateAndCall($mappings['user'], 'disableRoles');
-        }
-
-        if (! $configuration->isThrottlesEnabled())
-        {
-            $this->validateAndCall($mappings['user'], 'disableThrottles');
-        }
-
-        if (! $configuration->isPermissionsEnabled())
-        {
-            $this->validateAndCall($mappings['user'], 'disablePermissions');
-
-            if (isset($mappings['role']))
-            {
-                $this->validateAndCall($mappings['role'], 'disablePermissions');
-            }
-        }
-
-        if ($table = $configuration->getTable('usersRoles'))
-        {
-            $this->validateAndCall($mappings['user'], 'changeRolesJoinTable', $table);
-
-            if (isset($mappings['role']))
-            {
-                $this->validateAndCall($mappings['role'], 'changeRolesJoinTable', $table);
-            }
-        }
-
-        $mappingObjects = [];
-        foreach ($mappings as $entity => $mapping)
-        {
-            $entityMapping = $this->makeMapping($mapping);
-
-            if ($entityMapping instanceof CustomTableMapping && $table = $configuration->getTable($entity))
-            {
-                $entityMapping->setTable($table);
-            }
-
-            $mappingObjects[] = $entityMapping;
-        }
-
-        $this->addMappings($mappingObjects, $entityManager);
-    }
-
-    /**
-     * @param Mapping|string $mapping
      *
-     * @return Mapping
-     */
-    private function makeMapping($mapping)
-    {
-        if ($mapping instanceof Mapping)
-        {
-            return $mapping;
-        }
-
-        return $this->container->make($mapping);
-    }
-
-    /**
-     * @param Mapping|string &$mapping
-     * @param string $method
-     * @param ...$params
-     * @return mixed
-     *
-     * @throws \BadMethodCallException
-     */
-    private function validateAndCall(&$mapping, $method, ...$params)
-    {
-        $mapping = $this->makeMapping($mapping);
-
-        if (! method_exists($mapping, $method))
-        {
-            throw new \BadMethodCallException("EntityMapping [" . get_class($mapping) .
-                "] does not implement '$method'."
-            );
-        }
-
-        return call_user_func_array([$mapping, $method], $params);
-    }
-
-    /**
-     * @param string $context
-     */
-    private function addPermissionsFactoryListener($context)
-    {
-        /** @var SecurityContextConfiguration $configuration */
-        $configuration = $this->contexts[$context];
-
-        if ($configuration->isPermissionsEnabled())
-        {
-            /** @var EntityManagerInterface $entityManager */
-            $entityManager = $this->container->make(EntityManagerInterface::class);
-
-            $entityManager->getEventManager()->addEventSubscriber(
-                new PermissionStrategyEventListener($configuration->getPermissionsFactory())
-            );
-        }
-    }
-
-    /**
-     * @return SecurityFactory
-     */
-    private function getSecurityFactory()
-    {
-        if (! array_key_exists(SecurityFactory::class, $this->dependencies))
-        {
-            $this->dependencies[SecurityFactory::class] = $this->container->make(SecurityFactory::class);
-        }
-
-        return $this->dependencies[SecurityFactory::class];
-    }
-
-    /**
-     * @param Mapping[] $mappings
-     * @param EntityManagerInterface $entityManager
-     */
-    private function addMappings($mappings, EntityManagerInterface $entityManager)
-    {
-        $fluent = $this->getOrCreateFluentDriver($entityManager);
-
-        foreach ($mappings as $mapping) {
-            $fluent->addMapping($mapping);
-        }
-    }
-
-    /**
-     * @param EntityManagerInterface $entityManager
      * @return FluentDriver
      */
     public function getOrCreateFluentDriver(EntityManagerInterface $entityManager)
@@ -292,5 +162,130 @@ class SecurityContext
         $chain->addDriver($fluent, 'Digbang\\Security');
 
         return $fluent;
+    }
+
+    /**
+     * @param SecurityContextConfiguration $configuration
+     * @param EntityManagerInterface $entityManager
+     */
+    private function updateMappings(SecurityContextConfiguration $configuration, EntityManagerInterface $entityManager)
+    {
+        $mappings = $configuration->getMappings();
+
+        if (! $configuration->isRolesEnabled()) {
+            $this->validateAndCall($mappings['user'], 'disableRoles');
+        }
+
+        if (! $configuration->isThrottlesEnabled()) {
+            $this->validateAndCall($mappings['user'], 'disableThrottles');
+        }
+
+        if (! $configuration->isPermissionsEnabled()) {
+            $this->validateAndCall($mappings['user'], 'disablePermissions');
+
+            if (isset($mappings['role'])) {
+                $this->validateAndCall($mappings['role'], 'disablePermissions');
+            }
+        }
+
+        if ($table = $configuration->getTable('usersRoles')) {
+            $this->validateAndCall($mappings['user'], 'changeRolesJoinTable', $table);
+
+            if (isset($mappings['role'])) {
+                $this->validateAndCall($mappings['role'], 'changeRolesJoinTable', $table);
+            }
+        }
+
+        $mappingObjects = [];
+        foreach ($mappings as $entity => $mapping) {
+            $entityMapping = $this->makeMapping($mapping);
+
+            if ($entityMapping instanceof CustomTableMapping && $table = $configuration->getTable($entity)) {
+                $entityMapping->setTable($table);
+            }
+
+            $mappingObjects[] = $entityMapping;
+        }
+
+        $this->addMappings($mappingObjects, $entityManager);
+    }
+
+    /**
+     * @param Mapping|string $mapping
+     *
+     * @return Mapping
+     */
+    private function makeMapping($mapping)
+    {
+        if ($mapping instanceof Mapping) {
+            return $mapping;
+        }
+
+        return $this->container->make($mapping);
+    }
+
+    /**
+     * @param Mapping|string &$mapping
+     * @param string $method
+     * @param ...$params
+     *
+     * @throws \BadMethodCallException
+     *
+     * @return mixed
+     */
+    private function validateAndCall(&$mapping, $method, ...$params)
+    {
+        $mapping = $this->makeMapping($mapping);
+
+        if (! method_exists($mapping, $method)) {
+            throw new \BadMethodCallException('EntityMapping [' . get_class($mapping) .
+                "] does not implement '$method'."
+            );
+        }
+
+        return call_user_func_array([$mapping, $method], $params);
+    }
+
+    /**
+     * @param string $context
+     */
+    private function addPermissionsFactoryListener($context)
+    {
+        /** @var SecurityContextConfiguration $configuration */
+        $configuration = $this->contexts[$context];
+
+        if ($configuration->isPermissionsEnabled()) {
+            /** @var EntityManagerInterface $entityManager */
+            $entityManager = $this->container->make(EntityManagerInterface::class);
+
+            $entityManager->getEventManager()->addEventSubscriber(
+                new PermissionStrategyEventListener($configuration->getPermissionsFactory())
+            );
+        }
+    }
+
+    /**
+     * @return SecurityFactory
+     */
+    private function getSecurityFactory()
+    {
+        if (! array_key_exists(SecurityFactory::class, $this->dependencies)) {
+            $this->dependencies[SecurityFactory::class] = $this->container->make(SecurityFactory::class);
+        }
+
+        return $this->dependencies[SecurityFactory::class];
+    }
+
+    /**
+     * @param Mapping[] $mappings
+     * @param EntityManagerInterface $entityManager
+     */
+    private function addMappings($mappings, EntityManagerInterface $entityManager)
+    {
+        $fluent = $this->getOrCreateFluentDriver($entityManager);
+
+        foreach ($mappings as $mapping) {
+            $fluent->addMapping($mapping);
+        }
     }
 }

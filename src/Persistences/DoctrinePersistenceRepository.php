@@ -4,7 +4,9 @@ namespace Digbang\Security\Persistences;
 
 use Cartalyst\Sentinel\Cookies\CookieInterface;
 use Cartalyst\Sentinel\Persistences\PersistableInterface;
+use Cartalyst\Sentinel\Persistences\PersistenceInterface;
 use Cartalyst\Sentinel\Sessions\SessionInterface;
+use Cartalyst\Sentinel\Users\UserInterface;
 use Digbang\Security\Users\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -27,7 +29,7 @@ abstract class DoctrinePersistenceRepository extends EntityRepository implements
     private $single = false;
 
     /**
-     * @param EntityManager    $entityManager The EntityManager to use.
+     * @param EntityManager    $entityManager the EntityManager to use
      * @param SessionInterface $session
      * @param CookieInterface  $cookie
      */
@@ -42,34 +44,17 @@ abstract class DoctrinePersistenceRepository extends EntityRepository implements
     }
 
     /**
-     * Get the Persistence class name.
-     * @return string
-     */
-    abstract protected function entityName();
-
-    /**
-     * Create a new persistence.
-     *
-     * @param  User $user
-     * @param string $code
-     * @return Persistence
-     */
-    abstract protected function create(User $user, $code);
-
-    /**
      * Checks for a persistence code in the current session.
      *
      * @return string
      */
-    public function check()
+    public function check(): ?string
     {
-        if ($code = $this->session->get())
-        {
+        if ($code = $this->session->get()) {
             return $code;
         }
 
-        if ($code = $this->cookie->get())
-        {
+        if ($code = $this->cookie->get()) {
             return $code;
         }
     }
@@ -79,11 +64,11 @@ abstract class DoctrinePersistenceRepository extends EntityRepository implements
      *
      * @param  string $code
      *
-     * @return Persistence|false
+     * @return Persistence|PersistenceInterface|null
      */
-    public function findByPersistenceCode($code)
+    public function findByPersistenceCode(string $code): ?PersistenceInterface
     {
-        return $this->findOneBy(['code' => $code]) ?: false;
+        return $this->findOneBy(['code' => $code]) ?: null;
     }
 
     /**
@@ -91,18 +76,17 @@ abstract class DoctrinePersistenceRepository extends EntityRepository implements
      *
      * @param  string $code
      *
-     * @return \Digbang\Security\Users\DefaultUser|false
+     * @return \Digbang\Security\Users\DefaultUser|UserInterface|false
      */
-    public function findUserByPersistenceCode($code)
+    public function findUserByPersistenceCode(string $code): ?UserInterface
     {
         $persistence = $this->findByPersistenceCode($code);
 
-        if ($persistence)
-        {
+        if ($persistence) {
             return $persistence->getUser();
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -110,14 +94,13 @@ abstract class DoctrinePersistenceRepository extends EntityRepository implements
      *
      * @param User $persistable
      * @param bool $remember
+     *
      * @return bool
      */
-    public function persist(PersistableInterface $persistable, $remember = false)
+    public function persist(PersistableInterface $persistable, bool $remember = false): bool
     {
-        try
-        {
-            if ($this->single)
-            {
+        try {
+            if ($this->single) {
                 $this->flush($persistable);
             }
 
@@ -136,9 +119,7 @@ abstract class DoctrinePersistenceRepository extends EntityRepository implements
             $entityManager->flush();
 
             return true;
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return false;
         }
     }
@@ -150,21 +131,21 @@ abstract class DoctrinePersistenceRepository extends EntityRepository implements
      *
      * @return bool
      */
-    public function persistAndRemember(PersistableInterface $persistable)
+    public function persistAndRemember(PersistableInterface $persistable): bool
     {
         return $this->persist($persistable, true);
     }
 
     /**
      * Removes the persistence bound to the current session.
+     *
      * @return bool|null
      */
-    public function forget()
+    public function forget(): ?bool
     {
         $code = $this->check();
 
-        if ($code === null)
-        {
+        if ($code === null) {
             return null;
         }
 
@@ -181,7 +162,7 @@ abstract class DoctrinePersistenceRepository extends EntityRepository implements
      *
      * @return bool|null
      */
-    public function remove($code)
+    public function remove(string $code): ?bool
     {
         $entityManager = $this->getEntityManager();
 
@@ -199,13 +180,10 @@ abstract class DoctrinePersistenceRepository extends EntityRepository implements
      *
      * @param  PersistableInterface $persistable
      * @param  bool                 $forget
-     *
-     * @return void
      */
-    public function flush(PersistableInterface $persistable, $forget = true)
+    public function flush(PersistableInterface $persistable, bool $forget = true): void
     {
-        if ($forget)
-        {
+        if ($forget) {
             $this->forget();
         }
 
@@ -221,7 +199,7 @@ abstract class DoctrinePersistenceRepository extends EntityRepository implements
 
         $queryBuilder->setParameters([
             'persistable' => $persistable,
-            'code'        => $code
+            'code' => $code,
         ]);
 
         $queryBuilder->getQuery()->execute();
@@ -234,4 +212,21 @@ abstract class DoctrinePersistenceRepository extends EntityRepository implements
     {
         $this->single = $mode === 'single';
     }
+
+    /**
+     * Get the Persistence class name.
+     *
+     * @return string
+     */
+    abstract protected function entityName();
+
+    /**
+     * Create a new persistence.
+     *
+     * @param  User $user
+     * @param string $code
+     *
+     * @return Persistence
+     */
+    abstract protected function create(User $user, $code);
 }

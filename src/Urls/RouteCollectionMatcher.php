@@ -39,6 +39,7 @@ class RouteCollectionMatcher extends RouteCollection
      * @param  array  $routes
      * @param  Request  $request
      * @param  bool  $includingMethod
+     *
      * @return Route|null
      */
     protected function check(array $routes, $request, $includingMethod = true)

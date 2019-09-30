@@ -10,7 +10,6 @@ interface Roleable extends RoleableInterface
      * Add a role to the entity.
      *
      * @param Role $role
-     * @return void
      */
     public function addRole(Role $role);
 
@@ -18,7 +17,6 @@ interface Roleable extends RoleableInterface
      * Remove a role from the entity.
      *
      * @param Role $role
-     * @return void
      */
     public function removeRole(Role $role);
 }

@@ -25,8 +25,15 @@ class PermissionAwareUrlGenerator implements UrlGenerator
      */
     public function __construct(UrlGenerator $url, SecurityApi $securityApi)
     {
-        $this->url         = $url;
+        $this->url = $url;
         $this->securityApi = $securityApi;
+    }
+
+    public function __call($name, $args)
+    {
+        if (\is_callable([$this->url, $name])) {
+            return \call_user_func_array([$this->url, $name], $args);
+        }
     }
 
     /**
@@ -105,31 +112,6 @@ class PermissionAwareUrlGenerator implements UrlGenerator
     }
 
     /**
-     * Check if the logged user has access to the given permission(s).
-     * Users must implement the Digbang\Security\Permissions\Permissible interface.
-     *
-     * @param string|array $permission
-     *
-     * @return void
-     * @throws Unauthorized
-     */
-    private function checkPermission($permission)
-    {
-        if (!$permission)
-        {
-            return;
-        }
-
-        $user = $this->securityApi->getUser(true);
-        if ($user instanceof Permissible && $user->hasAccess($permission))
-        {
-            return;
-        }
-
-        throw Unauthorized::permissionDenied($permission, $this->securityApi);
-    }
-
-    /**
      * Get the current URL for the request.
      *
      * @return string
@@ -140,20 +122,36 @@ class PermissionAwareUrlGenerator implements UrlGenerator
     }
 
     /**
-      * Get the URL for the previous request.
-      *
-      * @param  mixed $fallback
-      * @return string
-    */
+     * Get the URL for the previous request.
+     *
+     * @param  mixed $fallback
+     *
+     * @return string
+     */
     public function previous($fallback = false)
     {
         return $this->url->previous($fallback);
     }
 
-    public function __call($name, $args)
+    /**
+     * Check if the logged user has access to the given permission(s).
+     * Users must implement the Digbang\Security\Permissions\Permissible interface.
+     *
+     * @param string|array $permission
+     *
+     * @throws Unauthorized
+     */
+    private function checkPermission($permission)
     {
-        if (\is_callable([$this->url, $name])) {
-            return \call_user_func_array([$this->url, $name], $args);
+        if (! $permission) {
+            return;
         }
+
+        $user = $this->securityApi->getUser(true);
+        if ($user instanceof Permissible && $user->hasAccess($permission)) {
+            return;
+        }
+
+        throw Unauthorized::permissionDenied($permission, $this->securityApi);
     }
 }

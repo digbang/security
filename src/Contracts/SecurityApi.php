@@ -21,8 +21,9 @@ interface SecurityApi
      * @param  array         $credentials
      * @param  \Closure|bool $callback
      *
-     * @return User|bool
      * @throws \InvalidArgumentException
+     *
+     * @return User|bool
      */
     public function register(array $credentials, $callback = null);
 
@@ -40,8 +41,9 @@ interface SecurityApi
      *
      * @param  mixed $user
      *
-     * @return bool
      * @throws \InvalidArgumentException
+     *
+     * @return bool
      */
     public function activate($user);
 
@@ -53,7 +55,7 @@ interface SecurityApi
     public function check();
 
     /**
-     * Checks to see if a user is logged in, bypassing checkpoints
+     * Checks to see if a user is logged in, bypassing checkpoints.
      *
      * @return User|bool
      */
@@ -132,16 +134,15 @@ interface SecurityApi
      * Sets the closure which resolves the request credentials.
      *
      * @param  \Closure $requestCredentials
-     *
-     * @return void
      */
     public function setRequestCredentials(\Closure $requestCredentials);
 
     /**
      * Sends a response when HTTP basic authentication fails.
      *
-     * @return mixed
      * @throws \RuntimeException
+     *
+     * @return mixed
      */
     public function getBasicResponse();
 
@@ -149,7 +150,6 @@ interface SecurityApi
      * Sets the callback which creates a basic response.
      *
      * @param \Closure $basicResponse
-     * @return void
      */
     public function creatingBasicResponse(\Closure $basicResponse);
 
@@ -167,6 +167,7 @@ interface SecurityApi
      * Persists a login for the given user, with the "remember" flag.
      *
      * @param  User $user
+     *
      * @return User|bool
      */
     public function loginAndRemember(User $user);
@@ -200,15 +201,11 @@ interface SecurityApi
 
     /**
      * Enables checkpoints.
-     *
-     * @return void
      */
     public function enableCheckpoints();
 
     /**
      * Disables checkpoints.
-     *
-     * @return void
      */
     public function disableCheckpoints();
 
@@ -217,8 +214,6 @@ interface SecurityApi
      *
      * @param  string              $key
      * @param  CheckpointInterface $checkpoint
-     *
-     * @return void
      */
     public function addCheckpoint($key, CheckpointInterface $checkpoint);
 
@@ -226,8 +221,6 @@ interface SecurityApi
      * Removes a checkpoint.
      *
      * @param  string $key
-     *
-     * @return void
      */
     public function removeCheckpoint($key);
 
@@ -244,8 +237,6 @@ interface SecurityApi
      * Sets the user associated with Sentinel (does not log in).
      *
      * @param User $user
-     *
-     * @return void
      */
     public function setUser(User $user);
 
@@ -299,7 +290,8 @@ interface SecurityApi
     public function url();
 
     /**
-     * Returns the login url
+     * Returns the login url.
+     *
      * @return string
      */
     public function getLoginUrl();

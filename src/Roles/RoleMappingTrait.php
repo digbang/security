@@ -23,7 +23,7 @@ trait RoleMappingTrait
      * @var array
      */
     protected $relations = [
-        'users'       => [DefaultUser::class, 'users', 'roles'],
+        'users' => [DefaultUser::class, 'users', 'roles'],
         'permissions' => [DefaultRolePermission::class, 'permissions'],
     ];
 
@@ -36,12 +36,13 @@ trait RoleMappingTrait
 
     /**
      * Enables or disables permissions mapping.
+     *
      * @var bool
      */
     protected $permissions = true;
 
     /**
-     * Adds all mappings: properties and relations
+     * Adds all mappings: properties and relations.
      *
      * @param Fluent $builder
      */
@@ -52,7 +53,7 @@ trait RoleMappingTrait
     }
 
     /**
-     * Adds only properties
+     * Adds only properties.
      *
      * @param Fluent $builder
      */
@@ -71,7 +72,6 @@ trait RoleMappingTrait
 
     /**
      * Disable the permissions relation.
-     * @return void
      */
     public function disablePermissions()
     {
@@ -79,7 +79,7 @@ trait RoleMappingTrait
     }
 
     /**
-     * Adds only relations
+     * Adds only relations.
      *
      * @param Fluent $builder
      */

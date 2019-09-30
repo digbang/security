@@ -4,9 +4,9 @@ namespace Digbang\Security\Users;
 
 use Digbang\Security\Activations\DefaultActivation;
 use Digbang\Security\Permissions\DefaultUserPermission;
-use Digbang\Security\Roles\DefaultRole;
 use Digbang\Security\Persistences\DefaultPersistence;
 use Digbang\Security\Reminders\DefaultReminder;
+use Digbang\Security\Roles\DefaultRole;
 use Digbang\Security\Throttling\DefaultUserThrottle;
 use LaravelDoctrine\Fluent\Fluent;
 use LaravelDoctrine\Fluent\Relations\OneToMany;
@@ -21,7 +21,7 @@ trait UserMappingTrait
     protected $enabled = [
         'roles' => true,
         'throttles' => true,
-        'permissions' => true
+        'permissions' => true,
     ];
 
     /**
@@ -41,16 +41,16 @@ trait UserMappingTrait
      * @var array
      */
     protected $relations = [
-        'roles'        => [DefaultRole::class,           'roles', 'users'],
+        'roles' => [DefaultRole::class,           'roles', 'users'],
         'persistences' => [DefaultPersistence::class,    'persistences'],
-        'activations'  => [DefaultActivation::class,     'activations'],
-        'reminders'    => [DefaultReminder::class,       'reminders'],
-        'throttles'    => [DefaultUserThrottle::class,   'throttles'],
-        'permissions'  => [DefaultUserPermission::class, 'permissions'],
+        'activations' => [DefaultActivation::class,     'activations'],
+        'reminders' => [DefaultReminder::class,       'reminders'],
+        'throttles' => [DefaultUserThrottle::class,   'throttles'],
+        'permissions' => [DefaultUserPermission::class, 'permissions'],
     ];
 
     /**
-     * Adds all mappings: properties and relations
+     * Adds all mappings: properties and relations.
      *
      * @param Fluent $builder
      */
@@ -61,7 +61,7 @@ trait UserMappingTrait
     }
 
     /**
-     * Adds only properties
+     * Adds only properties.
      *
      * @param Fluent $builder
      */
@@ -82,7 +82,7 @@ trait UserMappingTrait
     }
 
     /**
-     * Adds only relations
+     * Adds only relations.
      *
      * @param Fluent $builder
      */
@@ -101,29 +101,25 @@ trait UserMappingTrait
             ->orphanRemoval()
             ->orderBy('createdAt', 'desc');
 
-        if ($this->enabled['throttles'])
-        {
+        if ($this->enabled['throttles']) {
             $this->hasMany('throttles', $builder)
                 ->cascadeAll()
                 ->orphanRemoval();
         }
 
-        if ($this->enabled['roles'])
-        {
+        if ($this->enabled['roles']) {
             $roles = $builder
                 ->belongsToMany($this->relations['roles'][0], $this->relations['roles'][1])
                 ->inversedBy($this->relations['roles'][2])
                 ->source('user_id')
                 ->target('role_id');
 
-            if ($this->joinTable)
-            {
+            if ($this->joinTable) {
                 $roles->joinTable($this->joinTable);
             }
         }
 
-        if ($this->enabled['permissions'])
-        {
+        if ($this->enabled['permissions']) {
             $this->hasMany('permissions', $builder)
                 ->cascadeAll()
                 ->orphanRemoval();
@@ -132,7 +128,6 @@ trait UserMappingTrait
 
     /**
      * Disable the roles relation.
-     * @return void
      */
     public function disableRoles()
     {
@@ -141,7 +136,6 @@ trait UserMappingTrait
 
     /**
      * Disable the throttles relation.
-     * @return void
      */
     public function disableThrottles()
     {
@@ -150,23 +144,10 @@ trait UserMappingTrait
 
     /**
      * Disable the permissions relation.
-     * @return void
      */
     public function disablePermissions()
     {
         $this->enabled['permissions'] = false;
-    }
-
-    /**
-     * @param string  $key
-     * @param Fluent $builder
-     * @return OneToMany
-     */
-    private function hasMany($key, Fluent $builder)
-    {
-        return $builder
-            ->hasMany($this->relations[$key][0], $this->relations[$key][1])
-            ->mappedBy($this->name);
     }
 
     /**
@@ -177,5 +158,18 @@ trait UserMappingTrait
     public function changeRolesJoinTable($table)
     {
         $this->joinTable = $table;
+    }
+
+    /**
+     * @param string  $key
+     * @param Fluent $builder
+     *
+     * @return OneToMany
+     */
+    private function hasMany($key, Fluent $builder)
+    {
+        return $builder
+            ->hasMany($this->relations[$key][0], $this->relations[$key][1])
+            ->mappedBy($this->name);
     }
 }

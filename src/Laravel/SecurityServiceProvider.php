@@ -4,8 +4,8 @@ namespace Digbang\Security\Laravel;
 
 use Digbang\Security\Factories\ConfigurationRepositoryFactory;
 use Digbang\Security\Factories\ContainerBindingRepositoryFactory;
-use Digbang\Security\Factories\RepositoryFactory;
 use Digbang\Security\Factories\DefaultRepositoryFactory;
+use Digbang\Security\Factories\RepositoryFactory;
 use Digbang\Security\Mappings\EmailMapping;
 use Digbang\Security\Mappings\NameMapping;
 use Digbang\Security\Mappings\PasswordMapping;
@@ -20,13 +20,11 @@ class SecurityServiceProvider extends ServiceProvider
 {
     /**
      * Register the service provider.
-     *
-     * @return void
      */
     public function register()
     {
         $this->app->singleton(SecurityContext::class);
-        $this->app->bind(RepositoryFactory::class, function(Container $container){
+        $this->app->bind(RepositoryFactory::class, function (Container $container) {
             return
                 new ContainerBindingRepositoryFactory($container,
                     new ConfigurationRepositoryFactory($container,

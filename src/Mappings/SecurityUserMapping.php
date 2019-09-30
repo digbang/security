@@ -6,13 +6,11 @@ abstract class SecurityUserMapping extends CustomTableMapping implements Permiss
 {
     /**
      * Disable the roles relation.
-     * @return void
      */
     abstract public function disableRoles();
 
     /**
      * Disable the throttles relation.
-     * @return void
      */
     abstract public function disableThrottles();
 

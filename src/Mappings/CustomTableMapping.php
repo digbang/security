@@ -36,8 +36,7 @@ abstract class CustomTableMapping extends EntityMapping
      */
     public function map(Fluent $builder)
     {
-        if ($this->table)
-        {
+        if ($this->table) {
             $builder->table($this->table);
         }
     }

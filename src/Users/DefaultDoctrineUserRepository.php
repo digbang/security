@@ -2,6 +2,8 @@
 
 namespace Digbang\Security\Users;
 
+use Illuminate\Support\Arr;
+
 class DefaultDoctrineUserRepository extends DoctrineUserRepository
 {
     protected const ENTITY_CLASSNAME = DefaultUser::class;
@@ -27,9 +29,8 @@ class DefaultDoctrineUserRepository extends DoctrineUserRepository
     {
         $entity = static::ENTITY_CLASSNAME;
 
-        if (count(array_only($credentials, ['email', 'password', 'username'])) < 3)
-        {
-            throw new \InvalidArgumentException("Missing arguments.");
+        if (count(Arr::only($credentials, ['email', 'password', 'username'])) < 3) {
+            throw new \InvalidArgumentException('Missing arguments.');
         }
 
         /** @var User $user */
@@ -39,9 +40,8 @@ class DefaultDoctrineUserRepository extends DoctrineUserRepository
             $credentials['username']
         );
 
-        $rest = array_except($credentials, ['email', 'username', 'password']);
-        if (! empty($rest))
-        {
+        $rest = Arr::only($credentials, ['email', 'username', 'password']);
+        if (! empty($rest)) {
             $user->update($rest);
         }
 

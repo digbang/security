@@ -6,7 +6,6 @@ interface PermissibleMapping
 {
     /**
      * Disable the permissions relation.
-     * @return void
      */
     public function disablePermissions();
 }

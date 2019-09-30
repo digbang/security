@@ -3,18 +3,19 @@
 namespace Digbang\Security\Roles;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use IteratorAggregate;
 
 trait RoleableTrait
 {
     /**
-     * @var ArrayCollection|Role[]
+     * @var ArrayCollection|IteratorAggregate|Role[]
      */
     protected $roles;
 
     /**
      * {@inheritdoc}
      */
-    public function getRoles()
+    public function getRoles(): IteratorAggregate
     {
         return $this->roles;
     }
@@ -22,9 +23,9 @@ trait RoleableTrait
     /**
      * {@inheritdoc}
      */
-    public function inRole($role)
+    public function inRole($role): bool
     {
-        return $this->roles->exists(function($key, Role $myRole) use ($role){
+        return $this->roles->exists(function ($key, Role $myRole) use ($role) {
             return $myRole->is($role);
         });
     }
@@ -34,8 +35,7 @@ trait RoleableTrait
      */
     public function addRole(Role $role)
     {
-        if (! $this->inRole($role))
-        {
+        if (! $this->inRole($role)) {
             $this->roles->add($role);
         }
     }
@@ -46,5 +46,23 @@ trait RoleableTrait
     public function removeRole(Role $role)
     {
         $this->roles->removeElement($role);
+    }
+
+    /**
+     * Checks if the user is in any of the given roles.
+     *
+     * @param array $roles
+     *
+     * @return bool
+     */
+    public function inAnyRole(array $roles): bool
+    {
+        foreach ($roles as $rol) {
+            if ($this->inRole($rol)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

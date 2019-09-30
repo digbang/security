@@ -17,7 +17,7 @@ trait UserThrottleMappingTrait
      * @var array
      */
     private $relations = [
-        'user' => [DefaultUser::class, 'user']
+        'user' => [DefaultUser::class, 'user'],
     ];
 
     public function addMappings(Fluent $builder)

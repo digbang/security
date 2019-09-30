@@ -9,7 +9,6 @@ interface ReminderRepository extends ObjectRepository, ReminderRepositoryInterfa
 {
     /**
      * @param int $expires
-     * @return void
      */
     public function setExpires($expires);
 }

@@ -9,13 +9,11 @@ interface Role extends RoleInterface
 {
     /**
      * @param  string $name
-     * @return void
      */
     public function setName($name);
 
     /**
      * @param  string $slug
-     * @return void
      */
     public function setRoleSlug($slug);
 
@@ -33,6 +31,7 @@ interface Role extends RoleInterface
      * Checks if the given role equals itself.
      *
      * @param string|Role $role
+     *
      * @return bool
      */
     public function is($role);

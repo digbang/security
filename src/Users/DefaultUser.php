@@ -3,7 +3,6 @@
 namespace Digbang\Security\Users;
 
 use Carbon\Carbon;
-use Digbang\Security\Support\TimestampsTrait;
 use Digbang\Security\Activations\Activation;
 use Digbang\Security\Permissions\DefaultUserPermission;
 use Digbang\Security\Permissions\NullPermissions;
@@ -15,10 +14,12 @@ use Digbang\Security\Persistences\PersistableTrait;
 use Digbang\Security\Roles\Role;
 use Digbang\Security\Roles\Roleable;
 use Digbang\Security\Roles\RoleableTrait;
+use Digbang\Security\Support\TimestampsTrait;
 use Digbang\Security\Throttling\Throttleable;
 use Digbang\Security\Throttling\ThrottleableTrait;
-use Digbang\Security\Users\ValueObjects;
 use Doctrine\Common\Collections\ArrayCollection;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class DefaultUser implements User, Roleable, Permissible, Persistable, Throttleable
 {
@@ -50,25 +51,25 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
 
     public function __construct(string $email, string $password, string $username)
     {
-        $this->email    = new ValueObjects\Email(strtolower($email));
+        $this->email = new ValueObjects\Email(strtolower($email));
         $this->password = new ValueObjects\Password($password);
         $this->changeUsername($username);
 
-        $this->roles        = new ArrayCollection;
-        $this->permissions  = new ArrayCollection;
+        $this->roles = new ArrayCollection;
+        $this->permissions = new ArrayCollection;
         $this->persistences = new ArrayCollection;
-        $this->activations  = new ArrayCollection;
-        $this->reminders    = new ArrayCollection;
-        $this->throttles    = new ArrayCollection;
-        $this->name         = new ValueObjects\Name;
-        $this->permissionsFactory = function(){
+        $this->activations = new ArrayCollection;
+        $this->reminders = new ArrayCollection;
+        $this->throttles = new ArrayCollection;
+        $this->name = new ValueObjects\Name;
+        $this->permissionsFactory = function () {
             return new NullPermissions;
         };
     }
 
-    protected function createPermission($permission, $value)
+    public function __toString(): string
     {
-        return new DefaultUserPermission($this, $permission, $value);
+        return (string) $this->getName()->getFullName();
     }
 
     /**
@@ -115,31 +116,26 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
      */
     public function update(array $credentials)
     {
-        if (array_key_exists('email', $credentials))
-        {
+        if (array_key_exists('email', $credentials)) {
             $this->email = new ValueObjects\Email(strtolower($credentials['email']));
         }
 
-        if (array_key_exists('username', $credentials))
-        {
+        if (array_key_exists('username', $credentials)) {
             $this->changeUsername($credentials['username']);
         }
 
-        if (array_key_exists('password', $credentials) && !empty($credentials['password']))
-        {
+        if (array_key_exists('password', $credentials) && ! empty($credentials['password'])) {
             $this->password = new ValueObjects\Password($credentials['password']);
         }
 
-        if (array_key_exists('firstName', $credentials) || array_key_exists('lastName', $credentials))
-        {
-            $firstName = array_get($credentials, 'firstName', $this->name->getFirstName());
-            $lastName  = array_get($credentials, 'lastName',  $this->name->getLastName());
+        if (array_key_exists('firstName', $credentials) || array_key_exists('lastName', $credentials)) {
+            $firstName = Arr::get($credentials, 'firstName', $this->name->getFirstName());
+            $lastName = Arr::get($credentials, 'lastName', $this->name->getLastName());
 
             $this->changeName($firstName, $lastName);
         }
 
-        if (array_key_exists('permissions', $credentials))
-        {
+        if (array_key_exists('permissions', $credentials)) {
             $this->syncPermissions((array) $credentials['permissions']);
         }
     }
@@ -147,7 +143,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     /**
      * {@inheritdoc}
      */
-    public function getUserId()
+    public function getUserId(): int
     {
         return $this->id;
     }
@@ -163,7 +159,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     /**
      * {@inheritdoc}
      */
-    public function getUserLogin()
+    public function getUserLogin(): string
     {
         return $this->getEmail();
     }
@@ -171,7 +167,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     /**
      * {@inheritdoc}
      */
-    public function getUserLoginName()
+    public function getUserLoginName(): string
     {
         return 'email';
     }
@@ -179,7 +175,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     /**
      * {@inheritdoc}
      */
-    public function getUserPassword()
+    public function getUserPassword(): string
     {
         return $this->password->getHash();
     }
@@ -195,7 +191,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     /**
      * {@inheritdoc}
      */
-    public function getPersistableId()
+    public function getPersistableId(): string
     {
         return $this->getUserId();
     }
@@ -219,56 +215,32 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     /**
      * {@inheritdoc}
      */
-    protected function makePermissionsInstance()
-    {
-        $permissionsFactory = $this->getPermissionsFactory();
-
-        if (! is_callable($permissionsFactory))
-        {
-            throw new \InvalidArgumentException("No PermissionFactory callable given. PermissionFactory callable should be set by the DoctrineUserRepository on instance creation. New instances will use a NullPermissions implementation until persisted.");
-        }
-
-        $secondary = $this->roles->map(function(Permissible $role){
-            return $role->getPermissions();
-        });
-
-        return $permissionsFactory($this->permissions, $secondary->getValues());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function syncPermissions(array $permissions)
     {
-        foreach ($this->permissions as $current)
-        {
+        foreach ($this->permissions as $current) {
             /** @var Permission $current */
-            if ($current->isAllowed() && ! in_array($current->getName(), $permissions))
-            {
+            if ($current->isAllowed() && ! in_array($current->getName(), $permissions)) {
                 $current->deny();
-            }
-            elseif (! $current->isAllowed() && in_array($current->getName(), $permissions))
-            {
+            } elseif (! $current->isAllowed() && in_array($current->getName(), $permissions)) {
                 $current->allow();
             }
         }
 
-        $this->roles->map(function(Role $role) use ($permissions) {
-            if ($role instanceof Permissible)
-            {
+        $this->roles->map(function (Role $role) use ($permissions) {
+            if ($role instanceof Permissible) {
                 $rolePermissions = $role->getPermissions();
                 $rolePermissions
-                    ->filter(function(Permission $permission) use ($permissions) {
+                    ->filter(function (Permission $permission) use ($permissions) {
                         return $permission->isAllowed() && ! in_array($permission->getName(), $permissions);
                     })
-                    ->map(function(Permission $permission){
+                    ->map(function (Permission $permission) {
                         $this->addPermission($permission->getName(), false);
                     });
 
-                $rolePermissions->map(function(Permission $permission){
-                    $this->permissions->filter(function(Permission $current) use ($permission){
+                $rolePermissions->map(function (Permission $permission) {
+                    $this->permissions->filter(function (Permission $current) use ($permission) {
                         return $current->equals($permission);
-                    })->map(function(Permission $repeated){
+                    })->map(function (Permission $repeated) {
                         $this->permissions->removeElement($repeated);
                     });
                 });
@@ -353,7 +325,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
      */
     public function isActivated()
     {
-        return $this->activations->exists(function($id, Activation $activation){
+        return $this->activations->exists(function ($id, Activation $activation) {
             return $activation->isCompleted();
         });
     }
@@ -363,26 +335,20 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
      */
     public function getActivatedAt()
     {
-        $completed = $this->activations->filter(function(Activation $activation){
+        $completed = $this->activations->filter(function (Activation $activation) {
             return $activation->isCompleted();
         });
 
-        if ($completed->isEmpty())
-        {
+        if ($completed->isEmpty()) {
             return null;
         }
 
         return $completed->first()->getCompletedAt();
     }
 
-    private function changeUsername(string $username): void
-    {
-        $this->username = strtolower($username);
-    }
-
     public static function getShortIdentifier(): string
     {
-        return str_slug(class_basename(static::class));
+        return Str::slug(class_basename(static::class));
     }
 
     public static function getIdentifier(): string
@@ -390,8 +356,43 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
         return class_basename(static::class);
     }
 
-    public function __toString(): string
+    protected function createPermission($permission, $value)
     {
-        return (string) $this->getName()->getFullName();
+        return new DefaultUserPermission($this, $permission, $value);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function makePermissionsInstance()
+    {
+        $permissionsFactory = $this->getPermissionsFactory();
+
+        if (! is_callable($permissionsFactory)) {
+            throw new \InvalidArgumentException('No PermissionFactory callable given. PermissionFactory callable should be set by the DoctrineUserRepository on instance creation. New instances will use a NullPermissions implementation until persisted.');
+        }
+
+        $secondary = $this->roles->map(function (Permissible $role) {
+            return $role->getPermissions();
+        });
+
+        return $permissionsFactory($this->permissions, $secondary->getValues());
+    }
+
+    private function changeUsername(string $username): void
+    {
+        $this->username = strtolower($username);
+    }
+
+    public function setPersistableKey(string $key)
+    {
+        return 'user_id';
+    }
+
+    public function setPersistableRelationship(string $persistableRelationship)
+    {
+        return 'persistences';
+    }
+
+
 }

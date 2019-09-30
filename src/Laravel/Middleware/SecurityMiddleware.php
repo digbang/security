@@ -41,8 +41,8 @@ final class SecurityMiddleware
     public function __construct(SecurityContext $securityContext, LoggerInterface $logger, Redirector $redirector)
     {
         $this->securityContext = $securityContext;
-        $this->logger          = $logger;
-        $this->redirector      = $redirector;
+        $this->logger = $logger;
+        $this->redirector = $redirector;
     }
 
     /**
@@ -52,8 +52,9 @@ final class SecurityMiddleware
      * @param \Closure $next
      * @param string $context
      *
-     * @return mixed
      * @throws \Digbang\Security\Exceptions\Unauthorized
+     *
+     * @return mixed
      */
     public function handle(Request $request, \Closure $next, $context)
     {
@@ -85,21 +86,18 @@ final class SecurityMiddleware
      * @param SecurityApi                  $security
      * @param SecurityContextConfiguration $configuration
      */
-    protected function garbageCollect(SecurityApi $security, SecurityContextConfiguration $configuration)
+    private function garbageCollect(SecurityApi $security, SecurityContextConfiguration $configuration)
     {
-        try
-        {
+        try {
             $activations = $security->activations();
-            $reminders   = $security->reminders();
+            $reminders = $security->reminders();
 
             $this->sweep($activations, $configuration->getActivationsLottery());
-            $this->sweep($reminders,   $configuration->getRemindersLottery());
-        }
-        catch (\Exception $e)
-        {
+            $this->sweep($reminders, $configuration->getRemindersLottery());
+        } catch (\Exception $e) {
             // Silently fail and report, but still serve the content.
             $this->logger->error(
-                'Unable to garbage collect reminders or activations: '.
+                'Unable to garbage collect reminders or activations: ' .
                 $e->getMessage(),
                 $e->getTrace()
             );
@@ -111,12 +109,10 @@ final class SecurityMiddleware
      *
      * @param  ReminderRepositoryInterface|ActivationRepositoryInterface $repository
      * @param  array  $lottery
-     * @return void
      */
-    protected function sweep($repository, $lottery)
+    private function sweep($repository, $lottery)
     {
-        if ($this->hitsLottery($lottery))
-        {
+        if ($this->hitsLottery($lottery)) {
             $repository->removeExpired();
         }
     }
@@ -125,9 +121,10 @@ final class SecurityMiddleware
      * Determine if the configuration odds hit the lottery.
      *
      * @param  array  $lottery
+     *
      * @return bool
      */
-    protected function hitsLottery(array $lottery)
+    private function hitsLottery(array $lottery)
     {
         return random_int(1, $lottery[1]) <= $lottery[0];
     }

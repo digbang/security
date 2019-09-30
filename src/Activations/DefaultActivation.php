@@ -5,6 +5,7 @@ namespace Digbang\Security\Activations;
 use Carbon\Carbon;
 use Digbang\Security\Support\TimestampsTrait;
 use Digbang\Security\Users\User;
+use Illuminate\Support\Str;
 
 class DefaultActivation implements Activation
 {
@@ -43,16 +44,7 @@ class DefaultActivation implements Activation
     public function __construct(User $user)
     {
         $this->user = $user;
-        $this->code = str_random(32);
-    }
-
-    /**
-     * @return void
-     */
-    public function complete()
-    {
-        $this->completed = true;
-        $this->completedAt = Carbon::now();
+        $this->code = Str::random(32);
     }
 
     /**
@@ -60,12 +52,17 @@ class DefaultActivation implements Activation
      */
     public function __get($name)
     {
-        if ($name == 'code')
-        {
+        if ($name == 'code') {
             return $this->code;
         }
 
         throw new \BadMethodCallException("Property '$name' does not exist or is inaccessible.");
+    }
+
+    public function complete()
+    {
+        $this->completed = true;
+        $this->completedAt = Carbon::now();
     }
 
     /**

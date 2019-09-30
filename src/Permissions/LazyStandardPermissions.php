@@ -18,18 +18,19 @@ class LazyStandardPermissions implements PermissionsInterface
      */
     public function __construct(Collection $permissions = null, array $secondaryPermissions = [])
     {
-        $this->permissions     = new ArrayCollection;
+        $this->permissions = new ArrayCollection;
         $this->userPermissions = $permissions ?: new ArrayCollection;
         $this->rolePermissions = $secondaryPermissions;
     }
 
     /**
      * Get the factory method to build this object.
+     *
      * @return \Closure
      */
     public static function getFactory()
     {
-        return function(Collection $permissions = null, array $secondaryPermissions = []){
+        return function (Collection $permissions = null, array $secondaryPermissions = []) {
             return new static($permissions, $secondaryPermissions);
         };
     }
@@ -40,15 +41,14 @@ class LazyStandardPermissions implements PermissionsInterface
      */
     protected function mergePermissions(Collection $permissions, array $secondaryPermissions = [])
     {
-        foreach ($secondaryPermissions as $rolePermissions)
-        {
-            /** @var Collection $rolePermissions */
-            $rolePermissions->map(function(Permission $permission){
+        foreach ($secondaryPermissions as $rolePermissions) {
+            /* @var Collection $rolePermissions */
+            $rolePermissions->map(function (Permission $permission) {
                 $this->add($permission, ! $permission->isAllowed());
             });
         }
 
-        $permissions->map(function(Permission $permission){
+        $permissions->map(function (Permission $permission) {
             $this->add($permission);
         });
     }
