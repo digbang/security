@@ -386,12 +386,12 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
 
     public function setPersistableKey(string $key)
     {
-        // TODO: Implement setPersistableKey() method.
+        return 'user_id';
     }
 
     public function setPersistableRelationship(string $persistableRelationship)
     {
-        // TODO: Implement setPersistableRelationship() method.
+        return 'persistences';
     }
 
 

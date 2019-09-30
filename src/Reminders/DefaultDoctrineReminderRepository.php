@@ -3,6 +3,7 @@
 namespace Digbang\Security\Reminders;
 
 use Cartalyst\Sentinel\Users\UserInterface;
+use Illuminate\Support\Collection;
 
 class DefaultDoctrineReminderRepository extends DoctrineReminderRepository
 {
@@ -42,10 +43,18 @@ class DefaultDoctrineReminderRepository extends DoctrineReminderRepository
      * @param \Cartalyst\Sentinel\Users\UserInterface $user
      * @param string|null $code
      *
-     * @return \Illuminate\Database\Eloquent\Model|null
+     * @return Collection|null
      */
     public function get(UserInterface $user, string $code = null)
     {
-        // TODO: Implement get() method.
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+
+        $queryBuilder
+            ->select('r')
+            ->from($this->entityName(), 'r')
+            ->where('r.user > :user')
+            ->setParameter('user', $user);
+
+        return new Collection($queryBuilder->getQuery()->getResult());
     }
 }

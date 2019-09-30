@@ -58,7 +58,11 @@ trait RoleableTrait
     public function inAnyRole(array $roles): bool
     {
         foreach ($roles as $rol) {
-            $this->inRole($rol);
+            if ($this->inRole($rol)) {
+                return true;
+            }
         }
+
+        return false;
     }
 }
