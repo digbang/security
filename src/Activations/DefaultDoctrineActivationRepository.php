@@ -45,6 +45,14 @@ class DefaultDoctrineActivationRepository extends DoctrineActivationRepository
      */
     public function get(UserInterface $user, string $code = null): ?ActivationInterface
     {
-        // TODO: Implement get() method.
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+
+        $queryBuilder
+            ->select('r')
+            ->from($this->entityName(), 'r')
+            ->where('r.user > :user')
+            ->setParameter('user', $user);
+
+        return $queryBuilder->getQuery()->getSingleScalarResult();
     }
 }
