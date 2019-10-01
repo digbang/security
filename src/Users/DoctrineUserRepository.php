@@ -97,7 +97,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     {
         $user->recordLogin();
 
-        return $this->save($user);
+        return (bool) $this->save($user);
     }
 
     /**
@@ -109,7 +109,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
      */
     public function recordLogout(UserInterface $user): bool
     {
-        return $this->save($user);
+        return (bool) $this->save($user);
     }
 
     /**
@@ -281,7 +281,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
             $entityManager->persist($user);
             $entityManager->flush();
 
-            return true;
+            return $user;
         } catch (\Exception $e) {
             return false;
         }
