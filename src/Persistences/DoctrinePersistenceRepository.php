@@ -57,6 +57,8 @@ abstract class DoctrinePersistenceRepository extends EntityRepository implements
         if ($code = $this->cookie->get()) {
             return $code;
         }
+
+        return null;
     }
 
     /**

@@ -34,7 +34,7 @@ class Password
     /**
      * @return string
      */
-    public function getHash()
+    public function getHash(): string
     {
         return $this->hash;
     }
@@ -44,8 +44,8 @@ class Password
      *
      * @return bool
      */
-    public function check($password)
+    public function check(string $password): bool
     {
-        return password_verify($password, $this->hash);
+        return password_verify($password, $this->getHash());
     }
 }

@@ -281,7 +281,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
             $entityManager->persist($user);
             $entityManager->flush();
 
-            return $user;
+            return true;
         } catch (\Exception $e) {
             return false;
         }

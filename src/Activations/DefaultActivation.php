@@ -3,11 +3,12 @@
 namespace Digbang\Security\Activations;
 
 use Carbon\Carbon;
+use Cartalyst\Sentinel\Activations\ActivationInterface;
 use Digbang\Security\Support\TimestampsTrait;
 use Digbang\Security\Users\User;
 use Illuminate\Support\Str;
 
-class DefaultActivation implements Activation
+class DefaultActivation implements Activation, ActivationInterface
 {
     use TimestampsTrait;
 
@@ -108,7 +109,7 @@ class DefaultActivation implements Activation
     /**
      * {@inheritdoc}
      */
-    public function getCode()
+    public function getCode(): string
     {
         return $this->code;
     }
