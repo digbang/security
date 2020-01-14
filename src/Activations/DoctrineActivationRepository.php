@@ -64,6 +64,17 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
      */
     public function completed(UserInterface $user): bool
     {
+        $result = $this->findCompleted($user);
+
+        try {
+            return (bool) $result;
+        } catch (NoResultException $e) {
+            return false;
+        }
+    }
+
+    public function findCompleted(UserInterface $user): ?Activation
+    {
         $queryBuilder = $this->createQueryBuilder('a');
 
         $queryBuilder
@@ -77,9 +88,9 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
             ]);
 
         try {
-            return (bool) $queryBuilder->getQuery()->getSingleResult();
+            return $queryBuilder->getQuery()->getSingleResult();
         } catch (NoResultException $e) {
-            return false;
+            return null;
         }
     }
 
@@ -88,9 +99,9 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
      */
     public function remove(UserInterface $user): ?bool
     {
-        $activation = $this->completed($user);
+        $activation = $this->findCompleted($user);
 
-        if ($activation === false) {
+        if (! $activation) {
             return false;
         }
 
