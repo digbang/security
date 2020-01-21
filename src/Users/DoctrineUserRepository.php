@@ -20,16 +20,15 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
      * @var PersistenceRepository
      */
     protected $persistences;
-
     /**
      * @var RoleRepository
      */
     protected $roles;
 
     /**
-     * @param EntityManager         $entityManager
+     * @param EntityManager $entityManager
      * @param PersistenceRepository $persistences
-     * @param RoleRepository        $roles
+     * @param RoleRepository $roles
      */
     public function __construct(
         EntityManager $entityManager,
@@ -39,7 +38,6 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
         parent::__construct($entityManager, $entityManager->getClassMetadata(
             $this->entityName()
         ));
-
         $this->persistences = $persistences;
         $this->roles = $roles;
     }
@@ -47,7 +45,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     /**
      * Finds a user by the given primary key.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return User|UserInterface|null
      */
@@ -59,25 +57,22 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     /**
      * Finds a user by the given credentials.
      *
-     * @param  array $credentials
+     * @param array $credentials
      *
      * @return UserInterface|null
      */
     public function findByCredentials(array $credentials): ?UserInterface
     {
         $queryBuilder = $this->createQueryBuilder('u');
-
         $this->createCredentialsCriteria($queryBuilder, $credentials);
-
         $queryBuilder->setMaxResults(1);
-
         return $queryBuilder->getQuery()->getOneOrNullResult();
     }
 
     /**
      * Finds a user by the given persistence code.
      *
-     * @param  string $code
+     * @param string $code
      *
      * @return UserInterface|null
      */
@@ -103,7 +98,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     /**
      * Records a logout for the given user.
      *
-     * @param  UserInterface $user
+     * @param UserInterface $user
      *
      * @return UserInterface|bool
      */
@@ -128,11 +123,11 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     /**
      * Validate if the given user is valid for creation.
      *
-     * @param  array $credentials
-     *
-     * @throws \InvalidArgumentException
+     * @param array $credentials
      *
      * @return bool
+     * @throws \InvalidArgumentException
+     *
      */
     public function validForCreation(array $credentials): bool
     {
@@ -142,26 +137,25 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     /**
      * Validate if the given user is valid for updating.
      *
-     * @param  UserInterface|int $user
-     * @param  array             $credentials
-     *
-     * @throws \InvalidArgumentException
+     * @param UserInterface|int $user
+     * @param array $credentials
      *
      * @return bool
+     * @throws \InvalidArgumentException
+     *
      */
     public function validForUpdate($user, array $credentials): bool
     {
         if ($user instanceof UserInterface) {
             $user = $user->getUserId();
         }
-
         return $this->validate($credentials, $user);
     }
 
     /**
      * Creates a user.
      *
-     * @param array    $credentials
+     * @param array $credentials
      * @param \Closure $callback
      *
      * @return User
@@ -169,21 +163,25 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     public function create(array $credentials, Closure $callback = null): ?UserInterface
     {
         $user = $this->createUser($credentials);
-
         if ($callback) {
             if ($callback($user) === false) {
                 return null;
             }
         }
+        $userCreated = $this->save($user);
 
-        return $this->save($user);
+        if ($userCreated) {
+            return $userCreated;
+        }
+
+        return null;
     }
 
     /**
      * Updates a user.
      *
-     * @param  User|int $user
-     * @param  array    $credentials
+     * @param User|int $user
+     * @param array $credentials
      *
      * @return User|UserInterface
      */
@@ -250,11 +248,11 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 
     /**
      * @param array $credentials
-     * @param int   $id
-     *
-     * @throws InvalidArgumentException
+     * @param int $id
      *
      * @return bool
+     * @throws InvalidArgumentException
+     *
      */
     protected function validate(array $credentials, $id = null)
     {
