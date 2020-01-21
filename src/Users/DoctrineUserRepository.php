@@ -176,13 +176,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
             }
         }
 
-        $userCreated = $this->save($user);
-
-        if ($userCreated) {
-            return $userCreated;
-        }
-
-        return null;
+        return $this->save($user) ?? null;
     }
 
     /**
