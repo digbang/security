@@ -49,11 +49,14 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
      *
      * @param  int $id
      *
-     * @return User|UserInterface|null
+     * @return UserInterface|null
      */
     public function findById(int $id): ?UserInterface
     {
-        return $this->find($id);
+        /** @var UserInterface $user */
+        $user = $this->find($id);
+
+        return $user;
     }
 
     /**
@@ -91,7 +94,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
      *
      * @param User $user
      *
-     * @return UserInterface|bool
+     * @return bool
      */
     public function recordLogin(UserInterface $user): bool
     {
@@ -105,7 +108,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
      *
      * @param  UserInterface $user
      *
-     * @return UserInterface|bool
+     * @return bool
      */
     public function recordLogout(UserInterface $user): bool
     {
@@ -122,7 +125,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
      */
     public function validateCredentials(UserInterface $user, array $credentials): bool
     {
-        return $user->checkPassword(Arr::get($credentials, 'password'));
+        return (bool) $user->checkPassword(Arr::get($credentials, 'password'));
     }
 
     /**
