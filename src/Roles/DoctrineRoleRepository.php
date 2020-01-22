@@ -28,7 +28,10 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
      */
     public function findById(int $id): ?RoleInterface
     {
-        return $this->find($id);
+        /** @var RoleInterface $obj */
+        $obj = $this->find($id);
+
+        return $obj;
     }
 
     /**
@@ -40,7 +43,10 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
      */
     public function findBySlug(string $slug): ?RoleInterface
     {
-        return $this->findOneBy(['slug' => $slug]);
+        /** @var RoleInterface $role */
+        $role = $this->findOneBy(['slug' => $slug]);
+
+        return $role;
     }
 
     /**
@@ -54,7 +60,10 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
      */
     public function findByName(string $name): ?RoleInterface
     {
-        return $this->findOneBy(['name' => $name]);
+        /** @var RoleInterface $role */
+        $role = $this->findOneBy(['name' => $name]);
+
+        return $role;
     }
 
     /**

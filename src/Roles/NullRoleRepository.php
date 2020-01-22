@@ -78,7 +78,7 @@ class NullRoleRepository implements RoleRepository
      *
      * @param Criteria $criteria
      *
-     * @return Collection
+     * @return array
      */
     public function matching(Criteria $criteria)
     {

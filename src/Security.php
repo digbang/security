@@ -388,7 +388,10 @@ final class Security implements SecurityApi
      */
     public function getUser($check = true)
     {
-        return $this->sentinel->getUser($check);
+        /** @var User $user */
+        $user = $this->sentinel->getUser($check);
+
+        return $user;
     }
 
     /**

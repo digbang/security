@@ -29,11 +29,11 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
      * @param  UserInterface  $user
      * @param  string         $code
      *
-     * @return bool|null
+     * @return bool
      */
     public function exists(UserInterface $user, string $code = null): bool
     {
-        return $this->findIncomplete($user, $code) ?: null;
+        return (bool) $this->findIncomplete($user, $code);
     }
 
     /**

@@ -90,7 +90,7 @@ trait PermissibleTrait
     /**
      * {@inheritdoc}
      */
-    public function addPermission($permission, $value = true): PermissibleInterface
+    public function addPermission(string $permission, bool $value = true): PermissibleInterface
     {
         return $this->updatePermission($permission, $value, true);
     }
@@ -98,7 +98,7 @@ trait PermissibleTrait
     /**
      * {@inheritdoc}
      */
-    public function updatePermission($permission, $allow = true, $create = false): PermissibleInterface
+    public function updatePermission(string $permission, bool $allow = true, bool $create = false): PermissibleInterface
     {
         if ($existing = $this->getPermission($permission)) {
             if ($allow && ! $existing->isAllowed()) {
@@ -118,7 +118,7 @@ trait PermissibleTrait
     /**
      * {@inheritdoc}
      */
-    public function removePermission($permission): PermissibleInterface
+    public function removePermission(string $permission): PermissibleInterface
     {
         if ($object = $this->getPermission($permission)) {
             $this->permissions->removeElement($object);
