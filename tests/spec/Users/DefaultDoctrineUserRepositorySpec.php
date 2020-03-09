@@ -228,7 +228,7 @@ class DefaultDoctrineUserRepositorySpec extends ObjectBehavior
         ])->shouldBe($user);
     }
 
-    public function getMatchers()
+    public function getMatchers(): array
     {
         return [
             'beAUser' => function ($subject) {

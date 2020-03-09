@@ -60,7 +60,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
      *
      * @param  \Cartalyst\Sentinel\Users\UserInterface $user
      *
-     * @return bool|Activation
+     * @return bool
      */
     public function completed(UserInterface $user): bool
     {

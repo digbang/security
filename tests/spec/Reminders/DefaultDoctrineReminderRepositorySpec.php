@@ -109,7 +109,7 @@ class DefaultDoctrineReminderRepositorySpec extends ObjectBehavior
 
         $query->getSingleScalarResult()->willReturn(1);
 
-        $this->removeExpired()->shouldBe(1);
+        $this->removeExpired()->shouldBe(true);
     }
 
     public function it_should_catch_no_results_errors(EntityManager $entityManager, QueryBuilder $queryBuilder, AbstractQuery $query)
@@ -126,7 +126,7 @@ class DefaultDoctrineReminderRepositorySpec extends ObjectBehavior
 
         $query->getSingleScalarResult()->willThrow(NoResultException::class);
 
-        $this->removeExpired()->shouldBe(0);
+        $this->removeExpired()->shouldBe(false);
     }
 
     protected function prepareFindIncompleteQuery(EntityManager $entityManager, QueryBuilder $queryBuilder, AbstractQuery $query, $result = null)

@@ -193,7 +193,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
      */
     public function getPersistableId(): string
     {
-        return $this->getUserId();
+        return (string) $this->getUserId();
     }
 
     /**

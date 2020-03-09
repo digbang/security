@@ -1,7 +1,7 @@
 {
 	"name": "digbang/security",
 	"license": "MIT",
-	"description": "Security package for Laravel 5 & 6 projects in Digbang.",
+	"description": "Security package for Laravel projects in Digbang.",
 	"authors": [
 		{
 			"name": "Guido Contreras Woda",
@@ -10,25 +10,32 @@
 	],
 	"require": {
 		"php": ">=7.1",
-		"laravel-doctrine/orm": "^1.5",
+		"laravel-doctrine/orm": "^1.6",
 		"laravel-doctrine/fluent": "^1.1",
-		"illuminate/support":   "^5.4|^6.0",
-		"illuminate/contracts": "^5.4|^6.0",
-		"illuminate/events":    "^5.4|^6.0",
-		"illuminate/cookie":    "^5.4|^6.0",
-		"illuminate/routing":   "^5.4|^6.0",
-		"cartalyst/sentinel":   "~3.0",
+		"illuminate/support":   "^5.4|^6.0|^7.0",
+		"illuminate/contracts": "^5.4|^6.0|^7.0",
+		"illuminate/events":    "^5.4|^6.0|^7.0",
+		"illuminate/cookie":    "^5.4|^6.0|^7.0",
+		"illuminate/routing":   "^5.4|^6.0|^7.0",
+		"cartalyst/sentinel":   "^4.0.",
 		"doctrine/dbal":        "~2.5",
 		"friendsofphp/php-cs-fixer": "^2.15"
 	},
 	"require-dev": {
-		"phpspec/phpspec":     "^3.0|^4.0|^5.0",
-		"phpstan/phpstan": "^0.11.16"
+		"phpspec/phpspec":     "^6.0",
+		"phpstan/phpstan": "^0.12"
 	},
 	"autoload": {
 		"psr-4": {
 			"Digbang\\Security\\": "src/"
 		}
+	},
+	"scripts": {
+		"stan": "php -d memory_limit=500M ./vendor/bin/phpstan analyse -l 3 -c phpstan.neon src tests",
+		"unit": "./vendor/bin/phpunit",
+		"cs": "./vendor/bin/php-cs-fixer fix --allow-risky=yes",
+		"spec": "./vendor/bin/phpspec run phpspec.cc.yml",
+		"coverage": "./vendor/bin/phpunit --coverage-html coverage"
 	},
 	"repositories": [],
 	"minimum-stability": "dev",
