@@ -66,12 +66,7 @@ class SecurityServiceProvider extends ServiceProvider
      */
     private function addMiddleware(Router $router)
     {
-        if (method_exists($router, 'aliasMiddleware')) {
-            // Laravel >= 5.4
-            $router->aliasMiddleware('security', Middleware\SecurityMiddleware::class);
-        } else {
-            // Laravel <= 5.3
-            $router->middleware('security', Middleware\SecurityMiddleware::class);
-        }
+        // Laravel >= 5.4
+        $router->aliasMiddleware('security', Middleware\SecurityMiddleware::class);
     }
 }

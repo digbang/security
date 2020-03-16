@@ -407,7 +407,7 @@ final class Security implements SecurityApi
     /**
      * Returns the user repository.
      *
-     * @return UserRepository
+     * @return \Cartalyst\Sentinel\Users\UserRepositoryInterface
      */
     public function users()
     {
@@ -417,7 +417,7 @@ final class Security implements SecurityApi
     /**
      * Returns the role repository.
      *
-     * @return RoleRepository
+     * @return \Cartalyst\Sentinel\Roles\RoleRepositoryInterface
      */
     public function roles()
     {
@@ -427,7 +427,7 @@ final class Security implements SecurityApi
     /**
      * Returns the persistences repository.
      *
-     * @return PersistenceRepository
+     * @return \Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface
      */
     public function persistences()
     {
@@ -437,7 +437,7 @@ final class Security implements SecurityApi
     /**
      * Returns the reminders repository.
      *
-     * @return ReminderRepository
+     * @return \Cartalyst\Sentinel\Reminders\ReminderRepositoryInterface
      */
     public function reminders()
     {
@@ -447,7 +447,7 @@ final class Security implements SecurityApi
     /**
      * Returns the activations repository.
      *
-     * @return ActivationRepository
+     * @return \Cartalyst\Sentinel\Activations\ActivationRepositoryInterface
      */
     public function activations()
     {

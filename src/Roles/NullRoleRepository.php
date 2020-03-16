@@ -3,6 +3,7 @@
 namespace Digbang\Security\Roles;
 
 use Cartalyst\Sentinel\Roles\RoleInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 
@@ -73,16 +74,11 @@ class NullRoleRepository implements RoleRepository
     }
 
     /**
-     * Selects all elements from a selectable that match the expression and
-     * returns a new collection containing these elements.
-     *
-     * @param Criteria $criteria
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function matching(Criteria $criteria)
     {
-        return [];
+        return new ArrayCollection();
     }
 
     /**

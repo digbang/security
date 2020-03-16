@@ -124,11 +124,11 @@ class SecurityContext
     }
 
     /**
-     * @param $context
+     * @param string $context
      *
      * @return SecurityContextConfiguration
      */
-    public function getConfigurationFor($context)
+    public function getConfigurationFor(string $context)
     {
         if (! array_key_exists($context, $this->contexts)) {
             throw new \InvalidArgumentException("Context [$context] is not configured.");
@@ -150,7 +150,10 @@ class SecurityContext
         $drivers = $chain->getDrivers();
 
         if (array_key_exists('Digbang\\Security', $drivers)) {
-            return $drivers['Digbang\\Security'];
+            /** @var FluentDriver $digbangSecurity */
+            $digbangSecurity = $drivers['Digbang\\Security'];
+
+            return $digbangSecurity;
         }
 
         /** @var MetaDataManager $metaDataManager */
@@ -225,11 +228,9 @@ class SecurityContext
     }
 
     /**
-     * @param Mapping|string &$mapping
+     * @param Mapping|string $mapping
      * @param string $method
-     * @param ...$params
-     *
-     * @throws \BadMethodCallException
+     * @param mixed ...$params
      *
      * @return mixed
      */

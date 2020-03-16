@@ -244,8 +244,8 @@ class SecurityContextConfiguration
     /**
      * is triggered when invoking inaccessible methods in an object context.
      *
-     * @param $name      string
-     * @param $arguments array
+     * @param string $name
+     * @param array $arguments
      *
      * @return mixed
      *
@@ -821,7 +821,7 @@ class SecurityContextConfiguration
     }
 
     /**
-     * @param $entity
+     * @param string $entity
      *
      * @return mixed
      */

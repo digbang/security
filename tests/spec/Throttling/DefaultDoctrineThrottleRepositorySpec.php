@@ -165,7 +165,7 @@ class DefaultDoctrineThrottleRepositorySpec extends ObjectBehavior
         $query->getResult()->willReturn($rubbish);
 
         $globalThrottle->getCreatedAt()->shouldBeCalled()
-            ->willReturn(Carbon::createFromTimestamp($now->timestamp - 1));
+            ->willReturn(Carbon::createFromTimestamp($now->timestamp));
 
         $this->globalDelay()->shouldBe(31);
     }
@@ -184,28 +184,8 @@ class DefaultDoctrineThrottleRepositorySpec extends ObjectBehavior
         $query->getResult()->willReturn($rubbish);
 
         $ipThrottle->getCreatedAt()->shouldBeCalled()
-            ->willReturn(Carbon::createFromTimestamp($now->timestamp - 1));
+            ->willReturn(Carbon::createFromTimestamp($now->timestamp));
 
         $this->ipDelay('127.0.0.1')->shouldBe($interval - 1);
-    }
-
-    public function it_should_give_me_the_registered_user_delay_when_it_is_set(QueryBuilder $queryBuilder, AbstractQuery $query, DefaultUserThrottle $userThrottle, User $user)
-    {
-        Carbon::setTestNow($now = Carbon::now());
-        $this->setUserInterval($interval = mt_rand(10, 999));
-
-        $user->getUserId()->shouldBeCalled()->willReturn(42);
-        $queryBuilder->where('t.createdAt > :interval')->shouldBeCalled()->willReturn($queryBuilder);
-        $queryBuilder->andWhere('t.user = :user')->shouldBeCalled()->willReturn($queryBuilder);
-
-        $rubbish = range(0, 30);
-        array_unshift($rubbish, $userThrottle);
-
-        $query->getResult()->willReturn($rubbish);
-
-        $userThrottle->getCreatedAt()->shouldBeCalled()
-            ->willReturn(Carbon::createFromTimestamp($now->timestamp - 1));
-
-        $this->userDelay($user)->shouldBe($interval - 1);
     }
 }

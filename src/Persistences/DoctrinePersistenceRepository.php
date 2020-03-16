@@ -78,7 +78,7 @@ abstract class DoctrinePersistenceRepository extends EntityRepository implements
      *
      * @param  string $code
      *
-     * @return \Digbang\Security\Users\DefaultUser|UserInterface|false
+     * @return \Digbang\Security\Users\DefaultUser|UserInterface|null
      */
     public function findUserByPersistenceCode(string $code): ?UserInterface
     {

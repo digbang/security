@@ -79,13 +79,13 @@ class DefaultDoctrinePersistenceRepositorySpec extends ObjectBehavior
         $this->findByPersistenceCode('a_code')->shouldBe($persistence);
     }
 
-    public function it_should_return_false_when_persistence_by_code_is_not_found(EntityManager $entityManager, UnitOfWork $unitOfWork, EntityPersister $entityPersister)
+    public function it_should_return_null_when_persistence_by_code_is_not_found(EntityManager $entityManager, UnitOfWork $unitOfWork, EntityPersister $entityPersister)
     {
         $entityManager->getUnitOfWork()->willReturn($unitOfWork);
         $unitOfWork->getEntityPersister(DefaultPersistence::class)->willReturn($entityPersister);
         $entityPersister->load(Argument::cetera())->willReturn(null);
 
-        $this->findByPersistenceCode('a_code')->shouldBe(false);
+        $this->findByPersistenceCode('a_code')->shouldBe(null);
     }
 
     public function it_should_find_users_by_persistence_code(EntityManager $entityManager, UnitOfWork $unitOfWork, EntityPersister $entityPersister, Persistence $persistence, User $user)
@@ -99,13 +99,13 @@ class DefaultDoctrinePersistenceRepositorySpec extends ObjectBehavior
         $this->findUserByPersistenceCode('a_code')->shouldBe($user);
     }
 
-    public function it_should_return_false_when_user_by_persistence_code_is_not_found(EntityManager $entityManager, UnitOfWork $unitOfWork, EntityPersister $entityPersister)
+    public function it_should_return_null_when_user_by_persistence_code_is_not_found(EntityManager $entityManager, UnitOfWork $unitOfWork, EntityPersister $entityPersister)
     {
         $entityManager->getUnitOfWork()->willReturn($unitOfWork);
         $unitOfWork->getEntityPersister(DefaultPersistence::class)->willReturn($entityPersister);
         $entityPersister->load(Argument::cetera())->willReturn(null);
 
-        $this->findUserByPersistenceCode('a_code')->shouldBe(false);
+        $this->findUserByPersistenceCode('a_code')->shouldBe(null);
     }
 
     public function it_should_persist_persistables(SessionInterface $session, EntityManager $entityManager)

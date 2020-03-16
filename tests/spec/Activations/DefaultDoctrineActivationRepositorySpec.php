@@ -54,11 +54,11 @@ class DefaultDoctrineActivationRepositorySpec extends ObjectBehavior
         $activation->shouldBeAnActivation();
     }
 
-    public function it_should_return_the_activation_if_it_exists(User $user, EntityManager $entityManager, QueryBuilder $queryBuilder, Activation $activation)
+    public function it_should_return_true_if_it_exists(User $user, EntityManager $entityManager, QueryBuilder $queryBuilder, Activation $activation)
     {
         $this->prepareQuery($entityManager, $queryBuilder, $activation->getWrappedObject());
 
-        $this->exists($user)->shouldBe($activation);
+        $this->exists($user)->shouldBe(true);
     }
 
     public function it_should_return_false_if_it_does_not_exist(User $user, EntityManager $entityManager, QueryBuilder $queryBuilder)
@@ -92,7 +92,7 @@ class DefaultDoctrineActivationRepositorySpec extends ObjectBehavior
 
         $this->prepareQuery($entityManager, $queryBuilder, $activation);
 
-        $this->completed($user)->shouldBe($activation);
+        $this->completed($user)->shouldBe(true);
     }
 
     public function it_should_check_if_a_complete_activation_does_not_exist(User $user, EntityManager $entityManager, QueryBuilder $queryBuilder)
@@ -135,10 +135,10 @@ class DefaultDoctrineActivationRepositorySpec extends ObjectBehavior
 
         $query->getSingleScalarResult()->willReturn($amount = mt_rand(1, 20));
 
-        $this->removeExpired()->shouldReturn($amount);
+        $this->removeExpired()->shouldReturn(true);
     }
 
-    public function getMatchers()
+    public function getMatchers(): array
     {
         return [
             'beAnActivation' => function ($subject) {

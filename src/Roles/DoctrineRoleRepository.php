@@ -50,13 +50,7 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
     }
 
     /**
-     * Find the role by name.
-     *
-     * @param  string $name
-     *
-     * @throws
-     *
-     * @return Role|RoleInterface  $role
+     * {@inheritdoc}
      */
     public function findByName(string $name): ?RoleInterface
     {
