@@ -279,15 +279,11 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
      */
     protected function save(UserInterface $user)
     {
-        try {
-            $entityManager = $this->getEntityManager();
-            $entityManager->persist($user);
-            $entityManager->flush();
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($user);
+        $entityManager->flush();
 
-            return $user;
-        } catch (\Exception $e) {
-            return false;
-        }
+        return $user;
     }
 
     protected function createCredentialsCriteria(QueryBuilder $queryBuilder, array $credentials)
