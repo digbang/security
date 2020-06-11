@@ -2,6 +2,7 @@
 
 namespace Digbang\Security\Users;
 
+use Carbon\Carbon;
 use Cartalyst\Sentinel\Persistences\PersistableInterface;
 use Cartalyst\Sentinel\Users\UserInterface;
 
@@ -44,7 +45,7 @@ interface User extends UserInterface, PersistableInterface
     /**
      * @return \Carbon\Carbon
      */
-    public function getLastLogin();
+    public function getLastLogin(): ?Carbon;
 
     /**
      * @return \Carbon\Carbon
