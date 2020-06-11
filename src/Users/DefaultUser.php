@@ -42,7 +42,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     protected $password;
     /** @var ValueObjects\Name */
     protected $name;
-    /** @var Carbon */
+    /** @var Carbon|null */
     protected $lastLogin;
     /** @var ArrayCollection */
     protected $activations;
@@ -197,9 +197,9 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * @return Carbon
+     * @return Carbon|null
      */
-    public function getLastLogin()
+    public function getLastLogin(): ?Carbon
     {
         return $this->lastLogin;
     }
