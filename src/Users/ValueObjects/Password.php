@@ -13,9 +13,15 @@ class Password
      * Password constructor.
      *
      * @param string $plain
+     *
+     * @throws \InvalidArgumentException
      */
-    public function __construct($plain)
+    public function __construct(string $plain)
     {
+        if (strlen(trim($plain)) < 1) {
+            throw new \InvalidArgumentException('Password cannot be empty');
+        }
+
         $this->hash = password_hash($plain, PASSWORD_DEFAULT);
     }
 

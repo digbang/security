@@ -51,7 +51,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
 
     public function __construct(string $email, string $password, string $username)
     {
-        $this->email = new ValueObjects\Email(strtolower($email));
+        $this->email = new ValueObjects\Email($email);
         $this->password = new ValueObjects\Password($password);
         $this->changeUsername($username);
 
@@ -80,7 +80,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
         $this->name = $name;
     }
 
-    public function changeName(string $firstName, string $lastName)
+    public function changeName(?string $firstName = null, ?string $lastName = null)
     {
         $this->setName(new ValueObjects\Name($firstName, $lastName));
     }
@@ -117,7 +117,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     public function update(array $credentials)
     {
         if (array_key_exists('email', $credentials)) {
-            $this->email = new ValueObjects\Email(strtolower($credentials['email']));
+            $this->email = new ValueObjects\Email($credentials['email']);
         }
 
         if (array_key_exists('username', $credentials)) {
@@ -128,16 +128,14 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
             $this->password = new ValueObjects\Password($credentials['password']);
         }
 
-        if (array_key_exists('firstName', $credentials) || array_key_exists('lastName', $credentials)) {
-            $firstName = Arr::get($credentials, 'firstName', $this->name->getFirstName());
-            $lastName = Arr::get($credentials, 'lastName', $this->name->getLastName());
-
-            $this->changeName($firstName, $lastName);
-        }
-
         if (array_key_exists('permissions', $credentials)) {
             $this->syncPermissions((array) $credentials['permissions']);
         }
+
+        $this->changeName(
+            Arr::get($credentials, 'firstName', $this->name->getFirstName()),
+            Arr::get($credentials, 'lastName', $this->name->getLastName())
+        );
     }
 
     /**
@@ -379,9 +377,22 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
         return $permissionsFactory($this->permissions, $secondary->getValues());
     }
 
+    /**
+     * @param string $username
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return void
+     */
     private function changeUsername(string $username): void
     {
-        $this->username = strtolower($username);
+        $username = strtolower(trim($username));
+
+        if (strlen($username) < 1) {
+            throw new \InvalidArgumentException('Username cannot be empty');
+        }
+
+        $this->username = $username;
     }
 
     public function setPersistableKey(string $key)

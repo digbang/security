@@ -13,9 +13,13 @@ class Email
      * Email constructor.
      *
      * @param string $address
+     *
+     * @throws \InvalidArgumentException
      */
     public function __construct($address)
     {
+        $address = strtolower(trim($address));
+
         if (! filter_var($address, FILTER_VALIDATE_EMAIL)) {
             throw new \InvalidArgumentException("Given email address is not valid: [$address].");
         }
