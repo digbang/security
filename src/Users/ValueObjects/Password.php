@@ -18,7 +18,7 @@ class Password
      */
     public function __construct(string $plain)
     {
-        if (strlen($plain) < 1) {
+        if (strlen(trim($plain)) < 1) {
             throw new \InvalidArgumentException('Password cannot be empty');
         }
 

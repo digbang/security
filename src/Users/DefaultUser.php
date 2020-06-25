@@ -124,7 +124,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
             $this->changeUsername($credentials['username']);
         }
 
-        if (array_key_exists('password', $credentials)) {
+        if (array_key_exists('password', $credentials) && ! empty($credentials['password'])) {
             $this->password = new ValueObjects\Password($credentials['password']);
         }
 
@@ -386,13 +386,13 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
      */
     private function changeUsername(string $username): void
     {
-        $username = trim($username);
+        $username = strtolower(trim($username));
 
         if (strlen($username) < 1) {
             throw new \InvalidArgumentException('Username cannot be empty');
         }
 
-        $this->username = strtolower($username);
+        $this->username = $username;
     }
 
     public function setPersistableKey(string $key)
