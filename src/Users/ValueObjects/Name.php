@@ -20,7 +20,7 @@ class Name
      * @param null|string $firstName
      * @param null|string $lastName
      */
-    public function __construct(?string $firstName = '', ?string $lastName = '')
+    public function __construct(?string $firstName = null, ?string $lastName = null)
     {
         $this->firstName = $firstName;
         $this->lastName = $lastName;

@@ -116,28 +116,26 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
      */
     public function update(array $credentials)
     {
-        if (isset($credentials['email'])) {
+        if (array_key_exists('email', $credentials)) {
             $this->email = new ValueObjects\Email($credentials['email']);
         }
 
-        if (isset($credentials['username'])) {
+        if (array_key_exists('username', $credentials)) {
             $this->changeUsername($credentials['username']);
         }
 
-        if (isset($credentials['password'])) {
+        if (array_key_exists('password', $credentials)) {
             $this->password = new ValueObjects\Password($credentials['password']);
         }
 
-        if (isset($credentials['firstName']) || isset($credentials['lastName'])) {
-            $firstName = Arr::get($credentials, 'firstName', $this->name->getFirstName());
-            $lastName = Arr::get($credentials, 'lastName', $this->name->getLastName());
-
-            $this->changeName($firstName, $lastName);
+        if (array_key_exists('permissions', $credentials)) {
+            $this->syncPermissions((array) $credentials['permissions']);
         }
 
-        if (isset($credentials['permissions'])) {
-            $this->syncPermissions((array)$credentials['permissions']);
-        }
+        $this->changeName(
+            Arr::get($credentials, 'firstName', $this->name->getFirstName()),
+            Arr::get($credentials, 'lastName', $this->name->getLastName())
+        );
     }
 
     /**
@@ -388,11 +386,13 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
      */
     private function changeUsername(string $username): void
     {
+        $username = trim($username);
+
         if (strlen($username) < 1) {
-            throw new \InvalidArgumentException('Empty username are not allowed.');
+            throw new \InvalidArgumentException('Username cannot be empty');
         }
 
-        $this->username = strtolower(trim($username));
+        $this->username = strtolower($username);
     }
 
     public function setPersistableKey(string $key)

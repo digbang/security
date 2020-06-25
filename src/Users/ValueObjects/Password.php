@@ -18,10 +18,8 @@ class Password
      */
     public function __construct(string $plain)
     {
-        $plain = trim($plain);
-
         if (strlen($plain) < 1) {
-            throw new \InvalidArgumentException('Empty passwords are not allowed.');
+            throw new \InvalidArgumentException('Password cannot be empty');
         }
 
         $this->hash = password_hash($plain, PASSWORD_DEFAULT);
