@@ -3,6 +3,7 @@
 namespace Digbang\Security\Urls;
 
 use Illuminate\Http\Request;
+use Illuminate\Routing\AbstractRouteCollection;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\RouteCollection;
 
@@ -14,9 +15,9 @@ class RouteCollectionMatcher extends RouteCollection
     private $collection;
 
     /**
-     * @param RouteCollection $collection
+     * @param AbstractRouteCollection $collection
      */
-    public function __construct(RouteCollection $collection)
+    public function __construct(AbstractRouteCollection $collection)
     {
         $this->collection = $collection;
     }
