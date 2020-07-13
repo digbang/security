@@ -10,13 +10,10 @@ use Illuminate\Routing\RouteCollection;
 class RouteCollectionMatcher extends RouteCollection
 {
     /**
-     * @var RouteCollection
+     * @var AbstractRouteCollection
      */
     private $collection;
 
-    /**
-     * @param AbstractRouteCollection $collection
-     */
     public function __construct(AbstractRouteCollection $collection)
     {
         $this->collection = $collection;
