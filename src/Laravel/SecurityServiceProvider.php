@@ -10,8 +10,11 @@ use Digbang\Security\Mappings\EmailMapping;
 use Digbang\Security\Mappings\NameMapping;
 use Digbang\Security\Mappings\PasswordMapping;
 use Digbang\Security\SecurityContext;
+use Digbang\Security\Urls\PermissionAwareUrlGeneratorExtension;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\MappingException;
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Routing\RouteCollectionInterface;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use LaravelDoctrine\Fluent\FluentDriver;
@@ -41,18 +44,26 @@ class SecurityServiceProvider extends ServiceProvider
      * @param Router $router
      * @param EntityManagerInterface $entityManager
      *
-     * @throws \Doctrine\ORM\Mapping\MappingException
+     * @throws MappingException
      */
     public function boot(SecurityContext $securityContext, Router $router, EntityManagerInterface $entityManager)
     {
         $this->addMappings($securityContext->getOrCreateFluentDriver($entityManager));
+
+        $this->app
+            ->when(PermissionAwareUrlGeneratorExtension::class)
+            ->needs(RouteCollectionInterface::class)
+            ->give(function () use ($router) {
+                return $router->getRoutes();
+            });
+
         $this->addMiddleware($router);
     }
 
     /**
      * @param FluentDriver $mappingDriver
      *
-     * @throws \Doctrine\ORM\Mapping\MappingException
+     * @throws MappingException
      */
     private function addMappings(FluentDriver $mappingDriver)
     {
