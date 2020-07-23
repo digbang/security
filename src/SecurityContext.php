@@ -89,14 +89,7 @@ class SecurityContext
             return $security->url();
         });
 
-        $this->container->bind(UrlGenerator::class, function (Container $container) use ($security) {
-            /** @var PermissionAwareUrlGeneratorExtension $url */
-            $url = $container->make(PermissionAwareUrlGeneratorExtension::class);
-            $url->setUrlGenerator($security->url());
-
-            return $url;
-        });
-
+        $this->container->instance(UrlGenerator::class, $this->container->make(PermissionAwareUrlGeneratorExtension::class));
         $this->container->alias(UrlGenerator::class, 'url');
 
         $request->setUserResolver(function () use ($security) {
