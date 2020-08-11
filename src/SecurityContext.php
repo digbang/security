@@ -282,7 +282,12 @@ class SecurityContext
             $reflect = new ReflectionClass($mapping->mapFor());
             $namespace = explode('\\', $reflect->getNamespaceName());
 
-            $fluent = $this->getOrCreateFluentDriver($entityManager, $namespace[0]);
+            $driverName = $namespace[0];
+            if (count($namespace) > 1) {
+                $driverName .= '\\' . $namespace[1];
+            }
+
+            $fluent = $this->getOrCreateFluentDriver($entityManager, $driverName);
 
             $fluent->addMapping($mapping);
         }
