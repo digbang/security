@@ -2,6 +2,8 @@
 
 namespace Digbang\Security\Factories;
 
+use Cartalyst\Sentinel\Cookies\IlluminateCookie;
+use Cartalyst\Sentinel\Sessions\IlluminateSession;
 use Digbang\Security\Activations\ActivationRepository;
 use Digbang\Security\Configurations\SecurityContextConfiguration;
 use Digbang\Security\Permissions\InsecurePermissionRepository;
@@ -12,7 +14,11 @@ use Digbang\Security\Roles\RoleRepository;
 use Digbang\Security\SecurityContext;
 use Digbang\Security\Throttling\ThrottleRepository;
 use Digbang\Security\Users\UserRepository;
+use Doctrine\ORM\EntityManager;
+use Illuminate\Cookie\CookieJar;
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Http\Request;
+use Illuminate\Session\Store;
 
 class ConfigurationRepositoryFactory implements RepositoryFactory
 {
@@ -48,8 +54,21 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
      */
     public function createPersistenceRepository($context)
     {
-        if ($this->configuration($context)->getPersistenceRepository()) {
-            $repository = $this->container->make($this->configuration($context)->getPersistenceRepository());
+        $persistenceRepository = $this->configuration($context)->getPersistenceRepository();
+        if ($persistenceRepository) {
+            $entityManager = $this->container->make(EntityManager::class);
+            $session = new IlluminateSession($this->container->make(Store::class), "persistence:$context");
+            $cookie = new IlluminateCookie(
+                $this->container->make(Request::class),
+                $this->container->make(CookieJar::class),
+                $context
+            );
+
+            $repository = $this->container->make($persistenceRepository, [
+                'entityManager' => $entityManager,
+                'session' => $session,
+                'cookie' => $cookie,
+            ]);
         } else {
             $repository = $this->defaults->createPersistenceRepository($context);
         }
@@ -64,8 +83,15 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
      */
     public function createUserRepository($context, PersistenceRepository $persistenceRepository, RoleRepository $roleRepository)
     {
-        if ($this->configuration($context)->getUserRepository()) {
-            return $this->container->make($this->configuration($context)->getUserRepository());
+        $userRepository = $this->configuration($context)->getUserRepository();
+        if ($userRepository) {
+            $entityManager = $this->container->make(EntityManager::class);
+
+            return $this->container->make($userRepository, [
+                'entityManager' => $entityManager,
+                'persistences' => $persistenceRepository,
+                'roles' => $roleRepository,
+            ]);
         }
 
         return $this->defaults->createUserRepository($context, $persistenceRepository, $roleRepository);
@@ -77,11 +103,16 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
     public function createRoleRepository($context)
     {
         if (! $this->configuration($context)->isRolesEnabled()) {
-            return new NullRoleRepository;
+            return new NullRoleRepository();
         }
 
-        if ($this->configuration($context)->getRoleRepository()) {
-            return $this->container->make($this->configuration($context)->getRoleRepository());
+        $roleRepository = $this->configuration($context)->getRoleRepository();
+        if ($roleRepository) {
+            $entityManager = $this->container->make(EntityManager::class);
+
+            return $this->container->make($roleRepository, [
+                'entityManager' => $entityManager,
+            ]);
         }
 
         return $this->defaults->createRoleRepository($context);
@@ -92,8 +123,13 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
      */
     public function createActivationRepository($context)
     {
-        if ($this->configuration($context)->getActivationRepository()) {
-            $repository = $this->container->make($this->configuration($context)->getActivationRepository());
+        $activationRepository = $this->configuration($context)->getActivationRepository();
+        if ($activationRepository) {
+            $entityManager = $this->container->make(EntityManager::class);
+
+            $repository = $this->container->make($activationRepository, [
+                'entityManager' => $entityManager,
+            ]);
         } else {
             $repository = $this->defaults->createActivationRepository($context);
         }
@@ -109,8 +145,14 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
      */
     public function createReminderRepository($context, UserRepository $userRepository)
     {
-        if ($this->configuration($context)->getReminderRepository()) {
-            $repository = $this->container->make($this->configuration($context)->getReminderRepository());
+        $reminderRepository = $this->configuration($context)->getReminderRepository();
+        if ($reminderRepository) {
+            $entityManager = $this->container->make(EntityManager::class);
+
+            $repository = $this->container->make($reminderRepository, [
+                'entityManager' => $entityManager,
+                'users' => $userRepository,
+            ]);
         } else {
             $repository = $this->defaults->createReminderRepository($context, $userRepository);
         }
@@ -129,10 +171,11 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
         $enabled = $this->configuration($context)->isPermissionsEnabled();
 
         if (! $enabled) {
-            return new InsecurePermissionRepository;
+            return new InsecurePermissionRepository();
         }
 
-        if ($permissionRepository = $this->configuration($context)->getPermissionRepository()) {
+        $permissionRepository = $this->configuration($context)->getPermissionRepository();
+        if ($permissionRepository) {
             return $this->container->make($permissionRepository);
         }
 
@@ -144,8 +187,13 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
      */
     public function createThrottleRepository($context)
     {
-        if ($this->configuration($context)->getThrottleRepository()) {
-            $repository = $this->container->make($this->configuration($context)->getThrottleRepository());
+        $throttleRepository = $this->configuration($context)->getThrottleRepository();
+        if ($throttleRepository) {
+            $entityManager = $this->container->make(EntityManager::class);
+
+            $repository = $this->container->make($throttleRepository, [
+                'entityManager' => $entityManager,
+            ]);
         } else {
             $repository = $this->defaults->createThrottleRepository($context);
         }
