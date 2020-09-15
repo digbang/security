@@ -17,10 +17,10 @@ class Name
     /**
      * Name constructor.
      *
-     * @param string $firstName
-     * @param string $lastName
+     * @param null|string $firstName
+     * @param null|string $lastName
      */
-    public function __construct($firstName = '', $lastName = '')
+    public function __construct(?string $firstName = null, ?string $lastName = null)
     {
         $this->firstName = $firstName;
         $this->lastName = $lastName;

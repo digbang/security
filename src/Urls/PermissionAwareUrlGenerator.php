@@ -29,10 +29,15 @@ class PermissionAwareUrlGenerator implements UrlGenerator
         $this->securityApi = $securityApi;
     }
 
+    public function url(): UrlGenerator
+    {
+        return $this->url;
+    }
+
     public function __call($name, $args)
     {
-        if (\is_callable([$this->url, $name])) {
-            return \call_user_func_array([$this->url, $name], $args);
+        if (is_callable([$this->url, $name])) {
+            return call_user_func_array([$this->url, $name], $args);
         }
     }
 

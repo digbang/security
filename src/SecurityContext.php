@@ -17,6 +17,7 @@ use LaravelDoctrine\Fluent\FluentDriver;
 use LaravelDoctrine\Fluent\Mapping;
 use LaravelDoctrine\ORM\Configuration\MetaData\MetaDataManager;
 use LaravelDoctrine\ORM\Extensions\MappingDriverChain;
+use ReflectionClass;
 
 class SecurityContext
 {
@@ -89,14 +90,7 @@ class SecurityContext
             return $security->url();
         });
 
-        $this->container->bind(UrlGenerator::class, function (Container $container) use ($security) {
-            /** @var PermissionAwareUrlGeneratorExtension $url */
-            $url = $container->make(PermissionAwareUrlGeneratorExtension::class);
-            $url->setUrlGenerator($security->url());
-
-            return $url;
-        });
-
+        $this->container->instance(UrlGenerator::class, $this->container->make(PermissionAwareUrlGeneratorExtension::class));
         $this->container->alias(UrlGenerator::class, 'url');
 
         $request->setUserResolver(function () use ($security) {
@@ -139,19 +133,20 @@ class SecurityContext
 
     /**
      * @param EntityManagerInterface $entityManager
+     * @param string $driverName
      *
      * @return FluentDriver
      */
-    public function getOrCreateFluentDriver(EntityManagerInterface $entityManager)
+    public function getOrCreateFluentDriver(EntityManagerInterface $entityManager, $driverName = 'Digbang\\Security')
     {
         /** @var MappingDriverChain $chain */
         $chain = $entityManager->getConfiguration()->getMetadataDriverImpl();
 
         $drivers = $chain->getDrivers();
 
-        if (array_key_exists('Digbang\\Security', $drivers)) {
+        if (array_key_exists($driverName, $drivers)) {
             /** @var FluentDriver $digbangSecurity */
-            $digbangSecurity = $drivers['Digbang\\Security'];
+            $digbangSecurity = $drivers[$driverName];
 
             return $digbangSecurity;
         }
@@ -162,7 +157,7 @@ class SecurityContext
         /** @var FluentDriver $fluent */
         $fluent = $metaDataManager->driver('fluent', ['mappings' => []]);
 
-        $chain->addDriver($fluent, 'Digbang\\Security');
+        $chain->addDriver($fluent, $driverName);
 
         return $fluent;
     }
@@ -283,9 +278,17 @@ class SecurityContext
      */
     private function addMappings($mappings, EntityManagerInterface $entityManager)
     {
-        $fluent = $this->getOrCreateFluentDriver($entityManager);
-
         foreach ($mappings as $mapping) {
+            $reflect = new ReflectionClass($mapping->mapFor());
+            $namespace = explode('\\', $reflect->getNamespaceName());
+
+            $driverName = $namespace[0];
+            if (count($namespace) > 1) {
+                $driverName .= '\\' . $namespace[1];
+            }
+
+            $fluent = $this->getOrCreateFluentDriver($entityManager, $driverName);
+
             $fluent->addMapping($mapping);
         }
     }
