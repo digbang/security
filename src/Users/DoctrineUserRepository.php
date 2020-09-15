@@ -167,7 +167,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
      * @param array    $credentials
      * @param \Closure $callback
      *
-     * @return User
+     * @return User|UserInterface
      */
     public function create(array $credentials, Closure $callback = null): ?UserInterface
     {
