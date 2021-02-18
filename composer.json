@@ -9,20 +9,20 @@
 		}
 	],
 	"require": {
-		"php": "^7.3",
+		"php": "^7.3|^8.0",
 		"laravel-doctrine/orm": "^1.6",
 		"laravel-doctrine/fluent": "^1.1",
 		"illuminate/support":   "^7.0|^8.0",
 		"illuminate/contracts": "^7.0|^8.0",
-		"illuminate/events":    "^7.0|^8.0",
-		"illuminate/cookie":    "^7.0|^8.0",
-		"illuminate/routing":   "^7.0|^8.0",
-		"cartalyst/sentinel":   "^4.0|^5.0",
-		"doctrine/dbal":        "~2.5",
+		"illuminate/events": "^7.0|^8.0",
+		"illuminate/cookie": "^7.0|^8.0",
+		"illuminate/routing": "^7.0|^8.0",
+		"cartalyst/sentinel": "^4.0|^5.0",
+		"doctrine/dbal": "~2.5",
 		"friendsofphp/php-cs-fixer": "^2.15"
 	},
 	"require-dev": {
-		"phpspec/phpspec":     "^6.0",
+		"phpspec/phpspec": "^7.0",
 		"phpstan/phpstan": "^0.12"
 	},
 	"autoload": {
