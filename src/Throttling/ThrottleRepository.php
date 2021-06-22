@@ -3,7 +3,7 @@
 namespace Digbang\Security\Throttling;
 
 use Cartalyst\Sentinel\Throttling\ThrottleRepositoryInterface;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 
 interface ThrottleRepository extends ObjectRepository, ThrottleRepositoryInterface
 {

@@ -3,7 +3,7 @@
 namespace Digbang\Security\Activations;
 
 use Cartalyst\Sentinel\Activations\ActivationRepositoryInterface;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 
 interface ActivationRepository extends ObjectRepository, ActivationRepositoryInterface
 {

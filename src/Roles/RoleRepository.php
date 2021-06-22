@@ -4,7 +4,7 @@ namespace Digbang\Security\Roles;
 
 use Cartalyst\Sentinel\Roles\RoleRepositoryInterface;
 use Doctrine\Common\Collections\Selectable;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Illuminate\Support\Collection;
 
 interface RoleRepository extends ObjectRepository, RoleRepositoryInterface, Selectable
