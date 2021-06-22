@@ -30,7 +30,7 @@ return (new PhpCsFixer\Config())
                 'method_private',
             ],
         ],
-        'imports_order' => true,
+        'ordered_imports' => true,
         'phpdoc_align' => false,
         'phpdoc_order' => true,
         'psr_autoloading' => true,
