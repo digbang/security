@@ -72,6 +72,7 @@ trait UserMappingTrait
         $builder->carbonDateTime('lastLogin')->nullable();
         $builder->carbonDateTime('createdAt');
         $builder->carbonDateTime('updatedAt');
+        $builder->boolean('isPasswordConfirmed')->default(false);
         $builder->events()
             ->prePersist('onPrePersist')
             ->preUpdate('onPreUpdate');

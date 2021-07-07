@@ -48,6 +48,8 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     protected $activations;
     /** @var ArrayCollection */
     protected $reminders;
+    /** @var bool */
+    protected $isPasswordConfirmed = false;
 
     public function __construct(string $email, string $password, string $username)
     {
