@@ -48,8 +48,8 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     protected $activations;
     /** @var ArrayCollection */
     protected $reminders;
-    /** @var bool */
-    protected $isPasswordConfirmed = false;
+    /** @var Carbon|null */
+    protected $passwordChangedAt = null;
 
     public function __construct(string $email, string $password, string $username)
     {
@@ -128,6 +128,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
 
         if (array_key_exists('password', $credentials) && ! empty($credentials['password'])) {
             $this->password = new ValueObjects\Password($credentials['password']);
+            $this->passwordChangedAt = Carbon::now();
         }
 
         if (array_key_exists('permissions', $credentials)) {
@@ -407,5 +408,8 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
         return 'persistences';
     }
 
-
+    public function canActivate(): bool
+    {
+        return $this->createdAt->notEqualTo($this->passwordChangedAt);
+    }
 }

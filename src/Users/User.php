@@ -61,4 +61,6 @@ interface User extends UserInterface, PersistableInterface
      * @return \Carbon\Carbon|null
      */
     public function getActivatedAt();
+
+    public function canActivate(): bool;
 }
