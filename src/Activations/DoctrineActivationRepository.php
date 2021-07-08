@@ -4,6 +4,8 @@ namespace Digbang\Security\Activations;
 
 use Carbon\Carbon;
 use Cartalyst\Sentinel\Users\UserInterface;
+use Digbang\Security\Users\User;
+use Digbang\Security\Users\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;
@@ -14,13 +16,18 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
      * @var int
      */
     protected $expires;
+    /**
+     * @var UserRepository
+     */
+    private $users;
 
     /**
      * @param EntityManager $entityManager
      */
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager, UserRepository $users)
     {
         parent::__construct($entityManager, $entityManager->getClassMetadata($this->entityName()));
+        $this->users = $users;
     }
 
     /**
@@ -45,6 +52,10 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
         $activation = $this->findIncomplete($user, $code);
 
         if ($activation === null) {
+            return false;
+        }
+
+        if ($user instanceof User && ! $user->canActivate()){
             return false;
         }
 
@@ -204,5 +215,47 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
 
         $entityManager->persist($activation);
         $entityManager->flush();
+    }
+
+    /**
+     * Confirm the password and activate the user
+     *
+     * @param UserInterface $user
+     * @param string $code
+     * @param string $password
+     * @return bool
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function completeAndUpdatePassword(UserInterface $user, string $code, string $password): bool
+    {
+        $result = $this->findIncomplete($user, $code);
+
+        if ($result === null) {
+            return false;
+        }
+
+        $credentials = ['password' => $password];
+
+        if (! $this->users->validForUpdate($user, $credentials)) {
+            return false;
+        }
+
+        $entityManager = $this->getEntityManager();
+        $entityManager->beginTransaction();
+
+        try {
+            $this->users->update($user, $credentials);
+
+            $result->complete();
+            $this->save($result);
+
+            $entityManager->commit();
+
+            return true;
+        } catch (\Exception $e) {
+            $entityManager->rollback();
+
+            return false;
+        }
     }
 }
