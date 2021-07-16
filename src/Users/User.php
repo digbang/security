@@ -22,6 +22,8 @@ interface User extends UserInterface, PersistableInterface
 
     public function recordLogin();
 
+    public function hasExpiredPassword();
+
     /**
      * @return string
      */

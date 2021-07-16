@@ -70,6 +70,7 @@ trait UserMappingTrait
         $builder->bigIncrements('id');
         $builder->string('username');
         $builder->carbonDateTime('lastLogin')->nullable();
+        $builder->carbonDateTime('passwordExpiration')->nullable();
         $builder->carbonDateTime('createdAt');
         $builder->carbonDateTime('updatedAt');
         $builder->events()

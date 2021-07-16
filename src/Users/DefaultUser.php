@@ -44,15 +44,17 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     protected $name;
     /** @var Carbon|null */
     protected $lastLogin;
+    /** @var Carbon|null */
+    protected $passwordExpiration;
     /** @var ArrayCollection */
     protected $activations;
     /** @var ArrayCollection */
     protected $reminders;
 
-    public function __construct(string $email, string $password, string $username)
+    public function __construct(string $email, string $password, string $username, ?Carbon $passwordExpiration = null)
     {
         $this->email = new ValueObjects\Email($email);
-        $this->password = new ValueObjects\Password($password);
+        $this->changePassword($password, $passwordExpiration);
         $this->changeUsername($username);
 
         $this->roles = new ArrayCollection;
@@ -125,7 +127,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
         }
 
         if (array_key_exists('password', $credentials) && ! empty($credentials['password'])) {
-            $this->password = new ValueObjects\Password($credentials['password']);
+            $this->changePassword($credentials['password'], $credentials['password_expiration']);
         }
 
         if (array_key_exists('permissions', $credentials)) {
@@ -208,6 +210,21 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     public function recordLogin()
     {
         $this->lastLogin = Carbon::now();
+    }
+
+    public function getPasswordExpiration(): ?Carbon
+    {
+        return $this->passwordExpiration;
+    }
+
+    public function setPasswordExpiration(?Carbon $expiration = null): void
+    {
+        $this->passwordExpiration = $expiration;
+    }
+
+    public function hasExpiredPassword(): bool
+    {
+        return $this->passwordExpiration !== null && $this->passwordExpiration->isPast();
     }
 
     /**
@@ -395,6 +412,12 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
         $this->username = $username;
     }
 
+    private function changePassword(string $password, ?Carbon $expiration = null): void
+    {
+        $this->password = new ValueObjects\Password($password);
+        $this->setPasswordExpiration($expiration);
+    }
+
     public function setPersistableKey(string $key)
     {
         return 'user_id';
@@ -404,6 +427,4 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     {
         return 'persistences';
     }
-
-
 }
