@@ -187,24 +187,26 @@ abstract class DoctrinePersistenceRepository extends EntityRepository implements
      */
     public function flush(PersistableInterface $persistable, bool $forget = true): void
     {
+        $code = $this->check();
+
         if ($forget) {
             $this->forget();
         }
-
-        $code = $this->check();
 
         $entityManager = $this->getEntityManager();
         $queryBuilder = $entityManager->createQueryBuilder();
 
         $queryBuilder
             ->delete($this->entityName(), 'p')
-            ->where('p.user = :persistable')
-            ->andWhere('p.code != :code');
+            ->where('p.user = :persistable');
+        
+        if ($code) {
+            $queryBuilder
+                ->andWhere('p.code != :code')
+                ->setParameter('code', $code);
+        }
 
-        $queryBuilder->setParameters([
-            'persistable' => $persistable,
-            'code' => $code,
-        ]);
+        $queryBuilder->setParameter('persistable', $persistable);
 
         $queryBuilder->getQuery()->execute();
     }
