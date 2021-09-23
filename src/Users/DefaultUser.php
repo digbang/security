@@ -127,7 +127,12 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
         }
 
         if (array_key_exists('password', $credentials) && ! empty($credentials['password'])) {
-            $this->changePassword($credentials['password'], $credentials['password_expiration']);
+            $expiration = null;
+            if (array_key_exists('password_expiration', $credentials) && ! empty($credentials['password_expiration'])) {
+                $expiration = $credentials['password_expiration'];
+            }
+
+            $this->changePassword($credentials['password'], $expiration);
         }
 
         if (array_key_exists('permissions', $credentials)) {
