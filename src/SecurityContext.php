@@ -9,6 +9,7 @@ use Digbang\Security\Mappings\CustomTableMapping;
 use Digbang\Security\Permissions\PermissionStrategyEventListener;
 use Digbang\Security\Urls\PermissionAwareUrlGeneratorExtension;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Routing\UrlGenerator as UrlGeneratorContract;
 use Illuminate\Http\Request;
@@ -68,10 +69,16 @@ class SecurityContext
     {
         $this->contexts[$configuration->getName()] = $configuration;
 
-        $this->updateMappings(
-            $configuration,
-            $this->container->make(EntityManagerInterface::class)
-        );
+        /** @var ManagerRegistry $managerRegistry */
+        $managerRegistry = $this->container->make(ManagerRegistry::class);
+
+        /** @var EntityManager $entityManager */
+        foreach ($managerRegistry->getManagers() as $entityManager) {
+            $this->updateMappings(
+                $configuration,
+                $entityManager
+            );
+        }
     }
 
     /**

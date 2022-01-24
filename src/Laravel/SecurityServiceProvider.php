@@ -11,7 +11,7 @@ use Digbang\Security\Mappings\NameMapping;
 use Digbang\Security\Mappings\PasswordMapping;
 use Digbang\Security\SecurityContext;
 use Digbang\Security\Urls\PermissionAwareUrlGeneratorExtension;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Mapping\MappingException;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Routing\RouteCollectionInterface;
@@ -42,13 +42,16 @@ class SecurityServiceProvider extends ServiceProvider
      *
      * @param SecurityContext $securityContext
      * @param Router $router
-     * @param EntityManagerInterface $entityManager
+     * @param ManagerRegistry $managerRegistry
      *
      * @throws MappingException
      */
-    public function boot(SecurityContext $securityContext, Router $router, EntityManagerInterface $entityManager)
+    public function boot(SecurityContext $securityContext, Router $router, ManagerRegistry $managerRegistry)
     {
-        $this->addMappings($securityContext->getOrCreateFluentDriver($entityManager));
+        /** @var EntityManager $entityManager */
+        foreach ($managerRegistry->getManagers() as $entityManager) {
+            $this->addMappings($securityContext->getOrCreateFluentDriver($entityManager));
+        }
 
         $this->app
             ->when(PermissionAwareUrlGeneratorExtension::class)
