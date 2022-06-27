@@ -68,6 +68,14 @@ class PermissionAwareUrlGenerator implements UrlGenerator
     /**
      * {@inheritdoc}
      */
+    public function getRootControllerNamespace()
+    {
+        return $this->url->getRootControllerNamespace();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function to($path, $extra = [], $secure = null)
     {
         $url = $this->url->to($path, $extra, $secure);
