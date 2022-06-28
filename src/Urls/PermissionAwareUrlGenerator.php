@@ -5,7 +5,7 @@ namespace Digbang\Security\Urls;
 use Digbang\Security\Contracts\SecurityApi;
 use Digbang\Security\Exceptions\Unauthorized;
 use Digbang\Security\Permissions\Permissible;
-use Illuminate\Routing\UrlGenerator;
+use Illuminate\Contracts\Routing\UrlGenerator;
 
 class PermissionAwareUrlGenerator implements UrlGenerator
 {
