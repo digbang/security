@@ -20,8 +20,8 @@ class PermissionAwareUrlGenerator implements UrlGenerator
     private $securityApi;
 
     /**
-     * @param UrlGenerator $url
-     * @param SecurityApi  $securityApi
+     * @param  UrlGenerator  $url
+     * @param  SecurityApi  $securityApi
      */
     public function __construct(UrlGenerator $url, SecurityApi $securityApi)
     {
@@ -42,7 +42,7 @@ class PermissionAwareUrlGenerator implements UrlGenerator
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function route($name, $parameters = [], $absolute = true)
     {
@@ -54,7 +54,7 @@ class PermissionAwareUrlGenerator implements UrlGenerator
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function action($action, $parameters = [], $absolute = true)
     {
@@ -66,7 +66,7 @@ class PermissionAwareUrlGenerator implements UrlGenerator
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getRootControllerNamespace()
     {
@@ -74,7 +74,7 @@ class PermissionAwareUrlGenerator implements UrlGenerator
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function to($path, $extra = [], $secure = null)
     {
@@ -88,7 +88,7 @@ class PermissionAwareUrlGenerator implements UrlGenerator
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function secure($path, $parameters = [])
     {
@@ -96,7 +96,7 @@ class PermissionAwareUrlGenerator implements UrlGenerator
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function asset($path, $secure = null)
     {
@@ -105,7 +105,7 @@ class PermissionAwareUrlGenerator implements UrlGenerator
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setRootControllerNamespace($rootNamespace)
     {
@@ -137,8 +137,7 @@ class PermissionAwareUrlGenerator implements UrlGenerator
     /**
      * Get the URL for the previous request.
      *
-     * @param  mixed $fallback
-     *
+     * @param  mixed  $fallback
      * @return string
      */
     public function previous($fallback = false)
@@ -150,7 +149,7 @@ class PermissionAwareUrlGenerator implements UrlGenerator
      * Check if the logged user has access to the given permission(s).
      * Users must implement the Digbang\Security\Permissions\Permissible interface.
      *
-     * @param string|array $permission
+     * @param  string|array  $permission
      *
      * @throws Unauthorized
      */

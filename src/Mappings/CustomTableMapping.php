@@ -12,7 +12,7 @@ abstract class CustomTableMapping extends EntityMapping
     /**
      * Set the custom table name.
      *
-     * @param string $table
+     * @param  string  $table
      */
     public function setTable($table)
     {
@@ -32,7 +32,7 @@ abstract class CustomTableMapping extends EntityMapping
     /**
      * Load the object's metadata through the Metadata Builder object.
      *
-     * @param Fluent $builder
+     * @param  Fluent  $builder
      */
     public function map(Fluent $builder)
     {

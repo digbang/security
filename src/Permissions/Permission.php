@@ -27,8 +27,7 @@ interface Permission
     /**
      * Compares two permissions and returns TRUE if they are equal.
      *
-     * @param Permission $permission
-     *
+     * @param  Permission  $permission
      * @return bool
      */
     public function equals(Permission $permission);

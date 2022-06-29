@@ -9,13 +9,12 @@ use Cartalyst\Sentinel\Users\UserInterface;
 interface User extends UserInterface, PersistableInterface
 {
     /**
-     * @param array $credentials
+     * @param  array  $credentials
      */
     public function update(array $credentials);
 
     /**
-     * @param string $password
-     *
+     * @param  string  $password
      * @return bool
      */
     public function checkPassword($password);

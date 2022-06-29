@@ -27,8 +27,8 @@ class DefaultPersistence implements Persistence
     /**
      * Persistence constructor.
      *
-     * @param User   $user
-     * @param string $code
+     * @param  User  $user
+     * @param  string  $code
      */
     public function __construct(User $user, $code)
     {
@@ -37,7 +37,7 @@ class DefaultPersistence implements Persistence
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getUser()
     {

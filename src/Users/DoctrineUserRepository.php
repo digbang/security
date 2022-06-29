@@ -27,9 +27,9 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     protected $roles;
 
     /**
-     * @param EntityManager         $entityManager
-     * @param PersistenceRepository $persistences
-     * @param RoleRepository        $roles
+     * @param  EntityManager  $entityManager
+     * @param  PersistenceRepository  $persistences
+     * @param  RoleRepository  $roles
      */
     public function __construct(
         EntityManager $entityManager,
@@ -47,8 +47,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     /**
      * Finds a user by the given primary key.
      *
-     * @param  int $id
-     *
+     * @param  int  $id
      * @return UserInterface|null
      */
     public function findById(int $id): ?UserInterface
@@ -62,8 +61,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     /**
      * Finds a user by the given credentials.
      *
-     * @param  array $credentials
-     *
+     * @param  array  $credentials
      * @return UserInterface|null
      */
     public function findByCredentials(array $credentials): ?UserInterface
@@ -80,8 +78,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     /**
      * Finds a user by the given persistence code.
      *
-     * @param  string $code
-     *
+     * @param  string  $code
      * @return UserInterface|null
      */
     public function findByPersistenceCode(string $code): ?UserInterface
@@ -92,8 +89,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     /**
      * Records a login for the given user.
      *
-     * @param User $user
-     *
+     * @param  User  $user
      * @return bool
      */
     public function recordLogin(UserInterface $user): bool
@@ -106,8 +102,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     /**
      * Records a logout for the given user.
      *
-     * @param  UserInterface $user
-     *
+     * @param  UserInterface  $user
      * @return bool
      */
     public function recordLogout(UserInterface $user): bool
@@ -118,9 +113,8 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     /**
      * Validate the password of the given user.
      *
-     * @param User $user
-     * @param array $credentials
-     *
+     * @param  User  $user
+     * @param  array  $credentials
      * @return bool
      */
     public function validateCredentials(UserInterface $user, array $credentials): bool
@@ -131,11 +125,10 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     /**
      * Validate if the given user is valid for creation.
      *
-     * @param  array $credentials
+     * @param  array  $credentials
+     * @return bool
      *
      * @throws \InvalidArgumentException
-     *
-     * @return bool
      */
     public function validForCreation(array $credentials): bool
     {
@@ -145,12 +138,11 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     /**
      * Validate if the given user is valid for updating.
      *
-     * @param  UserInterface|int $user
-     * @param  array             $credentials
+     * @param  UserInterface|int  $user
+     * @param  array  $credentials
+     * @return bool
      *
      * @throws \InvalidArgumentException
-     *
-     * @return bool
      */
     public function validForUpdate($user, array $credentials): bool
     {
@@ -164,9 +156,8 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     /**
      * Creates a user.
      *
-     * @param array    $credentials
-     * @param \Closure $callback
-     *
+     * @param  array  $credentials
+     * @param  \Closure  $callback
      * @return User|UserInterface
      */
     public function create(array $credentials, Closure $callback = null): ?UserInterface
@@ -185,9 +176,8 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     /**
      * Updates a user.
      *
-     * @param  User|int $user
-     * @param  array    $credentials
-     *
+     * @param  User|int  $user
+     * @param  array  $credentials
      * @return User|UserInterface
      */
     public function update($user, array $credentials): UserInterface
@@ -227,7 +217,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function destroy(User $user)
     {
@@ -245,19 +235,17 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     /**
      * Create a new user based on the given credentials.
      *
-     * @param array $credentials
-     *
+     * @param  array  $credentials
      * @return User
      */
     abstract protected function createUser(array $credentials);
 
     /**
-     * @param array $credentials
-     * @param int   $id
+     * @param  array  $credentials
+     * @param  int  $id
+     * @return bool
      *
      * @throws InvalidArgumentException
-     *
-     * @return bool
      */
     protected function validate(array $credentials, $id = null)
     {
@@ -273,8 +261,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     }
 
     /**
-     * @param UserInterface $user
-     *
+     * @param  UserInterface  $user
      * @return bool|UserInterface
      */
     protected function save(UserInterface $user)
@@ -293,8 +280,8 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 
         if (array_key_exists('login', $credentials)) {
             $queryBuilder->andWhere($expr->orX(
-                $expr->eq($expr->lower($alias . '.email.address'), $expr->lower(':login')),
-                $expr->eq($expr->lower($alias . '.username'), $expr->lower(':login'))
+                $expr->eq($expr->lower($alias.'.email.address'), $expr->lower(':login')),
+                $expr->eq($expr->lower($alias.'.username'), $expr->lower(':login'))
             ));
 
             $queryBuilder->setParameter('login', $credentials['login']);
@@ -304,12 +291,12 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
             }
 
             if (isset($credentials['email'])) {
-                $queryBuilder->andWhere($expr->eq($expr->lower($alias . '.email.address'), $expr->lower(':email')));
+                $queryBuilder->andWhere($expr->eq($expr->lower($alias.'.email.address'), $expr->lower(':email')));
                 $queryBuilder->setParameter('email', $credentials['email']);
             }
 
             if (isset($credentials['username'])) {
-                $queryBuilder->andWhere($expr->eq($expr->lower($alias . '.username'), $expr->lower(':username')));
+                $queryBuilder->andWhere($expr->eq($expr->lower($alias.'.username'), $expr->lower(':username')));
                 $queryBuilder->setParameter('username', $credentials['username']);
             }
         }

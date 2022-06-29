@@ -12,7 +12,7 @@ class Email
     /**
      * Email constructor.
      *
-     * @param string $address
+     * @param  string  $address
      *
      * @throws \InvalidArgumentException
      */

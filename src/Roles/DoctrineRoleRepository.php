@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 abstract class DoctrineRoleRepository extends EntityRepository implements RoleRepository
 {
     /**
-     * @param EntityManager $entityManager
+     * @param  EntityManager  $entityManager
      */
     public function __construct(EntityManager $entityManager)
     {
@@ -22,8 +22,7 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
     /**
      * Find the role by ID.
      *
-     * @param  int $id
-     *
+     * @param  int  $id
      * @return Role|RoleInterface $role
      */
     public function findById(int $id): ?RoleInterface
@@ -37,8 +36,7 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
     /**
      * Finds a role by the given slug.
      *
-     * @param  string $slug
-     *
+     * @param  string  $slug
      * @return Role|RoleInterface
      */
     public function findBySlug(string $slug): ?RoleInterface
@@ -50,7 +48,7 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function findByName(string $name): ?RoleInterface
     {
@@ -61,7 +59,7 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function create($name, $slug = null)
     {
@@ -73,7 +71,7 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function save(Role $role)
     {
@@ -84,7 +82,7 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function delete(Role $role)
     {
@@ -95,7 +93,7 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function findAll()
     {
@@ -111,9 +109,8 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
     abstract protected function entityName();
 
     /**
-     * @param string      $name
-     * @param string|null $slug
-     *
+     * @param  string  $name
+     * @param  string|null  $slug
      * @return Role
      */
     abstract protected function createRole($name, $slug = null);

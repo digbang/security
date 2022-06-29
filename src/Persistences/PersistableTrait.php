@@ -21,7 +21,7 @@ trait PersistableTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPersistableKey(): string
     {
@@ -29,7 +29,7 @@ trait PersistableTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPersistableRelationship(): string
     {
@@ -37,7 +37,7 @@ trait PersistableTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function generatePersistenceCode(): string
     {

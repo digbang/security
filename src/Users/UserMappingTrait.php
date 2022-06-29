@@ -52,7 +52,7 @@ trait UserMappingTrait
     /**
      * Adds all mappings: properties and relations.
      *
-     * @param Fluent $builder
+     * @param  Fluent  $builder
      */
     public function addMappings(Fluent $builder)
     {
@@ -63,7 +63,7 @@ trait UserMappingTrait
     /**
      * Adds only properties.
      *
-     * @param Fluent $builder
+     * @param  Fluent  $builder
      */
     public function addProperties(Fluent $builder)
     {
@@ -85,7 +85,7 @@ trait UserMappingTrait
     /**
      * Adds only relations.
      *
-     * @param Fluent $builder
+     * @param  Fluent  $builder
      */
     public function addRelations(Fluent $builder)
     {
@@ -154,7 +154,7 @@ trait UserMappingTrait
     /**
      * Change the roles join table name.
      *
-     * @param string $table
+     * @param  string  $table
      */
     public function changeRolesJoinTable($table)
     {
@@ -162,9 +162,8 @@ trait UserMappingTrait
     }
 
     /**
-     * @param string  $key
-     * @param Fluent $builder
-     *
+     * @param  string  $key
+     * @param  Fluent  $builder
      * @return OneToMany
      */
     private function hasMany($key, Fluent $builder)

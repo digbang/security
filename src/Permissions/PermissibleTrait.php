@@ -27,12 +27,12 @@ trait PermissibleTrait
     protected $permissionsFactory;
 
     /**
-     * @param array $permissions
+     * @param  array  $permissions
      */
     abstract public function syncPermissions(array $permissions);
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function hasAccess($permissions): bool
     {
@@ -40,7 +40,7 @@ trait PermissibleTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function hasAnyAccess($permissions): bool
     {
@@ -48,7 +48,7 @@ trait PermissibleTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function allow($permissions, $force = false): void
     {
@@ -62,7 +62,7 @@ trait PermissibleTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function deny($permissions, $force = false): void
     {
@@ -76,7 +76,7 @@ trait PermissibleTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPermissionsInstance(): PermissionsInterface
     {
@@ -88,7 +88,7 @@ trait PermissibleTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function addPermission(string $permission, bool $value = true): PermissibleInterface
     {
@@ -96,7 +96,7 @@ trait PermissibleTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function updatePermission(string $permission, bool $allow = true, bool $create = false): PermissibleInterface
     {
@@ -116,7 +116,7 @@ trait PermissibleTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function removePermission(string $permission): PermissibleInterface
     {
@@ -129,7 +129,7 @@ trait PermissibleTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPermissions()
     {
@@ -137,7 +137,7 @@ trait PermissibleTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setPermissionsFactory(\Closure $permissionsFactory)
     {
@@ -147,7 +147,7 @@ trait PermissibleTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function clearPermissions()
     {
@@ -162,16 +162,14 @@ trait PermissibleTrait
     abstract protected function makePermissionsInstance();
 
     /**
-     * @param string $permission
-     * @param bool   $value
-     *
+     * @param  string  $permission
+     * @param  bool  $value
      * @return Permission
      */
     abstract protected function createPermission($permission, $value);
 
     /**
-     * @param Permission|string $permission
-     *
+     * @param  Permission|string  $permission
      * @return Permission|null
      */
     protected function getPermission($permission)
@@ -186,7 +184,7 @@ trait PermissibleTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function getPermissionsFactory()
     {

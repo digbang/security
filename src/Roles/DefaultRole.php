@@ -27,10 +27,13 @@ class DefaultRole implements Role, Permissible
 
     /** @var int */
     protected $id;
+
     /** @var string */
     protected $name;
+
     /** @var string */
     protected $slug;
+
     /** @var ArrayCollection */
     protected $users;
 
@@ -48,7 +51,7 @@ class DefaultRole implements Role, Permissible
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getRoleId(): int
     {
@@ -56,7 +59,7 @@ class DefaultRole implements Role, Permissible
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getRoleSlug(): string
     {
@@ -72,7 +75,7 @@ class DefaultRole implements Role, Permissible
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getUsers(): IteratorAggregate
     {
@@ -96,7 +99,7 @@ class DefaultRole implements Role, Permissible
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setName($name)
     {
@@ -104,7 +107,7 @@ class DefaultRole implements Role, Permissible
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setRoleSlug($slug)
     {
@@ -112,7 +115,7 @@ class DefaultRole implements Role, Permissible
     }
 
     /**
-     * @param array $permissions
+     * @param  array  $permissions
      */
     public function syncPermissions(array $permissions)
     {
@@ -133,7 +136,7 @@ class DefaultRole implements Role, Permissible
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function is($role)
     {
@@ -145,7 +148,7 @@ class DefaultRole implements Role, Permissible
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function getUsersModel(): string
     {
@@ -153,7 +156,7 @@ class DefaultRole implements Role, Permissible
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function setUsersModel(string $usersModel): void
     {
@@ -161,7 +164,7 @@ class DefaultRole implements Role, Permissible
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function createPermission($permission, $value)
     {
@@ -169,7 +172,7 @@ class DefaultRole implements Role, Permissible
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function makePermissionsInstance()
     {

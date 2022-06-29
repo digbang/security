@@ -167,7 +167,7 @@ class SecurityContextConfiguration
                 50 => 16,
                 60 => 12,
             ],
-            ],
+        ],
         'ip' => [
             'interval' => 900,
             'thresholds' => 5,
@@ -231,7 +231,7 @@ class SecurityContextConfiguration
     /**
      * SecurityContextConfiguration constructor.
      *
-     * @param string $name
+     * @param  string  $name
      */
     public function __construct($name)
     {
@@ -244,9 +244,8 @@ class SecurityContextConfiguration
     /**
      * is triggered when invoking inaccessible methods in an object context.
      *
-     * @param string $name
-     * @param array $arguments
-     *
+     * @param  string  $name
+     * @param  array  $arguments
      * @return mixed
      *
      * @see http://php.net/manual/en/language.oop5.overloading.php#language.oop5.overloading.methods
@@ -347,14 +346,13 @@ class SecurityContextConfiguration
      *
      * To unset the global prefix, use an empty string as prefix.
      *
-     * @param string $prefix
-     *
+     * @param  string  $prefix
      * @return $this
      */
     public function setPrefix($prefix)
     {
         if ($prefix != '') {
-            $prefix = rtrim($prefix, '_') . '_';
+            $prefix = rtrim($prefix, '_').'_';
         }
 
         $this->prefix = $prefix;
@@ -419,9 +417,8 @@ class SecurityContextConfiguration
     }
 
     /**
-     * @param string $key
-     * @param string $checkpoint Must implement \Cartalyst\Sentinel\Checkpoints\CheckpointInterface
-     *
+     * @param  string  $key
+     * @param  string  $checkpoint Must implement \Cartalyst\Sentinel\Checkpoints\CheckpointInterface
      * @return $this
      */
     public function addCheckpoint($key, $checkpoint)
@@ -432,8 +429,7 @@ class SecurityContextConfiguration
     }
 
     /**
-     * @param string $key
-     *
+     * @param  string  $key
      * @return $this
      */
     public function removeCheckpoint($key)
@@ -456,8 +452,7 @@ class SecurityContextConfiguration
      * as first parameter and an array of Collection objects as second parameter,
      * corresponding to user and role permissions.
      *
-     * @param \Closure $factory
-     *
+     * @param  \Closure  $factory
      * @return $this
      */
     public function setPermissionsFactory(\Closure $factory)
@@ -502,8 +497,7 @@ class SecurityContextConfiguration
     }
 
     /**
-     * @param string $permissionRepository Must implement \Digbang\Security\Permissions\PermissionRepository
-     *
+     * @param  string  $permissionRepository Must implement \Digbang\Security\Permissions\PermissionRepository
      * @return $this
      */
     public function setPermissionRepository($permissionRepository)
@@ -558,10 +552,9 @@ class SecurityContextConfiguration
     }
 
     /**
-     * @param string $userRepository Must implement \Cartalyst\Sentinel\Users\UserRepositoryInterface
-     * @param string|null $userMapping must implement \Digbang\Security\Mappings\SecurityUserMapping, null if
+     * @param  string  $userRepository Must implement \Cartalyst\Sentinel\Users\UserRepositoryInterface
+     * @param  string|null  $userMapping must implement \Digbang\Security\Mappings\SecurityUserMapping, null if
      *                                 you want to keep the default user mapping
-     *
      * @return $this
      */
     public function changeUsers($userRepository, $userMapping = null)
@@ -573,8 +566,8 @@ class SecurityContextConfiguration
     }
 
     /**
-     * @param string|null $userPermissionMapping Must implement \LaravelDoctrine\Fluent\EntityMapping
-     * @param string|null $rolePermissionMapping Must implement \LaravelDoctrine\Fluent\EntityMapping
+     * @param  string|null  $userPermissionMapping Must implement \LaravelDoctrine\Fluent\EntityMapping
+     * @param  string|null  $rolePermissionMapping Must implement \LaravelDoctrine\Fluent\EntityMapping
      */
     public function changePermissions($userPermissionMapping = null, $rolePermissionMapping = null)
     {
@@ -583,9 +576,8 @@ class SecurityContextConfiguration
     }
 
     /**
-     * @param string $activationRepository Must implement \Cartalyst\Sentinel\Activations\ActivationRepositoryInterface
-     * @param string|null $activationMapping Must implement \LaravelDoctrine\Fluent\EntityMapping
-     *
+     * @param  string  $activationRepository Must implement \Cartalyst\Sentinel\Activations\ActivationRepositoryInterface
+     * @param  string|null  $activationMapping Must implement \LaravelDoctrine\Fluent\EntityMapping
      * @return $this
      */
     public function changeActivations($activationRepository, $activationMapping = null)
@@ -597,9 +589,8 @@ class SecurityContextConfiguration
     }
 
     /**
-     * @param string $persistenceRepository Must implement \Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface
-     * @param string|null $persistencesMapping Must implement \LaravelDoctrine\Fluent\EntityMapping
-     *
+     * @param  string  $persistenceRepository Must implement \Cartalyst\Sentinel\Persistences\PersistenceRepositoryInterface
+     * @param  string|null  $persistencesMapping Must implement \LaravelDoctrine\Fluent\EntityMapping
      * @return $this
      */
     public function changePersistences($persistenceRepository, $persistencesMapping = null)
@@ -611,9 +602,8 @@ class SecurityContextConfiguration
     }
 
     /**
-     * @param string $reminderRepository Must implement \Cartalyst\Sentinel\Reminders\ReminderRepositoryInterface
-     * @param string $reminderMappping Must implement \LaravelDoctrine\Fluent\EntityMapping
-     *
+     * @param  string  $reminderRepository Must implement \Cartalyst\Sentinel\Reminders\ReminderRepositoryInterface
+     * @param  string  $reminderMappping Must implement \LaravelDoctrine\Fluent\EntityMapping
      * @return $this
      */
     public function changeReminders($reminderRepository, $reminderMappping = null)
@@ -625,9 +615,8 @@ class SecurityContextConfiguration
     }
 
     /**
-     * @param string $roleRepository Must implement \Cartalyst\Sentinel\Roles\RoleRepositoryInterface
-     * @param string $roleMapping Must implement \LaravelDoctrine\Fluent\EntityMapping
-     *
+     * @param  string  $roleRepository Must implement \Cartalyst\Sentinel\Roles\RoleRepositoryInterface
+     * @param  string  $roleMapping Must implement \LaravelDoctrine\Fluent\EntityMapping
      * @return $this
      */
     public function changeRoles($roleRepository, $roleMapping = null)
@@ -639,11 +628,10 @@ class SecurityContextConfiguration
     }
 
     /**
-     * @param string $throttleRepository Must implement \Cartalyst\Sentinel\Throttling\ThrottleRepositoryInterface
-     * @param array $throttleMappings you may set mappings for the following keys:
+     * @param  string  $throttleRepository Must implement \Cartalyst\Sentinel\Throttling\ThrottleRepositoryInterface
+     * @param  array  $throttleMappings you may set mappings for the following keys:
      *                                 'throttle', 'ipThrottle', 'globalThrottle', 'userThrottle'
      *                                 if not present, defaults will be used
-     *
      * @return $this
      */
     public function changeThrottles($throttleRepository, array $throttleMappings = [])
@@ -657,14 +645,13 @@ class SecurityContextConfiguration
     }
 
     /**
-     * @param string $entity
-     *
+     * @param  string  $entity
      * @return string|null
      */
     public function getTable($entity)
     {
         if (array_key_exists($entity, $this->customTables)) {
-            return $this->prefix . $this->customTables[$entity];
+            return $this->prefix.$this->customTables[$entity];
         }
 
         return null;
@@ -679,7 +666,7 @@ class SecurityContextConfiguration
     }
 
     /**
-     * @param string $loginRoute
+     * @param  string  $loginRoute
      */
     public function setLoginRoute($loginRoute)
     {
@@ -687,16 +674,15 @@ class SecurityContextConfiguration
     }
 
     /**
-     * @param string $module
+     * @param  string  $module
+     * @return $this
      *
      * @throws \InvalidArgumentException
-     *
-     * @return $this
      */
     private function enable($module)
     {
         if (! array_key_exists($module, $this->enabled)) {
-            throw new \InvalidArgumentException("Module '$module' cannot be enabled or disabled. Only [" . implode(', ', array_keys($this->enabled)) . '] can.');
+            throw new \InvalidArgumentException("Module '$module' cannot be enabled or disabled. Only [".implode(', ', array_keys($this->enabled)).'] can.');
         }
 
         $this->enabled[$module] = true;
@@ -705,16 +691,15 @@ class SecurityContextConfiguration
     }
 
     /**
-     * @param string $module
+     * @param  string  $module
+     * @return $this
      *
      * @throws \InvalidArgumentException
-     *
-     * @return $this
      */
     private function disable($module)
     {
         if (! array_key_exists($module, $this->enabled)) {
-            throw new \InvalidArgumentException("Module '$module' cannot be enabled or disabled. Only [" . implode(', ', array_keys($this->enabled)) . '] can.');
+            throw new \InvalidArgumentException("Module '$module' cannot be enabled or disabled. Only [".implode(', ', array_keys($this->enabled)).'] can.');
         }
 
         $this->enabled[$module] = false;
@@ -723,42 +708,39 @@ class SecurityContextConfiguration
     }
 
     /**
-     * @param string $module
+     * @param  string  $module
+     * @return bool
      *
      * @throws \InvalidArgumentException
-     *
-     * @return bool
      */
     private function isEnabled($module)
     {
         if (! array_key_exists($module, $this->enabled)) {
-            throw new \InvalidArgumentException("Module '$module' cannot be enabled or disabled. Only [" . implode(', ', array_keys($this->enabled)) . '] can.');
+            throw new \InvalidArgumentException("Module '$module' cannot be enabled or disabled. Only [".implode(', ', array_keys($this->enabled)).'] can.');
         }
 
         return $this->enabled[$module];
     }
 
     /**
-     * @param string $entity
+     * @param  string  $entity
+     * @return string An FQCN that implements \LaravelDoctrine\Fluent\Mapping
      *
      * @throws \InvalidArgumentException
-     *
-     * @return string An FQCN that implements \LaravelDoctrine\Fluent\Mapping
      */
     private function getMapping($entity)
     {
         if (! array_key_exists($entity, $this->mappings)) {
-            throw new \InvalidArgumentException("'$entity' is not a valid mapping key. One of [" . implode(', ', array_keys($this->mappings)) . '] is expected.');
+            throw new \InvalidArgumentException("'$entity' is not a valid mapping key. One of [".implode(', ', array_keys($this->mappings)).'] is expected.');
         }
 
         return $this->mappings[$entity];
     }
 
     /**
-     * @param string $type
-     * @param string $key
-     * @param int|array $value
-     *
+     * @param  string  $type
+     * @param  string  $key
+     * @param  int|array  $value
      * @return $this
      */
     private function setThrottle($type, $key, $value)
@@ -773,9 +755,8 @@ class SecurityContextConfiguration
     }
 
     /**
-     * @param string $type
-     * @param string $key
-     *
+     * @param  string  $type
+     * @param  string  $key
      * @return int|array
      */
     private function getThrottle($type, $key)
@@ -788,10 +769,9 @@ class SecurityContextConfiguration
     }
 
     /**
-     * @param string $type
-     * @param string $subtype
-     * @param int|array $value
-     *
+     * @param  string  $type
+     * @param  string  $subtype
+     * @param  int|array  $value
      * @return $this
      */
     private function setExpiring($type, $subtype, $value)
@@ -806,9 +786,8 @@ class SecurityContextConfiguration
     }
 
     /**
-     * @param string $type
-     * @param string $subtype
-     *
+     * @param  string  $type
+     * @param  string  $subtype
      * @return int|array
      */
     private function getExpiring($type, $subtype)
@@ -821,23 +800,21 @@ class SecurityContextConfiguration
     }
 
     /**
-     * @param string $entity
-     *
+     * @param  string  $entity
      * @return mixed
      */
     private function getRepository($entity)
     {
         if (! array_key_exists($entity, $this->repositories)) {
-            throw new \InvalidArgumentException("'$entity' is not a valid repository. One of [" . implode(', ', array_keys($this->repositories)) . '] is expected.');
+            throw new \InvalidArgumentException("'$entity' is not a valid repository. One of [".implode(', ', array_keys($this->repositories)).'] is expected.');
         }
 
         return $this->repositories[$entity];
     }
 
     /**
-     * @param string $entity
-     * @param string $table
-     *
+     * @param  string  $entity
+     * @param  string  $table
      * @return $this
      */
     private function setMappingTable($entity, $table)

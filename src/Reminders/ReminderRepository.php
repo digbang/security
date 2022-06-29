@@ -8,7 +8,7 @@ use Doctrine\Persistence\ObjectRepository;
 interface ReminderRepository extends ObjectRepository, ReminderRepositoryInterface
 {
     /**
-     * @param int $expires
+     * @param  int  $expires
      */
     public function setExpires($expires);
 }

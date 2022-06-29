@@ -5,7 +5,7 @@ namespace Digbang\Security\Permissions;
 class InsecurePermissionRepository implements PermissionRepository
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getForRoute($route)
     {
@@ -13,7 +13,7 @@ class InsecurePermissionRepository implements PermissionRepository
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getForAction($action)
     {
@@ -21,7 +21,7 @@ class InsecurePermissionRepository implements PermissionRepository
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function all()
     {
@@ -29,7 +29,7 @@ class InsecurePermissionRepository implements PermissionRepository
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getForPath($path)
     {

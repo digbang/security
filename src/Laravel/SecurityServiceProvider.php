@@ -11,8 +11,8 @@ use Digbang\Security\Mappings\NameMapping;
 use Digbang\Security\Mappings\PasswordMapping;
 use Digbang\Security\SecurityContext;
 use Digbang\Security\Urls\PermissionAwareUrlGeneratorExtension;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Mapping\MappingException;
+use Doctrine\Persistence\ManagerRegistry;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Routing\RouteCollectionInterface;
 use Illuminate\Routing\Router;
@@ -40,9 +40,9 @@ class SecurityServiceProvider extends ServiceProvider
     /**
      * Boot the service provider.
      *
-     * @param SecurityContext $securityContext
-     * @param Router $router
-     * @param ManagerRegistry $managerRegistry
+     * @param  SecurityContext  $securityContext
+     * @param  Router  $router
+     * @param  ManagerRegistry  $managerRegistry
      *
      * @throws MappingException
      */
@@ -64,7 +64,7 @@ class SecurityServiceProvider extends ServiceProvider
     }
 
     /**
-     * @param FluentDriver $mappingDriver
+     * @param  FluentDriver  $mappingDriver
      *
      * @throws MappingException
      */
@@ -76,7 +76,7 @@ class SecurityServiceProvider extends ServiceProvider
     }
 
     /**
-     * @param Router $router
+     * @param  Router  $router
      */
     private function addMiddleware(Router $router)
     {

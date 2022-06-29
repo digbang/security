@@ -18,20 +18,18 @@ interface SecurityApi
      * Registers a user. You may provide a callback to occur before the user
      * is saved, or provide a true boolean as a shortcut to activation.
      *
-     * @param  array         $credentials
-     * @param  \Closure|bool $callback
+     * @param  array  $credentials
+     * @param  \Closure|bool  $callback
+     * @return User|bool
      *
      * @throws \InvalidArgumentException
-     *
-     * @return User|bool
      */
     public function register(array $credentials, $callback = null);
 
     /**
      * Registers and activates the user.
      *
-     * @param  array $credentials
-     *
+     * @param  array  $credentials
      * @return User|bool
      */
     public function registerAndActivate(array $credentials);
@@ -39,11 +37,10 @@ interface SecurityApi
     /**
      * Activates the given user.
      *
-     * @param  mixed $user
+     * @param  mixed  $user
+     * @return bool
      *
      * @throws \InvalidArgumentException
-     *
-     * @return bool
      */
     public function activate($user);
 
@@ -71,10 +68,9 @@ interface SecurityApi
     /**
      * Authenticates a user, with "remember" flag.
      *
-     * @param  User|array $credentials
-     * @param  bool       $remember
-     * @param  bool       $login
-     *
+     * @param  User|array  $credentials
+     * @param  bool  $remember
+     * @param  bool  $login
      * @return User|bool
      */
     public function authenticate($credentials, $remember = false, $login = true);
@@ -82,8 +78,7 @@ interface SecurityApi
     /**
      * Authenticates a user, with the "remember" flag.
      *
-     * @param  User|array $credentials
-     *
+     * @param  User|array  $credentials
      * @return User|bool
      */
     public function authenticateAndRemember($credentials);
@@ -91,9 +86,8 @@ interface SecurityApi
     /**
      * Forces an authentication to bypass checkpoints.
      *
-     * @param  User|array $credentials
-     * @param  bool       $remember
-     *
+     * @param  User|array  $credentials
+     * @param  bool  $remember
      * @return User|bool
      */
     public function forceAuthenticate($credentials, $remember = false);
@@ -101,8 +95,7 @@ interface SecurityApi
     /**
      * Forces an authentication to bypass checkpoints, with the "remember" flag.
      *
-     * @param  User|array $credentials
-     *
+     * @param  User|array  $credentials
      * @return User|bool
      */
     public function forceAuthenticateAndRemember($credentials);
@@ -110,8 +103,7 @@ interface SecurityApi
     /**
      * Attempt a stateless authentication.
      *
-     * @param  User|array $credentials
-     *
+     * @param  User|array  $credentials
      * @return User|bool
      */
     public function stateless($credentials);
@@ -133,32 +125,31 @@ interface SecurityApi
     /**
      * Sets the closure which resolves the request credentials.
      *
-     * @param  \Closure $requestCredentials
+     * @param  \Closure  $requestCredentials
      */
     public function setRequestCredentials(\Closure $requestCredentials);
 
     /**
      * Sends a response when HTTP basic authentication fails.
      *
-     * @throws \RuntimeException
-     *
      * @return mixed
+     *
+     * @throws \RuntimeException
      */
     public function getBasicResponse();
 
     /**
      * Sets the callback which creates a basic response.
      *
-     * @param \Closure $basicResponse
+     * @param  \Closure  $basicResponse
      */
     public function creatingBasicResponse(\Closure $basicResponse);
 
     /**
      * Persists a login for the given user.
      *
-     * @param  User $user
-     * @param  bool $remember
-     *
+     * @param  User  $user
+     * @param  bool  $remember
      * @return User|bool
      */
     public function login(User $user, $remember = false);
@@ -166,8 +157,7 @@ interface SecurityApi
     /**
      * Persists a login for the given user, with the "remember" flag.
      *
-     * @param  User $user
-     *
+     * @param  User  $user
      * @return User|bool
      */
     public function loginAndRemember(User $user);
@@ -175,9 +165,8 @@ interface SecurityApi
     /**
      * Logs the current user out.
      *
-     * @param  User $user
-     * @param  bool $everywhere
-     *
+     * @param  User  $user
+     * @param  bool  $everywhere
      * @return bool
      */
     public function logout(User $user = null, $everywhere = false);
@@ -185,9 +174,8 @@ interface SecurityApi
     /**
      * Pass a closure to Sentinel to bypass checkpoints.
      *
-     * @param  \Closure $callback
-     * @param  array   $checkpoints
-     *
+     * @param  \Closure  $callback
+     * @param  array  $checkpoints
      * @return mixed
      */
     public function bypassCheckpoints(\Closure $callback, $checkpoints = []);
@@ -212,23 +200,22 @@ interface SecurityApi
     /**
      * Add a new checkpoint to Sentinel.
      *
-     * @param  string              $key
-     * @param  CheckpointInterface $checkpoint
+     * @param  string  $key
+     * @param  CheckpointInterface  $checkpoint
      */
     public function addCheckpoint($key, CheckpointInterface $checkpoint);
 
     /**
      * Removes a checkpoint.
      *
-     * @param  string $key
+     * @param  string  $key
      */
     public function removeCheckpoint($key);
 
     /**
      * Returns the currently logged in user, lazily checking for it.
      *
-     * @param  bool $check
-     *
+     * @param  bool  $check
      * @return User
      */
     public function getUser($check = true);
@@ -236,7 +223,7 @@ interface SecurityApi
     /**
      * Sets the user associated with Sentinel (does not log in).
      *
-     * @param User $user
+     * @param  User  $user
      */
     public function setUser(User $user);
 

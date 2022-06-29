@@ -40,7 +40,7 @@ class DefaultActivation implements Activation, ActivationInterface
     /**
      * Activation constructor.
      *
-     * @param User $user
+     * @param  User  $user
      */
     public function __construct(User $user)
     {
@@ -49,7 +49,7 @@ class DefaultActivation implements Activation, ActivationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function __get($name)
     {
@@ -107,7 +107,7 @@ class DefaultActivation implements Activation, ActivationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getCode(): string
     {

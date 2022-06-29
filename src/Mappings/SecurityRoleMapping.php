@@ -7,7 +7,7 @@ abstract class SecurityRoleMapping extends CustomTableMapping implements Permiss
     /**
      * Change the roles join table name.
      *
-     * @param string $table
+     * @param  string  $table
      */
     abstract public function changeRolesJoinTable($table);
 }

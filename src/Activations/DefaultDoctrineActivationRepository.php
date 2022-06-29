@@ -12,8 +12,7 @@ class DefaultDoctrineActivationRepository extends DoctrineActivationRepository
     /**
      * Create a new activation record and code.
      *
-     * @param UserInterface $user
-     *
+     * @param  UserInterface  $user
      * @return ActivationInterface
      */
     public function create(UserInterface $user): ActivationInterface
@@ -28,7 +27,7 @@ class DefaultDoctrineActivationRepository extends DoctrineActivationRepository
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function entityName()
     {
@@ -38,9 +37,8 @@ class DefaultDoctrineActivationRepository extends DoctrineActivationRepository
     /**
      * Gets the activation for the given user.
      *
-     * @param \Cartalyst\Sentinel\Users\UserInterface $user
-     * @param string|null $code
-     *
+     * @param  \Cartalyst\Sentinel\Users\UserInterface  $user
+     * @param  string|null  $code
      * @return \Cartalyst\Sentinel\Activations\ActivationInterface|null
      */
     public function get(UserInterface $user, string $code = null): ?ActivationInterface

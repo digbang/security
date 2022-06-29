@@ -15,8 +15,8 @@ use Digbang\Security\SecurityContext;
 use Digbang\Security\Throttling\ThrottleRepository;
 use Digbang\Security\Users\UserRepository;
 use Doctrine\ORM\EntityManager;
-use Illuminate\Cookie\CookieJar;
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Cookie\CookieJar;
 use Illuminate\Http\Request;
 use Illuminate\Session\Store;
 
@@ -40,8 +40,8 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
     /**
      * ConfigurationRepositoryFactory constructor.
      *
-     * @param Container         $container
-     * @param RepositoryFactory $defaults
+     * @param  Container  $container
+     * @param  RepositoryFactory  $defaults
      */
     public function __construct(Container $container, RepositoryFactory $defaults)
     {
@@ -50,7 +50,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function createPersistenceRepository($context)
     {
@@ -79,7 +79,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function createUserRepository($context, PersistenceRepository $persistenceRepository, RoleRepository $roleRepository)
     {
@@ -98,7 +98,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function createRoleRepository($context)
     {
@@ -119,7 +119,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function createActivationRepository($context)
     {
@@ -141,7 +141,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function createReminderRepository($context, UserRepository $userRepository)
     {
@@ -164,7 +164,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function createPermissionRepository($context)
     {
@@ -183,7 +183,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function createThrottleRepository($context)
     {
@@ -210,8 +210,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * @param string $context
-     *
+     * @param  string  $context
      * @return SecurityContextConfiguration
      */
     private function configuration($context)

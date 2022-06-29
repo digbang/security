@@ -16,7 +16,7 @@ class PermissionStrategyEventListener implements EventSubscriber
     /**
      * PermissionStrategyEventListener constructor.
      *
-     * @param \Closure $permissionFactory
+     * @param  \Closure  $permissionFactory
      */
     public function __construct(\Closure $permissionFactory)
     {

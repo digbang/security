@@ -12,7 +12,7 @@ class Password
     /**
      * Password constructor.
      *
-     * @param string $plain
+     * @param  string  $plain
      *
      * @throws \InvalidArgumentException
      */
@@ -46,8 +46,7 @@ class Password
     }
 
     /**
-     * @param string $password
-     *
+     * @param  string  $password
      * @return bool
      */
     public function check(string $password): bool

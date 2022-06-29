@@ -150,8 +150,8 @@ class DefaultDoctrineActivationRepositorySpec extends ObjectBehavior
     }
 
     /**
-     * @param EntityManager $entityManager
-     * @param QueryBuilder  $queryBuilder
+     * @param  EntityManager  $entityManager
+     * @param  QueryBuilder  $queryBuilder
      */
     private function prepareQuery(EntityManager $entityManager, QueryBuilder $queryBuilder, $result = null)
     {
@@ -176,8 +176,8 @@ class DefaultDoctrineActivationRepositorySpec extends ObjectBehavior
     }
 
     /**
-     * @param EntityManager $entityManager
-     * @param bool          $should
+     * @param  EntityManager  $entityManager
+     * @param  bool  $should
      */
     private function preparePersist(EntityManager $entityManager, $should = true)
     {
@@ -191,7 +191,7 @@ class DefaultDoctrineActivationRepositorySpec extends ObjectBehavior
     }
 
     /**
-     * @param EntityManager $entityManager
+     * @param  EntityManager  $entityManager
      */
     private function prepareRemove(EntityManager $entityManager, $should = true)
     {

@@ -12,8 +12,7 @@ class DefaultDoctrineReminderRepository extends DoctrineReminderRepository
     /**
      * Create a new reminder record and code.
      *
-     * @param \Digbang\Security\Users\User $user
-     *
+     * @param  \Digbang\Security\Users\User  $user
      * @return Reminder
      */
     public function create(UserInterface $user)
@@ -40,9 +39,8 @@ class DefaultDoctrineReminderRepository extends DoctrineReminderRepository
     /**
      * Gets the reminder for the given user.
      *
-     * @param \Cartalyst\Sentinel\Users\UserInterface $user
-     * @param string|null $code
-     *
+     * @param  \Cartalyst\Sentinel\Users\UserInterface  $user
+     * @param  string|null  $code
      * @return Collection|null
      */
     public function get(UserInterface $user, string $code = null)

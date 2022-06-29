@@ -8,7 +8,7 @@ use Doctrine\Persistence\ObjectRepository;
 interface ActivationRepository extends ObjectRepository, ActivationRepositoryInterface
 {
     /**
-     * @param int $expires
+     * @param  int  $expires
      */
     public function setExpires($expires);
 }

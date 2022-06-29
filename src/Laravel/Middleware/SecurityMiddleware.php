@@ -34,9 +34,9 @@ final class SecurityMiddleware
     /**
      * SecurityContext constructor.
      *
-     * @param SecurityContext $securityContext
-     * @param LoggerInterface $logger
-     * @param Redirector      $redirector
+     * @param  SecurityContext  $securityContext
+     * @param  LoggerInterface  $logger
+     * @param  Redirector  $redirector
      */
     public function __construct(SecurityContext $securityContext, LoggerInterface $logger, Redirector $redirector)
     {
@@ -48,13 +48,12 @@ final class SecurityMiddleware
     /**
      * Run the request filter.
      *
-     * @param Request $request
-     * @param \Closure $next
-     * @param string $context
+     * @param  Request  $request
+     * @param  \Closure  $next
+     * @param  string  $context
+     * @return mixed
      *
      * @throws \Digbang\Security\Exceptions\Unauthorized
-     *
-     * @return mixed
      */
     public function handle(Request $request, \Closure $next, $context)
     {
@@ -83,8 +82,8 @@ final class SecurityMiddleware
     /**
      * Garbage collect activations and reminders.
      *
-     * @param SecurityApi                  $security
-     * @param SecurityContextConfiguration $configuration
+     * @param  SecurityApi  $security
+     * @param  SecurityContextConfiguration  $configuration
      */
     private function garbageCollect(SecurityApi $security, SecurityContextConfiguration $configuration)
     {
@@ -97,7 +96,7 @@ final class SecurityMiddleware
         } catch (\Exception $e) {
             // Silently fail and report, but still serve the content.
             $this->logger->error(
-                'Unable to garbage collect reminders or activations: ' .
+                'Unable to garbage collect reminders or activations: '.
                 $e->getMessage(),
                 $e->getTrace()
             );
@@ -107,7 +106,7 @@ final class SecurityMiddleware
     /**
      * Sweep expired codes.
      *
-     * @param  ReminderRepositoryInterface|ActivationRepositoryInterface $repository
+     * @param  ReminderRepositoryInterface|ActivationRepositoryInterface  $repository
      * @param  array  $lottery
      */
     private function sweep($repository, $lottery)
@@ -121,7 +120,6 @@ final class SecurityMiddleware
      * Determine if the configuration odds hit the lottery.
      *
      * @param  array  $lottery
-     *
      * @return bool
      */
     private function hitsLottery(array $lottery)
@@ -130,9 +128,9 @@ final class SecurityMiddleware
     }
 
     /**
-     * @param string  $context
-     * @param string  $privacy
-     * @param Request $request
+     * @param  string  $context
+     * @param  string  $privacy
+     * @param  Request  $request
      *
      * @throws Unauthenticated
      * @throws Unauthorized

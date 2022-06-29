@@ -15,9 +15,8 @@ class Unauthorized extends SecurityException
     private $permission;
 
     /**
-     * @param string      $permission
-     * @param SecurityApi $security
-     *
+     * @param  string  $permission
+     * @param  SecurityApi  $security
      * @return static
      */
     public static function permissionDenied($permission, SecurityApi $security)
@@ -39,7 +38,7 @@ class Unauthorized extends SecurityException
     }
 
     /**
-     * @param string $permission
+     * @param  string  $permission
      */
     private function setPermission($permission)
     {

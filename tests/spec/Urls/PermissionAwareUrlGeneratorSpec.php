@@ -20,12 +20,19 @@ use Prophecy\Prophet;
 class PermissionAwareUrlGeneratorSpec extends ObjectBehavior
 {
     const SECURE_ROUTE = 'a.valid.route';
+
     const SECURE_ACTION = 'A\Valid\Controller@action';
+
     const SECURE_PATH = '/a/valid/path';
+
     const INSECURE_ROUTE = 'an.insecure.route';
+
     const INSECURE_ACTION = 'An\Insecure\Controller@action';
+
     const INSECURE_PATH = '/an/insecure/path';
+
     const VALID_PERMISSION = 'a.valid.permission';
+
     const URL = '/a/valid/url';
 
     public function let(UrlGenerator $url, PermissionRepository $permissionRepo, SecurityApi $securityApi)

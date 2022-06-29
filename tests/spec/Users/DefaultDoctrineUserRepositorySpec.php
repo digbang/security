@@ -240,8 +240,8 @@ class DefaultDoctrineUserRepositorySpec extends ObjectBehavior
     }
 
     /**
-     * @param EntityManager $entityManager
-     * @param QueryBuilder  $queryBuilder
+     * @param  EntityManager  $entityManager
+     * @param  QueryBuilder  $queryBuilder
      */
     private function prepareQuery(EntityManager $entityManager, QueryBuilder $queryBuilder, $result = null)
     {

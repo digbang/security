@@ -12,9 +12,8 @@ interface RoleRepository extends ObjectRepository, RoleRepositoryInterface, Sele
     /**
      * Creates a role and persists it.
      *
-     * @param string      $name
-     * @param string|null $slug
-     *
+     * @param  string  $name
+     * @param  string|null  $slug
      * @return Role
      */
     public function create($name, $slug = null);
@@ -22,14 +21,14 @@ interface RoleRepository extends ObjectRepository, RoleRepositoryInterface, Sele
     /**
      * Persist changes to the Role.
      *
-     * @param Role $role
+     * @param  Role  $role
      */
     public function save(Role $role);
 
     /**
      * Delete the role.
      *
-     * @param Role $role
+     * @param  Role  $role
      */
     public function delete(Role $role);
 

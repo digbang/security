@@ -33,8 +33,7 @@ abstract class SecurityException extends \RuntimeException
     }
 
     /**
-     * @param string $context
-     *
+     * @param  string  $context
      * @return static
      */
     public function inContext($context)
@@ -45,7 +44,7 @@ abstract class SecurityException extends \RuntimeException
     }
 
     /**
-     * @param SecurityApi $security
+     * @param  SecurityApi  $security
      */
     protected function setSecurity($security)
     {

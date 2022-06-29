@@ -32,9 +32,9 @@ class SecurityFactory
     private $url;
 
     /**
-     * @param Container         $container
-     * @param RepositoryFactory $repositories
-     * @param UrlGenerator      $url
+     * @param  Container  $container
+     * @param  RepositoryFactory  $repositories
+     * @param  UrlGenerator  $url
      */
     public function __construct(Container $container, RepositoryFactory $repositories, UrlGenerator $url)
     {
@@ -44,9 +44,8 @@ class SecurityFactory
     }
 
     /**
-     * @param string $context
-     * @param SecurityContextConfiguration $configuration
-     *
+     * @param  string  $context
+     * @param  SecurityContextConfiguration  $configuration
      * @return Security
      */
     public function create($context, SecurityContextConfiguration $configuration)
@@ -102,9 +101,8 @@ class SecurityFactory
     }
 
     /**
-     * @param CheckpointInterface|string $checkpoint
-     * @param string $context
-     *
+     * @param  CheckpointInterface|string  $checkpoint
+     * @param  string  $context
      * @return ActivationCheckpoint|ThrottleCheckpoint|CheckpointInterface
      */
     private function makeCheckpoint($checkpoint, $context)
@@ -125,7 +123,7 @@ class SecurityFactory
     }
 
     /**
-     * @param Security $security
+     * @param  Security  $security
      */
     private function bindUrlGenerator(Security $security)
     {

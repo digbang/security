@@ -12,7 +12,7 @@ class DefaultIpThrottle extends DefaultThrottle
     /**
      * IpThrottle constructor.
      *
-     * @param string $ip
+     * @param  string  $ip
      */
     public function __construct($ip)
     {

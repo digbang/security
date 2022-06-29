@@ -9,8 +9,7 @@ final class NullPermissions implements PermissionsInterface
     /**
      * Returns if access is available for all given permissions.
      *
-     * @param  array|string $permissions
-     *
+     * @param  array|string  $permissions
      * @return bool
      */
     public function hasAccess($permissions): bool
@@ -21,8 +20,7 @@ final class NullPermissions implements PermissionsInterface
     /**
      * Returns if access is available for any given permissions.
      *
-     * @param  array|string $permissions
-     *
+     * @param  array|string  $permissions
      * @return bool
      */
     public function hasAnyAccess($permissions): bool
