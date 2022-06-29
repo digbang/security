@@ -4,17 +4,12 @@ namespace Digbang\Security;
 
 use Cartalyst\Sentinel\Checkpoints\CheckpointInterface;
 use Cartalyst\Sentinel\Sentinel;
-use Digbang\Security\Activations\ActivationRepository;
 use Digbang\Security\Contracts\SecurityApi;
 use Digbang\Security\Permissions\InsecurePermissionRepository;
 use Digbang\Security\Permissions\PermissionRepository;
-use Digbang\Security\Persistences\PersistenceRepository;
-use Digbang\Security\Reminders\ReminderRepository;
 use Digbang\Security\Roles\Role;
-use Digbang\Security\Roles\RoleRepository;
 use Digbang\Security\Urls\PermissionAwareUrlGenerator;
 use Digbang\Security\Users\User;
-use Digbang\Security\Users\UserRepository;
 
 /**
  * Class Security.
@@ -62,8 +57,8 @@ final class Security implements SecurityApi
     /**
      * Security constructor.
      *
-     * @param Sentinel             $sentinel
-     * @param PermissionRepository $permissions
+     * @param  Sentinel  $sentinel
+     * @param  PermissionRepository  $permissions
      */
     public function __construct(Sentinel $sentinel, PermissionRepository $permissions)
     {
@@ -74,12 +69,11 @@ final class Security implements SecurityApi
     /**
      * Dynamically pass missing methods to Sentinel.
      *
-     * @param  string $method
+     * @param  string  $method
      * @param  array  $parameters
+     * @return mixed
      *
      * @throws \BadMethodCallException
-     *
-     * @return mixed
      */
     public function __call($method, $parameters)
     {
@@ -87,7 +81,7 @@ final class Security implements SecurityApi
     }
 
     /**
-     * @param PermissionAwareUrlGenerator $url
+     * @param  PermissionAwareUrlGenerator  $url
      */
     public function setUrlGenerator(PermissionAwareUrlGenerator $url)
     {
@@ -98,12 +92,11 @@ final class Security implements SecurityApi
      * Registers a user. You may provide a callback to occur before the user
      * is saved, or provide a true boolean as a shortcut to activation.
      *
-     * @param  array         $credentials
-     * @param  \Closure|bool $callback
+     * @param  array  $credentials
+     * @param  \Closure|bool  $callback
+     * @return User|bool
      *
      * @throws \InvalidArgumentException
-     *
-     * @return User|bool
      */
     public function register(array $credentials, $callback = null)
     {
@@ -113,8 +106,7 @@ final class Security implements SecurityApi
     /**
      * Registers and activates the user.
      *
-     * @param  array $credentials
-     *
+     * @param  array  $credentials
      * @return User|bool
      */
     public function registerAndActivate(array $credentials)
@@ -125,11 +117,10 @@ final class Security implements SecurityApi
     /**
      * Activates the given user.
      *
-     * @param  mixed $user
+     * @param  mixed  $user
+     * @return bool
      *
      * @throws \InvalidArgumentException
-     *
-     * @return bool
      */
     public function activate($user)
     {
@@ -169,10 +160,9 @@ final class Security implements SecurityApi
     /**
      * Authenticates a user, with "remember" flag.
      *
-     * @param  User|array $credentials
-     * @param  bool       $remember
-     * @param  bool       $login
-     *
+     * @param  User|array  $credentials
+     * @param  bool  $remember
+     * @param  bool  $login
      * @return User|bool
      */
     public function authenticate($credentials, $remember = false, $login = true)
@@ -183,8 +173,7 @@ final class Security implements SecurityApi
     /**
      * Authenticates a user, with the "remember" flag.
      *
-     * @param  User|array $credentials
-     *
+     * @param  User|array  $credentials
      * @return User|bool
      */
     public function authenticateAndRemember($credentials)
@@ -195,9 +184,8 @@ final class Security implements SecurityApi
     /**
      * Forces an authentication to bypass checkpoints.
      *
-     * @param  User|array $credentials
-     * @param  bool       $remember
-     *
+     * @param  User|array  $credentials
+     * @param  bool  $remember
      * @return User|bool
      */
     public function forceAuthenticate($credentials, $remember = false)
@@ -208,8 +196,7 @@ final class Security implements SecurityApi
     /**
      * Forces an authentication to bypass checkpoints, with the "remember" flag.
      *
-     * @param  User|array $credentials
-     *
+     * @param  User|array  $credentials
      * @return User|bool
      */
     public function forceAuthenticateAndRemember($credentials)
@@ -220,8 +207,7 @@ final class Security implements SecurityApi
     /**
      * Attempt a stateless authentication.
      *
-     * @param  User|array $credentials
-     *
+     * @param  User|array  $credentials
      * @return User|bool
      */
     public function stateless($credentials)
@@ -252,7 +238,7 @@ final class Security implements SecurityApi
     /**
      * Sets the closure which resolves the request credentials.
      *
-     * @param  \Closure $requestCredentials
+     * @param  \Closure  $requestCredentials
      */
     public function setRequestCredentials(\Closure $requestCredentials)
     {
@@ -262,9 +248,9 @@ final class Security implements SecurityApi
     /**
      * Sends a response when HTTP basic authentication fails.
      *
-     * @throws \RuntimeException
-     *
      * @return mixed
+     *
+     * @throws \RuntimeException
      */
     public function getBasicResponse()
     {
@@ -274,7 +260,7 @@ final class Security implements SecurityApi
     /**
      * Sets the callback which creates a basic response.
      *
-     * @param \Closure $basicResponse
+     * @param  \Closure  $basicResponse
      */
     public function creatingBasicResponse(\Closure $basicResponse)
     {
@@ -284,9 +270,8 @@ final class Security implements SecurityApi
     /**
      * Persists a login for the given user.
      *
-     * @param  User $user
-     * @param  bool $remember
-     *
+     * @param  User  $user
+     * @param  bool  $remember
      * @return User|bool
      */
     public function login(User $user, $remember = false)
@@ -297,8 +282,7 @@ final class Security implements SecurityApi
     /**
      * Persists a login for the given user, with the "remember" flag.
      *
-     * @param  User $user
-     *
+     * @param  User  $user
      * @return User|bool
      */
     public function loginAndRemember(User $user)
@@ -309,9 +293,8 @@ final class Security implements SecurityApi
     /**
      * Logs the current user out.
      *
-     * @param  User $user
-     * @param  bool $everywhere
-     *
+     * @param  User  $user
+     * @param  bool  $everywhere
      * @return bool
      */
     public function logout(User $user = null, $everywhere = false)
@@ -322,9 +305,8 @@ final class Security implements SecurityApi
     /**
      * Pass a closure to Sentinel to bypass checkpoints.
      *
-     * @param  \Closure $callback
-     * @param  array   $checkpoints
-     *
+     * @param  \Closure  $callback
+     * @param  array  $checkpoints
      * @return mixed
      */
     public function bypassCheckpoints(\Closure $callback, $checkpoints = [])
@@ -361,8 +343,8 @@ final class Security implements SecurityApi
     /**
      * Add a new checkpoint to Sentinel.
      *
-     * @param  string              $key
-     * @param  CheckpointInterface $checkpoint
+     * @param  string  $key
+     * @param  CheckpointInterface  $checkpoint
      */
     public function addCheckpoint($key, CheckpointInterface $checkpoint)
     {
@@ -372,7 +354,7 @@ final class Security implements SecurityApi
     /**
      * Removes a checkpoint.
      *
-     * @param  string $key
+     * @param  string  $key
      */
     public function removeCheckpoint($key)
     {
@@ -382,8 +364,7 @@ final class Security implements SecurityApi
     /**
      * Returns the currently logged in user, lazily checking for it.
      *
-     * @param  bool $check
-     *
+     * @param  bool  $check
      * @return User
      */
     public function getUser($check = true)
@@ -397,7 +378,7 @@ final class Security implements SecurityApi
     /**
      * Sets the user associated with Sentinel (does not log in).
      *
-     * @param User $user
+     * @param  User  $user
      */
     public function setUser(User $user)
     {
@@ -475,9 +456,8 @@ final class Security implements SecurityApi
     }
 
     /**
-     * @param array $permissions
-     * @param string ...$permissions
-     *
+     * @param  array  $permissions
+     * @param  string  ...$permissions
      * @return bool
      */
     public function hasAccess($permissions)
@@ -490,9 +470,8 @@ final class Security implements SecurityApi
     }
 
     /**
-     * @param array $permissions
-     * @param string ...$permissions
-     *
+     * @param  array  $permissions
+     * @param  string  ...$permissions
      * @return bool
      */
     public function hasAnyAccess($permissions)
@@ -505,7 +484,7 @@ final class Security implements SecurityApi
     }
 
     /**
-     * @param string $route
+     * @param  string  $route
      */
     public function setLoginRoute($route)
     {

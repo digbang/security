@@ -15,8 +15,8 @@ abstract class DefaultPermission implements Permission
     protected $allowed = true;
 
     /**
-     * @param string $name
-     * @param bool   $allowed
+     * @param  string  $name
+     * @param  bool  $allowed
      */
     public function __construct($name, $allowed = true)
     {
@@ -49,7 +49,7 @@ abstract class DefaultPermission implements Permission
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function allow()
     {
@@ -57,7 +57,7 @@ abstract class DefaultPermission implements Permission
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function deny()
     {

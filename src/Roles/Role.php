@@ -8,12 +8,12 @@ use Doctrine\Common\Collections\Collection;
 interface Role extends RoleInterface
 {
     /**
-     * @param  string $name
+     * @param  string  $name
      */
     public function setName($name);
 
     /**
-     * @param  string $slug
+     * @param  string  $slug
      */
     public function setRoleSlug($slug);
 
@@ -30,8 +30,7 @@ interface Role extends RoleInterface
     /**
      * Checks if the given role equals itself.
      *
-     * @param string|Role $role
-     *
+     * @param  string|Role  $role
      * @return bool
      */
     public function is($role);

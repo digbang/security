@@ -12,7 +12,7 @@ class DefaultUserThrottle extends DefaultThrottle
     protected $user;
 
     /**
-     * @param User $user
+     * @param  User  $user
      */
     public function __construct(User $user)
     {

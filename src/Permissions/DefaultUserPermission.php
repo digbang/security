@@ -12,9 +12,9 @@ class DefaultUserPermission extends DefaultPermission
     protected $user;
 
     /**
-     * @param User   $user
-     * @param string $name
-     * @param bool   $allowed
+     * @param  User  $user
+     * @param  string  $name
+     * @param  bool  $allowed
      */
     public function __construct(User $user, $name, $allowed = true)
     {

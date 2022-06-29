@@ -7,7 +7,7 @@ class DefaultDoctrineRoleRepository extends DoctrineRoleRepository
     protected const ENTITY_CLASSNAME = DefaultRole::class;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function entityName()
     {
@@ -15,7 +15,7 @@ class DefaultDoctrineRoleRepository extends DoctrineRoleRepository
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function createRole($name, $slug = null)
     {

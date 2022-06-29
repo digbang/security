@@ -9,7 +9,7 @@ class DefaultDoctrinePersistenceRepository extends DoctrinePersistenceRepository
     protected const ENTITY_CLASSNAME = DefaultPersistence::class;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function entityName()
     {
@@ -17,7 +17,7 @@ class DefaultDoctrinePersistenceRepository extends DoctrinePersistenceRepository
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function create(User $user, $code)
     {

@@ -36,7 +36,7 @@ class DefaultRepositoryFactory implements RepositoryFactory
     /**
      * DefaultRepositoryFactory constructor.
      *
-     * @param Container $container
+     * @param  Container  $container
      */
     public function __construct(Container $container)
     {
@@ -44,7 +44,7 @@ class DefaultRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function createPersistenceRepository($context)
     {
@@ -80,7 +80,7 @@ class DefaultRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function createRoleRepository($context)
     {
@@ -94,7 +94,7 @@ class DefaultRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function createActivationRepository($context)
     {
@@ -108,7 +108,7 @@ class DefaultRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function createReminderRepository($context, UserRepository $userRepository)
     {
@@ -125,7 +125,7 @@ class DefaultRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function createPermissionRepository($context)
     {
@@ -133,7 +133,7 @@ class DefaultRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function createThrottleRepository($context)
     {

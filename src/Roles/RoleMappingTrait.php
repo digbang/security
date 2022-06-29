@@ -44,7 +44,7 @@ trait RoleMappingTrait
     /**
      * Adds all mappings: properties and relations.
      *
-     * @param Fluent $builder
+     * @param  Fluent  $builder
      */
     public function addMappings(Fluent $builder)
     {
@@ -55,7 +55,7 @@ trait RoleMappingTrait
     /**
      * Adds only properties.
      *
-     * @param Fluent $builder
+     * @param  Fluent  $builder
      */
     public function addProperties(Fluent $builder)
     {
@@ -81,7 +81,7 @@ trait RoleMappingTrait
     /**
      * Adds only relations.
      *
-     * @param Fluent $builder
+     * @param  Fluent  $builder
      */
     public function addRelations(Fluent $builder)
     {
@@ -106,7 +106,7 @@ trait RoleMappingTrait
     /**
      * Change the roles join table name.
      *
-     * @param string $table
+     * @param  string  $table
      */
     public function changeRolesJoinTable($table)
     {

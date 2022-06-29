@@ -51,7 +51,7 @@ class SecurityContext
     /**
      * SecurityContext constructor.
      *
-     * @param Container $container
+     * @param  Container  $container
      */
     public function __construct(Container $container)
     {
@@ -61,7 +61,7 @@ class SecurityContext
     /**
      * Add a security context.
      *
-     * @param SecurityContextConfiguration $configuration
+     * @param  SecurityContextConfiguration  $configuration
      *
      * @throws \BadMethodCallException
      */
@@ -84,8 +84,8 @@ class SecurityContext
     /**
      * Bind the given security context to the Request and Container.
      *
-     * @param string  $context
-     * @param Request $request
+     * @param  string  $context
+     * @param  Request  $request
      */
     public function bindContext($context, Request $request)
     {
@@ -108,8 +108,7 @@ class SecurityContext
     /**
      * Get the Security instance for the given context.
      *
-     * @param string $context
-     *
+     * @param  string  $context
      * @return Security
      */
     public function getSecurity($context)
@@ -125,8 +124,7 @@ class SecurityContext
     }
 
     /**
-     * @param string $context
-     *
+     * @param  string  $context
      * @return SecurityContextConfiguration
      */
     public function getConfigurationFor(string $context)
@@ -139,9 +137,8 @@ class SecurityContext
     }
 
     /**
-     * @param EntityManagerInterface $entityManager
-     * @param string $driverName
-     *
+     * @param  EntityManagerInterface  $entityManager
+     * @param  string  $driverName
      * @return FluentDriver
      */
     public function getOrCreateFluentDriver(EntityManagerInterface $entityManager, $driverName = 'Digbang\\Security')
@@ -170,8 +167,8 @@ class SecurityContext
     }
 
     /**
-     * @param SecurityContextConfiguration $configuration
-     * @param EntityManagerInterface $entityManager
+     * @param  SecurityContextConfiguration  $configuration
+     * @param  EntityManagerInterface  $entityManager
      */
     private function updateMappings(SecurityContextConfiguration $configuration, EntityManagerInterface $entityManager)
     {
@@ -216,8 +213,7 @@ class SecurityContext
     }
 
     /**
-     * @param Mapping|string $mapping
-     *
+     * @param  Mapping|string  $mapping
      * @return Mapping
      */
     private function makeMapping($mapping)
@@ -230,10 +226,9 @@ class SecurityContext
     }
 
     /**
-     * @param Mapping|string $mapping
-     * @param string $method
-     * @param mixed ...$params
-     *
+     * @param  Mapping|string  $mapping
+     * @param  string  $method
+     * @param  mixed  ...$params
      * @return mixed
      */
     private function validateAndCall(&$mapping, $method, ...$params)
@@ -241,7 +236,7 @@ class SecurityContext
         $mapping = $this->makeMapping($mapping);
 
         if (! method_exists($mapping, $method)) {
-            throw new \BadMethodCallException('EntityMapping [' . get_class($mapping) .
+            throw new \BadMethodCallException('EntityMapping ['.get_class($mapping).
                 "] does not implement '$method'."
             );
         }
@@ -250,7 +245,7 @@ class SecurityContext
     }
 
     /**
-     * @param string $context
+     * @param  string  $context
      */
     private function addPermissionsFactoryListener($context)
     {
@@ -280,8 +275,8 @@ class SecurityContext
     }
 
     /**
-     * @param Mapping[] $mappings
-     * @param EntityManagerInterface $entityManager
+     * @param  Mapping[]  $mappings
+     * @param  EntityManagerInterface  $entityManager
      */
     private function addMappings($mappings, EntityManagerInterface $entityManager)
     {
@@ -291,7 +286,7 @@ class SecurityContext
 
             $driverName = $namespace[0];
             if (count($namespace) > 1) {
-                $driverName .= '\\' . $namespace[1];
+                $driverName .= '\\'.$namespace[1];
             }
 
             $fluent = $this->getOrCreateFluentDriver($entityManager, $driverName);

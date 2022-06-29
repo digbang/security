@@ -34,20 +34,28 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
 
     /** @var int */
     protected $id;
+
     /** @var ValueObjects\Email */
     protected $email;
+
     /** @var string */
     protected $username;
+
     /** @var ValueObjects\Password */
     protected $password;
+
     /** @var ValueObjects\Name */
     protected $name;
+
     /** @var Carbon|null */
     protected $lastLogin;
+
     /** @var Carbon|null */
     protected $passwordExpiration;
+
     /** @var ArrayCollection */
     protected $activations;
+
     /** @var ArrayCollection */
     protected $reminders;
 
@@ -75,7 +83,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * @param ValueObjects\Name $name
+     * @param  ValueObjects\Name  $name
      */
     public function setName(ValueObjects\Name $name)
     {
@@ -112,7 +120,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * @throws \InvalidArgumentException
      */
@@ -146,7 +154,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getUserId(): int
     {
@@ -162,7 +170,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getUserLogin(): string
     {
@@ -170,7 +178,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getUserLoginName(): string
     {
@@ -178,7 +186,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getUserPassword(): string
     {
@@ -186,7 +194,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function checkPassword($password)
     {
@@ -194,7 +202,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPersistableId(): string
     {
@@ -210,7 +218,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function recordLogin()
     {
@@ -233,7 +241,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function syncPermissions(array $permissions)
     {
@@ -273,7 +281,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function addRole(Role $role)
     {
@@ -283,7 +291,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function removeRole(Role $role)
     {
@@ -341,7 +349,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function isActivated()
     {
@@ -351,7 +359,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getActivatedAt()
     {
@@ -382,7 +390,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function makePermissionsInstance()
     {
@@ -400,11 +408,10 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * @param string $username
+     * @param  string  $username
+     * @return void
      *
      * @throws \InvalidArgumentException
-     *
-     * @return void
      */
     private function changeUsername(string $username): void
     {

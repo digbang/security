@@ -12,9 +12,9 @@ class DefaultRolePermission extends DefaultPermission
     protected $role;
 
     /**
-     * @param Role   $role
-     * @param string $name
-     * @param bool   $allowed
+     * @param  Role  $role
+     * @param  string  $name
+     * @param  bool  $allowed
      */
     public function __construct(Role $role, $name, $allowed = true)
     {

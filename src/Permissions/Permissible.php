@@ -10,20 +10,18 @@ interface Permissible extends PermissibleInterface
     /**
      * Set the Permissions instance factory configured for this context.
      *
-     * @param \Closure $permissionsFactory
+     * @param  \Closure  $permissionsFactory
      */
     public function setPermissionsFactory(\Closure $permissionsFactory);
 
     /**
-     * @param string $permission
-     *
+     * @param  string  $permission
      * @return bool
      */
     public function hasAccess($permission);
 
     /**
-     * @param string $permission
-     *
+     * @param  string  $permission
      * @return bool
      */
     public function hasAnyAccess($permission);
@@ -34,19 +32,19 @@ interface Permissible extends PermissibleInterface
     public function getPermissions();
 
     /**
-     * @param array|string $permissions
-     * @param bool         $force
+     * @param  array|string  $permissions
+     * @param  bool  $force
      */
     public function allow($permissions, $force = false);
 
     /**
-     * @param array|string $permissions
-     * @param bool         $force
+     * @param  array|string  $permissions
+     * @param  bool  $force
      */
     public function deny($permissions, $force = false);
 
     /**
-     * @param array $permissions
+     * @param  array  $permissions
      */
     public function syncPermissions(array $permissions);
 }

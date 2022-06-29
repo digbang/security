@@ -5,22 +5,19 @@ namespace Digbang\Security\Permissions;
 interface PermissionRepository
 {
     /**
-     * @param  string $route
-     *
+     * @param  string  $route
      * @return string|null the permission matching the route, if it needs one
      */
     public function getForRoute($route);
 
     /**
-     * @param  string $action
-     *
+     * @param  string  $action
      * @return string|null the permission matching the action, if it needs one
      */
     public function getForAction($action);
 
     /**
-     * @param string $path
-     *
+     * @param  string  $path
      * @return string|null the permission matching the action, if it needs one
      */
     public function getForPath($path);

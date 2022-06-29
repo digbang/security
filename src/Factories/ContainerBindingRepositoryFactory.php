@@ -26,8 +26,8 @@ class ContainerBindingRepositoryFactory implements RepositoryFactory
     /**
      * ContainerBindingRepositoryFactory constructor.
      *
-     * @param Container         $container
-     * @param RepositoryFactory $repositories
+     * @param  Container  $container
+     * @param  RepositoryFactory  $repositories
      */
     public function __construct(Container $container, RepositoryFactory $repositories)
     {
@@ -36,7 +36,7 @@ class ContainerBindingRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function createPersistenceRepository($context)
     {
@@ -47,7 +47,7 @@ class ContainerBindingRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function createUserRepository($context, PersistenceRepository $persistenceRepository, RoleRepository $roleRepository)
     {
@@ -58,7 +58,7 @@ class ContainerBindingRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function createRoleRepository($context)
     {
@@ -69,7 +69,7 @@ class ContainerBindingRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function createActivationRepository($context)
     {
@@ -80,7 +80,7 @@ class ContainerBindingRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function createReminderRepository($context, UserRepository $userRepository)
     {
@@ -91,7 +91,7 @@ class ContainerBindingRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function createPermissionRepository($context)
     {
@@ -102,7 +102,7 @@ class ContainerBindingRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function createThrottleRepository($context)
     {
@@ -113,9 +113,8 @@ class ContainerBindingRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * @param string $abstract
-     * @param object $instance
-     *
+     * @param  string  $abstract
+     * @param  object  $instance
      * @return object
      */
     private function bindAndReturn($abstract, $instance)

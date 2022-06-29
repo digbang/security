@@ -1,0 +1,36 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Exceptions/Unauthenticated.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Exceptions/Unauthorized.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Permissions/LazyStandardPermissions.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Permissions/LazyStrictPermissions.php
+
+		-
+			message: "#^Function str_random not found\\.$#"
+			count: 4
+			path: tests/spec/Persistences/DefaultDoctrinePersistenceRepositorySpec.php
+
+		-
+			message: "#^Function str_random not found\\.$#"
+			count: 2
+			path: tests/spec/Persistences/DefaultPersistenceSpec.php
+
+		-
+			message: "#^Function str_random not found\\.$#"
+			count: 3
+			path: tests/spec/Reminders/DefaultDoctrineReminderRepositorySpec.php

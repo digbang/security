@@ -1,7 +1,7 @@
 version: '2'
 services:
   php:
-    image: digbang/php-dev:7.4
+    image: digbang/php-dev:8.1
     volumes:
      - .:/var/www/html
     networks:

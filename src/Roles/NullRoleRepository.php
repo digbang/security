@@ -4,13 +4,12 @@ namespace Digbang\Security\Roles;
 
 use Cartalyst\Sentinel\Roles\RoleInterface;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 
 class NullRoleRepository implements RoleRepository
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function findById(int $id): ?RoleInterface
     {
@@ -18,7 +17,7 @@ class NullRoleRepository implements RoleRepository
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function findBySlug($slug): ?RoleInterface
     {
@@ -26,7 +25,7 @@ class NullRoleRepository implements RoleRepository
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function findByName($name): ?RoleInterface
     {
@@ -34,7 +33,7 @@ class NullRoleRepository implements RoleRepository
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function find($id)
     {
@@ -42,7 +41,7 @@ class NullRoleRepository implements RoleRepository
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function findAll()
     {
@@ -50,7 +49,7 @@ class NullRoleRepository implements RoleRepository
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
     {
@@ -58,7 +57,7 @@ class NullRoleRepository implements RoleRepository
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function findOneBy(array $criteria)
     {
@@ -66,7 +65,7 @@ class NullRoleRepository implements RoleRepository
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getClassName()
     {
@@ -74,7 +73,7 @@ class NullRoleRepository implements RoleRepository
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function matching(Criteria $criteria)
     {
@@ -84,15 +83,14 @@ class NullRoleRepository implements RoleRepository
     /**
      * Creates a role and persists it.
      *
-     * @param string      $name
-     * @param string|null $slug
-     *
+     * @param  string  $name
+     * @param  string|null  $slug
      * @return Role
      */
     public function create($name, $slug = null)
     {
         throw new \BadMethodCallException(
-            "Cannot create role [$name], Roles are disabled. " .
+            "Cannot create role [$name], Roles are disabled. ".
             'Enable Roles through the configuration and try again.'
         );
     }
@@ -100,12 +98,12 @@ class NullRoleRepository implements RoleRepository
     /**
      * Persist changes to the Role.
      *
-     * @param Role $role
+     * @param  Role  $role
      */
     public function save(Role $role)
     {
         throw new \BadMethodCallException(
-            'Cannot save role, Roles are disabled. ' .
+            'Cannot save role, Roles are disabled. '.
             'Enable Roles through the configuration and try again.'
         );
     }
@@ -113,12 +111,12 @@ class NullRoleRepository implements RoleRepository
     /**
      * Delete the role.
      *
-     * @param Role $role
+     * @param  Role  $role
      */
     public function delete(Role $role)
     {
         throw new \BadMethodCallException(
-            'Cannot delete role, Roles are disabled. ' .
+            'Cannot delete role, Roles are disabled. '.
             'Enable Roles through the configuration and try again.'
         );
     }

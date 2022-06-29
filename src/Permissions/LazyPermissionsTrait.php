@@ -25,8 +25,7 @@ trait LazyPermissionsTrait
     /**
      * Returns if access is available for all given permissions.
      *
-     * @param  array|string $permissions
-     *
+     * @param  array|string  $permissions
      * @return bool
      */
     public function hasAccess($permissions): bool
@@ -51,8 +50,7 @@ trait LazyPermissionsTrait
     /**
      * Returns if access is available for any given permissions.
      *
-     * @param  array|string $permissions
-     *
+     * @param  array|string  $permissions
      * @return bool
      */
     public function hasAnyAccess($permissions): bool
@@ -75,8 +73,8 @@ trait LazyPermissionsTrait
     }
 
     /**
-     * @param Collection $permissions
-     * @param array      $secondaryPermissions
+     * @param  Collection  $permissions
+     * @param  array  $secondaryPermissions
      */
     abstract protected function mergePermissions(Collection $permissions, array $secondaryPermissions = []);
 
@@ -84,8 +82,8 @@ trait LazyPermissionsTrait
      * Adds a permission to the merged permissions Collection.
      * Override logic is handled from outside to enable strict or standard permissions.
      *
-     * @param Permission $permission
-     * @param bool       $override
+     * @param  Permission  $permission
+     * @param  bool  $override
      */
     protected function add(Permission $permission, $override = true)
     {
@@ -98,8 +96,7 @@ trait LazyPermissionsTrait
      * Check if the given permission is allowed.
      * Only explicitly allowed permissions will return true.
      *
-     * @param string $permissionName
-     *
+     * @param  string  $permissionName
      * @return bool
      */
     protected function allows($permissionName)
@@ -117,8 +114,7 @@ trait LazyPermissionsTrait
     }
 
     /**
-     * @param string $permission
-     *
+     * @param  string  $permission
      * @return array
      */
     protected function getMatchingPermissions($permission)

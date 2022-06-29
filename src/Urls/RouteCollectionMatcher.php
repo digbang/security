@@ -20,8 +20,7 @@ class RouteCollectionMatcher extends RouteCollection
     }
 
     /**
-     * @param Request $request
-     *
+     * @param  Request  $request
      * @return Route|null
      */
     public function getRouteForRequest(Request $request)
@@ -37,7 +36,6 @@ class RouteCollectionMatcher extends RouteCollection
      * @param  array  $routes
      * @param  Request  $request
      * @param  bool  $includingMethod
-     *
      * @return Route|null
      */
     protected function check(array $routes, $request, $includingMethod = true)

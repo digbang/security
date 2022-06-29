@@ -13,7 +13,7 @@ trait RoleableTrait
     protected $roles;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getRoles(): IteratorAggregate
     {
@@ -21,7 +21,7 @@ trait RoleableTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function inRole($role): bool
     {
@@ -31,7 +31,7 @@ trait RoleableTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function addRole(Role $role)
     {
@@ -41,7 +41,7 @@ trait RoleableTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function removeRole(Role $role)
     {
@@ -51,8 +51,7 @@ trait RoleableTrait
     /**
      * Checks if the user is in any of the given roles.
      *
-     * @param array $roles
-     *
+     * @param  array  $roles
      * @return bool
      */
     public function inAnyRole(array $roles): bool

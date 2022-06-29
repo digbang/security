@@ -23,7 +23,7 @@ trait RolePermissionMappingTrait
     /**
      * Adds all mappings: properties and relations.
      *
-     * @param Fluent $builder
+     * @param  Fluent  $builder
      */
     public function addMappings(Fluent $builder)
     {
@@ -34,7 +34,7 @@ trait RolePermissionMappingTrait
     /**
      * Adds only properties.
      *
-     * @param Fluent $builder
+     * @param  Fluent  $builder
      */
     public function addProperties(Fluent $builder)
     {
@@ -45,7 +45,7 @@ trait RolePermissionMappingTrait
     /**
      * Adds only relations.
      *
-     * @param Fluent $builder
+     * @param  Fluent  $builder
      */
     public function addRelations(Fluent $builder)
     {

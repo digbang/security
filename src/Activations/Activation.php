@@ -13,8 +13,7 @@ interface Activation
      * Sentinel 2.0.6 will access $activation->code, so this must
      * be implemented for now.
      *
-     * @param string $name
-     *
+     * @param  string  $name
      * @return string
      */
     public function __get($name);

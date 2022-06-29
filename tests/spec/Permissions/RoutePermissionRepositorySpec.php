@@ -19,7 +19,9 @@ use Prophecy\Argument;
 class RoutePermissionRepositorySpec extends ObjectBehavior
 {
     const VALID_NAME = 'the.valid.route';
+
     const VALID_ACTION = 'A\\Valid\\Action@name';
+
     const VALID_PERMISSION = 'a.valid.permission';
 
     public function let(Router $router, Route $route, RouteCollection $routeCollection)

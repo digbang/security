@@ -39,7 +39,7 @@ class DefaultReminder implements Reminder
     /**
      * DefaultReminder constructor.
      *
-     * @param User $user
+     * @param  User  $user
      */
     public function __construct(User $user)
     {
@@ -48,7 +48,7 @@ class DefaultReminder implements Reminder
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function complete()
     {

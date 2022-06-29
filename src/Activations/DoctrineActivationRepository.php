@@ -16,7 +16,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
     protected $expires;
 
     /**
-     * @param EntityManager $entityManager
+     * @param  EntityManager  $entityManager
      */
     public function __construct(EntityManager $entityManager)
     {
@@ -27,8 +27,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
      * Checks if a valid activation for the given user exists.
      *
      * @param  UserInterface  $user
-     * @param  string         $code
-     *
+     * @param  string  $code
      * @return bool
      */
     public function exists(UserInterface $user, string $code = null): bool
@@ -37,7 +36,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function complete(UserInterface $user, string $code): bool
     {
@@ -58,8 +57,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
     /**
      * Checks if a valid activation has been completed.
      *
-     * @param  \Cartalyst\Sentinel\Users\UserInterface $user
-     *
+     * @param  \Cartalyst\Sentinel\Users\UserInterface  $user
      * @return bool
      */
     public function completed(UserInterface $user): bool
@@ -95,7 +93,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function remove(UserInterface $user): ?bool
     {
@@ -114,7 +112,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function removeExpired(): bool
     {
@@ -138,7 +136,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setExpires($expires)
     {
@@ -161,12 +159,11 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
     }
 
     /**
-     * @param UserInterface $user
-     * @param string|null   $code
+     * @param  UserInterface  $user
+     * @param  string|null  $code
+     * @return Activation|null
      *
      * @throws \Doctrine\ORM\NonUniqueResultException
-     *
-     * @return Activation|null
      */
     protected function findIncomplete(UserInterface $user, $code = null)
     {
@@ -196,7 +193,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
     }
 
     /**
-     * @param Activation $activation
+     * @param  Activation  $activation
      */
     protected function save(Activation $activation)
     {

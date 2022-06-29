@@ -21,7 +21,7 @@ class NameMapping extends EmbeddableMapping
     /**
      * Load the object's metadata through the Metadata Builder object.
      *
-     * @param Fluent $builder
+     * @param  Fluent  $builder
      */
     public function map(Fluent $builder)
     {

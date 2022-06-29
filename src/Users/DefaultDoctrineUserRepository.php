@@ -21,8 +21,7 @@ class DefaultDoctrineUserRepository extends DoctrineUserRepository
     /**
      * Create a new user based on the given credentials.
      *
-     * @param array $credentials
-     *
+     * @param  array  $credentials
      * @return User
      */
     protected function createUser(array $credentials)

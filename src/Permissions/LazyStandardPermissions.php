@@ -13,8 +13,8 @@ class LazyStandardPermissions implements PermissionsInterface
     /**
      * Create a new permissions instance.
      *
-     * @param Collection $permissions
-     * @param array      $secondaryPermissions
+     * @param  Collection  $permissions
+     * @param  array  $secondaryPermissions
      */
     public function __construct(Collection $permissions = null, array $secondaryPermissions = [])
     {
@@ -36,8 +36,8 @@ class LazyStandardPermissions implements PermissionsInterface
     }
 
     /**
-     * @param Collection $permissions
-     * @param array      $secondaryPermissions
+     * @param  Collection  $permissions
+     * @param  array  $secondaryPermissions
      */
     protected function mergePermissions(Collection $permissions, array $secondaryPermissions = [])
     {

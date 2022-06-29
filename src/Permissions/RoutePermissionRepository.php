@@ -23,7 +23,7 @@ final class RoutePermissionRepository implements PermissionRepository
     private $permissions = [];
 
     /**
-     * @param Router $router
+     * @param  Router  $router
      */
     public function __construct(Router $router)
     {
@@ -31,7 +31,7 @@ final class RoutePermissionRepository implements PermissionRepository
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getForRoute($routeName)
     {
@@ -43,7 +43,7 @@ final class RoutePermissionRepository implements PermissionRepository
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getForAction($action)
     {
@@ -55,7 +55,7 @@ final class RoutePermissionRepository implements PermissionRepository
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function all()
     {
@@ -74,7 +74,7 @@ final class RoutePermissionRepository implements PermissionRepository
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getForPath($path)
     {
@@ -96,8 +96,7 @@ final class RoutePermissionRepository implements PermissionRepository
     /**
      * Extracts the permission configured inside the route action array.
      *
-     * @param Route $route
-     *
+     * @param  Route  $route
      * @return string|null
      */
     private function extractPermissionFrom(Route $route)

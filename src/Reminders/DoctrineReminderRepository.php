@@ -23,8 +23,8 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
     private $users;
 
     /**
-     * @param EntityManager  $entityManager
-     * @param UserRepository $users
+     * @param  EntityManager  $entityManager
+     * @param  UserRepository  $users
      */
     public function __construct(EntityManager $entityManager, UserRepository $users)
     {
@@ -36,9 +36,8 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
     /**
      * Check if a valid reminder exists.
      *
-     * @param  User   $user
-     * @param  string $code
-     *
+     * @param  User  $user
+     * @param  string  $code
      * @return bool
      */
     public function exists(UserInterface $user, string $code = null): bool
@@ -49,10 +48,9 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
     /**
      * Complete reminder for the given user.
      *
-     * @param  User   $user
-     * @param  string $code
-     * @param  string $password
-     *
+     * @param  User  $user
+     * @param  string  $code
+     * @param  string  $password
      * @return bool
      */
     public function complete(UserInterface $user, string $code, string $password): bool
@@ -116,7 +114,7 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setExpires($expires)
     {
@@ -131,7 +129,7 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
     abstract protected function entityName();
 
     /**
-     * @param Reminder $reminder
+     * @param  Reminder  $reminder
      */
     protected function save(Reminder $reminder)
     {
@@ -150,12 +148,11 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
     }
 
     /**
-     * @param UserInterface $user
-     * @param string|null   $code
+     * @param  UserInterface  $user
+     * @param  string|null  $code
+     * @return Reminder|null
      *
      * @throws \Doctrine\ORM\NonUniqueResultException
-     *
-     * @return Reminder|null
      */
     protected function findIncomplete(UserInterface $user, $code = null)
     {
