@@ -11,7 +11,6 @@ use Digbang\Security\Support\TimestampsTrait;
 use Digbang\Security\Users\DefaultUser;
 use Doctrine\Common\Collections\ArrayCollection;
 use Illuminate\Support\Str;
-use IteratorAggregate;
 
 class DefaultRole implements Role, Permissible
 {
@@ -42,16 +41,16 @@ class DefaultRole implements Role, Permissible
         $this->name = $name;
         $this->slug = $slug ?: Str::slug($name);
 
-        $this->permissions = new ArrayCollection;
-        $this->users = new ArrayCollection;
+        $this->permissions = new ArrayCollection();
+        $this->users = new ArrayCollection();
 
         $this->permissionsFactory = function () {
-            return new NullPermissions;
+            return new NullPermissions();
         };
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRoleId(): int
     {
@@ -59,7 +58,7 @@ class DefaultRole implements Role, Permissible
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRoleSlug(): string
     {
@@ -75,9 +74,9 @@ class DefaultRole implements Role, Permissible
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function getUsers(): IteratorAggregate
+    public function getUsers(): \IteratorAggregate
     {
         return $this->users;
     }
@@ -99,7 +98,7 @@ class DefaultRole implements Role, Permissible
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setName($name)
     {
@@ -107,7 +106,7 @@ class DefaultRole implements Role, Permissible
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setRoleSlug($slug)
     {
@@ -136,7 +135,7 @@ class DefaultRole implements Role, Permissible
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function is($role)
     {
@@ -148,7 +147,7 @@ class DefaultRole implements Role, Permissible
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function getUsersModel(): string
     {
@@ -156,7 +155,7 @@ class DefaultRole implements Role, Permissible
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function setUsersModel(string $usersModel): void
     {
@@ -164,7 +163,7 @@ class DefaultRole implements Role, Permissible
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function createPermission($permission, $value)
     {
@@ -172,7 +171,7 @@ class DefaultRole implements Role, Permissible
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function makePermissionsInstance()
     {

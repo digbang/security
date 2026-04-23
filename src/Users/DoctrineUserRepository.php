@@ -3,7 +3,6 @@
 namespace Digbang\Security\Users;
 
 use Cartalyst\Sentinel\Users\UserInterface;
-use Closure;
 use Digbang\Security\Persistences\PersistenceRepository;
 use Digbang\Security\Roles\Role;
 use Digbang\Security\Roles\Roleable;
@@ -12,7 +11,6 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Illuminate\Support\Arr;
-use InvalidArgumentException;
 
 abstract class DoctrineUserRepository extends EntityRepository implements UserRepository
 {
@@ -34,7 +32,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     public function __construct(
         EntityManager $entityManager,
         PersistenceRepository $persistences,
-        RoleRepository $roles
+        RoleRepository $roles,
     ) {
         parent::__construct($entityManager, $entityManager->getClassMetadata(
             $this->entityName()
@@ -126,9 +124,9 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
      * Validate if the given user is valid for creation.
      *
      * @param  array  $credentials
-     * @return bool
      *
      * @throws \InvalidArgumentException
+     * @return bool
      */
     public function validForCreation(array $credentials): bool
     {
@@ -140,9 +138,9 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
      *
      * @param  UserInterface|int  $user
      * @param  array  $credentials
-     * @return bool
      *
      * @throws \InvalidArgumentException
+     * @return bool
      */
     public function validForUpdate($user, array $credentials): bool
     {
@@ -160,7 +158,7 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
      * @param  \Closure  $callback
      * @return User|UserInterface
      */
-    public function create(array $credentials, Closure $callback = null): ?UserInterface
+    public function create(array $credentials, \Closure $callback = null): ?UserInterface
     {
         $user = $this->createUser($credentials);
 
@@ -217,12 +215,12 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function destroy(User $user)
     {
-        $this->_em->remove($user);
-        $this->_em->flush();
+        $this->getEntityManager()->remove($user);
+        $this->getEntityManager()->flush();
     }
 
     /**
@@ -243,9 +241,9 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
     /**
      * @param  array  $credentials
      * @param  int  $id
-     * @return bool
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
+     * @return bool
      */
     protected function validate(array $credentials, $id = null)
     {
@@ -280,8 +278,8 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
 
         if (array_key_exists('login', $credentials)) {
             $queryBuilder->andWhere($expr->orX(
-                $expr->eq($expr->lower($alias.'.email.address'), $expr->lower(':login')),
-                $expr->eq($expr->lower($alias.'.username'), $expr->lower(':login'))
+                $expr->eq($expr->lower($alias . '.email.address'), $expr->lower(':login')),
+                $expr->eq($expr->lower($alias . '.username'), $expr->lower(':login'))
             ));
 
             $queryBuilder->setParameter('login', $credentials['login']);
@@ -291,12 +289,12 @@ abstract class DoctrineUserRepository extends EntityRepository implements UserRe
             }
 
             if (isset($credentials['email'])) {
-                $queryBuilder->andWhere($expr->eq($expr->lower($alias.'.email.address'), $expr->lower(':email')));
+                $queryBuilder->andWhere($expr->eq($expr->lower($alias . '.email.address'), $expr->lower(':email')));
                 $queryBuilder->setParameter('email', $credentials['email']);
             }
 
             if (isset($credentials['username'])) {
-                $queryBuilder->andWhere($expr->eq($expr->lower($alias.'.username'), $expr->lower(':username')));
+                $queryBuilder->andWhere($expr->eq($expr->lower($alias . '.username'), $expr->lower(':username')));
                 $queryBuilder->setParameter('username', $credentials['username']);
             }
         }

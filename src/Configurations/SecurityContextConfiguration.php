@@ -352,7 +352,7 @@ class SecurityContextConfiguration
     public function setPrefix($prefix)
     {
         if ($prefix != '') {
-            $prefix = rtrim($prefix, '_').'_';
+            $prefix = rtrim($prefix, '_') . '_';
         }
 
         $this->prefix = $prefix;
@@ -651,7 +651,7 @@ class SecurityContextConfiguration
     public function getTable($entity)
     {
         if (array_key_exists($entity, $this->customTables)) {
-            return $this->prefix.$this->customTables[$entity];
+            return $this->prefix . $this->customTables[$entity];
         }
 
         return null;
@@ -675,14 +675,14 @@ class SecurityContextConfiguration
 
     /**
      * @param  string  $module
-     * @return $this
      *
      * @throws \InvalidArgumentException
+     * @return $this
      */
     private function enable($module)
     {
         if (! array_key_exists($module, $this->enabled)) {
-            throw new \InvalidArgumentException("Module '$module' cannot be enabled or disabled. Only [".implode(', ', array_keys($this->enabled)).'] can.');
+            throw new \InvalidArgumentException("Module '$module' cannot be enabled or disabled. Only [" . implode(', ', array_keys($this->enabled)) . '] can.');
         }
 
         $this->enabled[$module] = true;
@@ -692,14 +692,14 @@ class SecurityContextConfiguration
 
     /**
      * @param  string  $module
-     * @return $this
      *
      * @throws \InvalidArgumentException
+     * @return $this
      */
     private function disable($module)
     {
         if (! array_key_exists($module, $this->enabled)) {
-            throw new \InvalidArgumentException("Module '$module' cannot be enabled or disabled. Only [".implode(', ', array_keys($this->enabled)).'] can.');
+            throw new \InvalidArgumentException("Module '$module' cannot be enabled or disabled. Only [" . implode(', ', array_keys($this->enabled)) . '] can.');
         }
 
         $this->enabled[$module] = false;
@@ -709,14 +709,14 @@ class SecurityContextConfiguration
 
     /**
      * @param  string  $module
-     * @return bool
      *
      * @throws \InvalidArgumentException
+     * @return bool
      */
     private function isEnabled($module)
     {
         if (! array_key_exists($module, $this->enabled)) {
-            throw new \InvalidArgumentException("Module '$module' cannot be enabled or disabled. Only [".implode(', ', array_keys($this->enabled)).'] can.');
+            throw new \InvalidArgumentException("Module '$module' cannot be enabled or disabled. Only [" . implode(', ', array_keys($this->enabled)) . '] can.');
         }
 
         return $this->enabled[$module];
@@ -724,14 +724,14 @@ class SecurityContextConfiguration
 
     /**
      * @param  string  $entity
-     * @return string An FQCN that implements \LaravelDoctrine\Fluent\Mapping
      *
      * @throws \InvalidArgumentException
+     * @return string An FQCN that implements \LaravelDoctrine\Fluent\Mapping
      */
     private function getMapping($entity)
     {
         if (! array_key_exists($entity, $this->mappings)) {
-            throw new \InvalidArgumentException("'$entity' is not a valid mapping key. One of [".implode(', ', array_keys($this->mappings)).'] is expected.');
+            throw new \InvalidArgumentException("'$entity' is not a valid mapping key. One of [" . implode(', ', array_keys($this->mappings)) . '] is expected.');
         }
 
         return $this->mappings[$entity];
@@ -806,7 +806,7 @@ class SecurityContextConfiguration
     private function getRepository($entity)
     {
         if (! array_key_exists($entity, $this->repositories)) {
-            throw new \InvalidArgumentException("'$entity' is not a valid repository. One of [".implode(', ', array_keys($this->repositories)).'] is expected.');
+            throw new \InvalidArgumentException("'$entity' is not a valid repository. One of [" . implode(', ', array_keys($this->repositories)) . '] is expected.');
         }
 
         return $this->repositories[$entity];

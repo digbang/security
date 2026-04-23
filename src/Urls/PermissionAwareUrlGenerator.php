@@ -29,11 +29,6 @@ class PermissionAwareUrlGenerator implements UrlGenerator
         $this->securityApi = $securityApi;
     }
 
-    public function url(): UrlGenerator
-    {
-        return $this->url;
-    }
-
     public function __call($name, $args)
     {
         if (is_callable([$this->url, $name])) {
@@ -41,8 +36,13 @@ class PermissionAwareUrlGenerator implements UrlGenerator
         }
     }
 
+    public function url(): UrlGenerator
+    {
+        return $this->url;
+    }
+
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function route($name, $parameters = [], $absolute = true)
     {
@@ -54,7 +54,7 @@ class PermissionAwareUrlGenerator implements UrlGenerator
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function action($action, $parameters = [], $absolute = true)
     {
@@ -66,7 +66,7 @@ class PermissionAwareUrlGenerator implements UrlGenerator
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRootControllerNamespace()
     {
@@ -74,7 +74,7 @@ class PermissionAwareUrlGenerator implements UrlGenerator
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function to($path, $extra = [], $secure = null)
     {
@@ -88,7 +88,7 @@ class PermissionAwareUrlGenerator implements UrlGenerator
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function secure($path, $parameters = [])
     {
@@ -96,7 +96,7 @@ class PermissionAwareUrlGenerator implements UrlGenerator
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function asset($path, $secure = null)
     {
@@ -105,7 +105,7 @@ class PermissionAwareUrlGenerator implements UrlGenerator
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setRootControllerNamespace($rootNamespace)
     {

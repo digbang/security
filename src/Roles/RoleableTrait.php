@@ -3,25 +3,24 @@
 namespace Digbang\Security\Roles;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use IteratorAggregate;
 
 trait RoleableTrait
 {
     /**
-     * @var ArrayCollection|IteratorAggregate|Role[]
+     * @var ArrayCollection|\IteratorAggregate|Role[]
      */
     protected $roles;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function getRoles(): IteratorAggregate
+    public function getRoles(): \IteratorAggregate
     {
         return $this->roles;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function inRole($role): bool
     {
@@ -31,7 +30,7 @@ trait RoleableTrait
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addRole(Role $role)
     {
@@ -41,7 +40,7 @@ trait RoleableTrait
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function removeRole(Role $role)
     {

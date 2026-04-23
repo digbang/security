@@ -49,7 +49,7 @@ class DefaultActivation implements Activation, ActivationInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function __get($name)
     {
@@ -91,7 +91,7 @@ class DefaultActivation implements Activation, ActivationInterface
     }
 
     /**
-     * @return \Carbon\Carbon
+     * @return Carbon
      */
     public function getUpdatedAt()
     {
@@ -99,7 +99,7 @@ class DefaultActivation implements Activation, ActivationInterface
     }
 
     /**
-     * @return \Carbon\Carbon
+     * @return Carbon
      */
     public function getCreatedAt()
     {
@@ -107,7 +107,7 @@ class DefaultActivation implements Activation, ActivationInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getCode(): string
     {

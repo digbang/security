@@ -101,10 +101,8 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
             ->where('r.completed = :completed')
             ->andWhere('r.createdAt < :expires');
 
-        $queryBuilder->setParameters([
-            'completed' => false,
-            'expires' => $this->expires(),
-        ]);
+        $queryBuilder->setParameter('completed', false)
+            ->setParameter('expires', $this->expires());
 
         try {
             return (bool) $queryBuilder->getQuery()->getSingleScalarResult();
@@ -114,7 +112,7 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setExpires($expires)
     {
@@ -150,9 +148,9 @@ abstract class DoctrineReminderRepository extends EntityRepository implements Re
     /**
      * @param  UserInterface  $user
      * @param  string|null  $code
-     * @return Reminder|null
      *
      * @throws \Doctrine\ORM\NonUniqueResultException
+     * @return Reminder|null
      */
     protected function findIncomplete(UserInterface $user, $code = null)
     {

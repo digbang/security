@@ -13,7 +13,7 @@ class DefaultDoctrineThrottleRepository extends DoctrineThrottleRepository
     protected const ENTITY_CLASSNAME_USER = DefaultUserThrottle::class;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function entityName($type = null)
     {
@@ -34,7 +34,7 @@ class DefaultDoctrineThrottleRepository extends DoctrineThrottleRepository
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function createGlobalThrottle()
     {
@@ -44,7 +44,7 @@ class DefaultDoctrineThrottleRepository extends DoctrineThrottleRepository
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function createIpThrottle($ipAddress)
     {
@@ -54,7 +54,7 @@ class DefaultDoctrineThrottleRepository extends DoctrineThrottleRepository
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function createUserThrottle(User $user)
     {

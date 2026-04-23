@@ -85,14 +85,9 @@ trait RoleMappingTrait
      */
     public function addRelations(Fluent $builder)
     {
-        $users = $builder
+        $builder
             ->belongsToMany($this->relations['users'][0], $this->relations['users'][1])
-            ->mappedBy($this->relations['users'][2])
-            ->source('role_id')->target('user_id');
-
-        if ($this->joinTable) {
-            $users->joinTable($this->joinTable);
-        }
+            ->mappedBy($this->relations['users'][2]);
 
         if ($this->permissions) {
             $builder

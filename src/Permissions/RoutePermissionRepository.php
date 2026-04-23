@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 final class RoutePermissionRepository implements PermissionRepository
 {
     /**
-     * @var \Illuminate\Routing\Router
+     * @var Router
      */
     private $router;
 
@@ -31,7 +31,7 @@ final class RoutePermissionRepository implements PermissionRepository
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getForRoute($routeName)
     {
@@ -43,7 +43,7 @@ final class RoutePermissionRepository implements PermissionRepository
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getForAction($action)
     {
@@ -55,7 +55,7 @@ final class RoutePermissionRepository implements PermissionRepository
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function all()
     {
@@ -74,7 +74,7 @@ final class RoutePermissionRepository implements PermissionRepository
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getForPath($path)
     {

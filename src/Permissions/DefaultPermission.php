@@ -49,7 +49,7 @@ abstract class DefaultPermission implements Permission
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function allow()
     {
@@ -57,7 +57,7 @@ abstract class DefaultPermission implements Permission
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function deny()
     {

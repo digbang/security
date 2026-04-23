@@ -28,7 +28,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     use PermissibleTrait;
     use ThrottleableTrait;
     use RoleableTrait {
-        addRole    as _addRole;
+        addRole as _addRole;
         removeRole as _removeRole;
     }
 
@@ -65,15 +65,15 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
         $this->changePassword($password, $passwordExpiration);
         $this->changeUsername($username);
 
-        $this->roles = new ArrayCollection;
-        $this->permissions = new ArrayCollection;
-        $this->persistences = new ArrayCollection;
-        $this->activations = new ArrayCollection;
-        $this->reminders = new ArrayCollection;
-        $this->throttles = new ArrayCollection;
-        $this->name = new ValueObjects\Name;
+        $this->roles = new ArrayCollection();
+        $this->permissions = new ArrayCollection();
+        $this->persistences = new ArrayCollection();
+        $this->activations = new ArrayCollection();
+        $this->reminders = new ArrayCollection();
+        $this->throttles = new ArrayCollection();
+        $this->name = new ValueObjects\Name();
         $this->permissionsFactory = function () {
-            return new NullPermissions;
+            return new NullPermissions();
         };
     }
 
@@ -120,7 +120,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      * @throws \InvalidArgumentException
      */
@@ -154,7 +154,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getUserId(): int
     {
@@ -170,7 +170,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getUserLogin(): string
     {
@@ -178,7 +178,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getUserLoginName(): string
     {
@@ -186,7 +186,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getUserPassword(): string
     {
@@ -194,7 +194,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function checkPassword($password)
     {
@@ -202,7 +202,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getPersistableId(): string
     {
@@ -218,7 +218,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function recordLogin()
     {
@@ -241,7 +241,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function syncPermissions(array $permissions)
     {
@@ -281,7 +281,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addRole(Role $role)
     {
@@ -291,7 +291,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function removeRole(Role $role)
     {
@@ -317,7 +317,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * @return \Carbon\Carbon
+     * @return Carbon
      */
     public function getCreatedAt()
     {
@@ -325,7 +325,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * @return \Carbon\Carbon
+     * @return Carbon
      */
     public function getUpdatedAt()
     {
@@ -349,7 +349,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isActivated()
     {
@@ -359,7 +359,7 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getActivatedAt()
     {
@@ -384,13 +384,23 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
         return class_basename(static::class);
     }
 
+    public function setPersistableKey(string $key)
+    {
+        return 'user_id';
+    }
+
+    public function setPersistableRelationship(string $persistableRelationship)
+    {
+        return 'persistences';
+    }
+
     protected function createPermission($permission, $value)
     {
         return new DefaultUserPermission($this, $permission, $value);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function makePermissionsInstance()
     {
@@ -409,9 +419,9 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
 
     /**
      * @param  string  $username
-     * @return void
      *
      * @throws \InvalidArgumentException
+     * @return void
      */
     private function changeUsername(string $username): void
     {
@@ -428,15 +438,5 @@ class DefaultUser implements User, Roleable, Permissible, Persistable, Throttlea
     {
         $this->password = new ValueObjects\Password($password);
         $this->setPasswordExpiration($expiration);
-    }
-
-    public function setPersistableKey(string $key)
-    {
-        return 'user_id';
-    }
-
-    public function setPersistableRelationship(string $persistableRelationship)
-    {
-        return 'persistences';
     }
 }

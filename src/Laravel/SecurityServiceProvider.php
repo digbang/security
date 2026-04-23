@@ -70,9 +70,9 @@ class SecurityServiceProvider extends ServiceProvider
      */
     private function addMappings(FluentDriver $mappingDriver)
     {
-        $mappingDriver->addMapping(new NameMapping);
-        $mappingDriver->addMapping(new EmailMapping);
-        $mappingDriver->addMapping(new PasswordMapping);
+        $mappingDriver->addMapping(new NameMapping());
+        $mappingDriver->addMapping(new EmailMapping());
+        $mappingDriver->addMapping(new PasswordMapping());
     }
 
     /**

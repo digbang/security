@@ -36,7 +36,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function complete(UserInterface $user, string $code): bool
     {
@@ -57,7 +57,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
     /**
      * Checks if a valid activation has been completed.
      *
-     * @param  \Cartalyst\Sentinel\Users\UserInterface  $user
+     * @param  UserInterface  $user
      * @return bool
      */
     public function completed(UserInterface $user): bool
@@ -80,10 +80,8 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
             ->andWhere('a.completed = :completed');
 
         $queryBuilder
-            ->setParameters([
-                'user' => $user,
-                'completed' => true,
-            ]);
+            ->setParameter('user', $user)
+            ->setParameter('completed', true);
 
         try {
             return $queryBuilder->getQuery()->getSingleResult();
@@ -93,7 +91,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function remove(UserInterface $user): ?bool
     {
@@ -112,7 +110,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function removeExpired(): bool
     {
@@ -123,10 +121,8 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
             ->where('a.completed = :completed')
             ->andWhere('a.createdAt < :expires');
 
-        $queryBuilder->setParameters([
-            'completed' => false,
-            'expires' => $this->expires(),
-        ]);
+        $queryBuilder->setParameter('completed', false)
+            ->setParameter('expires', $this->expires());
 
         try {
             return (bool) $queryBuilder->getQuery()->getSingleScalarResult();
@@ -136,7 +132,7 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setExpires($expires)
     {
@@ -161,9 +157,9 @@ abstract class DoctrineActivationRepository extends EntityRepository implements 
     /**
      * @param  UserInterface  $user
      * @param  string|null  $code
-     * @return Activation|null
      *
      * @throws \Doctrine\ORM\NonUniqueResultException
+     * @return Activation|null
      */
     protected function findIncomplete(UserInterface $user, $code = null)
     {
