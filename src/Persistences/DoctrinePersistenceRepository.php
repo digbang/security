@@ -206,7 +206,7 @@ abstract class DoctrinePersistenceRepository extends EntityRepository implements
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setPersistenceMode($mode = 'single')
     {

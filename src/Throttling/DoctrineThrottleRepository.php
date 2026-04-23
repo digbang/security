@@ -43,7 +43,7 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
     /**
      * Cached global throttles collection within the interval.
      *
-     * @var \Illuminate\Support\Collection
+     * @var Collection
      */
     protected $globalThrottles;
 
@@ -85,7 +85,7 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
     /**
      * The cached user throttle collections within the interval.
      *
-     * @var \Illuminate\Support\Collection
+     * @var Collection
      */
     protected $userThrottles;
 
@@ -98,8 +98,8 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
             $this->entityName()
         ));
 
-        $this->ipThrottles = new Collection;
-        $this->userThrottles = new Collection;
+        $this->ipThrottles = new Collection();
+        $this->userThrottles = new Collection();
     }
 
     /**
@@ -163,7 +163,7 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function globalDelay()
     {
@@ -171,7 +171,7 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function ipDelay($ipAddress)
     {
@@ -179,7 +179,7 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function userDelay(UserInterface $user)
     {
@@ -252,9 +252,9 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
     protected function delay($type, $argument = null)
     {
         // Based on the given type, we will generate method and property names
-        $method = 'get'.Str::studly($type).'Throttles';
+        $method = 'get' . Str::studly($type) . 'Throttles';
 
-        $thresholds = $type.'Thresholds';
+        $thresholds = $type . 'Thresholds';
 
         /** @var Collection $throttles */
         $throttles = $this->{$method}($argument);
@@ -279,7 +279,7 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
                 }
             }
         } elseif ($throttles->count() > $this->$thresholds) {
-            $interval = $type.'Interval';
+            $interval = $type . 'Interval';
 
             $first = $throttles->first();
 
@@ -292,7 +292,7 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
     /**
      * Returns the global throttles collection.
      *
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     protected function getGlobalThrottles()
     {
@@ -306,7 +306,7 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
     /**
      * Loads and returns the global throttles collection.
      *
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     protected function loadGlobalThrottles()
     {
@@ -324,7 +324,7 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
      * Returns the IP address throttles collection.
      *
      * @param  string  $ipAddress
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     protected function getIpThrottles($ipAddress)
     {
@@ -339,7 +339,7 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
      * Loads and returns the IP address throttles collection.
      *
      * @param  string  $ipAddress
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     protected function loadIpThrottles($ipAddress)
     {
@@ -350,10 +350,8 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
             ->from($this->entityName('ip'), 't')
             ->where('t.createdAt > :interval')
             ->andWhere('t.ip = :ip')
-            ->setParameters([
-                'interval' => Carbon::now()->subSeconds($this->ipInterval),
-                'ip' => $ipAddress,
-            ]);
+            ->setParameter('interval', Carbon::now()->subSeconds($this->ipInterval))
+            ->setParameter('ip', $ipAddress);
 
         return new Collection($queryBuilder->getQuery()->getResult());
     }
@@ -361,8 +359,8 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
     /**
      * Returns the user throttles collection.
      *
-     * @param  \Cartalyst\Sentinel\Users\UserInterface  $user
-     * @return \Illuminate\Support\Collection
+     * @param  UserInterface  $user
+     * @return Collection
      */
     protected function getUserThrottles(UserInterface $user)
     {
@@ -376,8 +374,8 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
     /**
      * Loads and returns the user throttles collection.
      *
-     * @param  \Cartalyst\Sentinel\Users\UserInterface  $user
-     * @return \Illuminate\Support\Collection
+     * @param  UserInterface  $user
+     * @return Collection
      */
     protected function loadUserThrottles(UserInterface $user)
     {
@@ -387,10 +385,8 @@ abstract class DoctrineThrottleRepository extends EntityRepository implements Th
             ->from($this->entityName('user'), 't')
             ->where('t.createdAt > :interval')
             ->andWhere('t.user = :user')
-            ->setParameters([
-                'interval' => Carbon::now()->subSeconds($this->userInterval),
-                'user' => $user,
-            ]);
+            ->setParameter('interval', Carbon::now()->subSeconds($this->userInterval))
+            ->setParameter('user', $user);
 
         return new Collection($queryBuilder->getQuery()->getResult());
     }

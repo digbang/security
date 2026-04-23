@@ -27,19 +27,9 @@ class DefaultDoctrineReminderRepository extends DoctrineReminderRepository
     }
 
     /**
-     * Get the Reminder class name.
-     *
-     * @return string
-     */
-    protected function entityName()
-    {
-        return static::ENTITY_CLASSNAME;
-    }
-
-    /**
      * Gets the reminder for the given user.
      *
-     * @param  \Cartalyst\Sentinel\Users\UserInterface  $user
+     * @param  UserInterface  $user
      * @param  string|null  $code
      * @return Collection|null
      */
@@ -54,5 +44,15 @@ class DefaultDoctrineReminderRepository extends DoctrineReminderRepository
             ->setParameter('user', $user);
 
         return new Collection($queryBuilder->getQuery()->getResult());
+    }
+
+    /**
+     * Get the Reminder class name.
+     *
+     * @return string
+     */
+    protected function entityName()
+    {
+        return static::ENTITY_CLASSNAME;
     }
 }

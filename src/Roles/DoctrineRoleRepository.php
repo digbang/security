@@ -48,7 +48,7 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function findByName(string $name): ?RoleInterface
     {
@@ -59,7 +59,7 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function create($name, $slug = null)
     {
@@ -71,7 +71,7 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function save(Role $role)
     {
@@ -82,7 +82,7 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function delete(Role $role)
     {
@@ -93,11 +93,11 @@ abstract class DoctrineRoleRepository extends EntityRepository implements RoleRe
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function findAll()
+    public function findAll(): array
     {
-        return new Collection(parent::findAll());
+        return parent::findAll();
     }
 
     /**

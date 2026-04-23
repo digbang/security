@@ -18,7 +18,6 @@ use LaravelDoctrine\Fluent\FluentDriver;
 use LaravelDoctrine\Fluent\Mapping;
 use LaravelDoctrine\ORM\Configuration\MetaData\MetaDataManager;
 use LaravelDoctrine\ORM\Extensions\MappingDriverChain;
-use ReflectionClass;
 
 class SecurityContext
 {
@@ -236,9 +235,7 @@ class SecurityContext
         $mapping = $this->makeMapping($mapping);
 
         if (! method_exists($mapping, $method)) {
-            throw new \BadMethodCallException('EntityMapping ['.get_class($mapping).
-                "] does not implement '$method'."
-            );
+            throw new \BadMethodCallException('EntityMapping [' . get_class($mapping) . "] does not implement '$method'.");
         }
 
         return call_user_func_array([$mapping, $method], $params);
@@ -281,12 +278,12 @@ class SecurityContext
     private function addMappings($mappings, EntityManagerInterface $entityManager)
     {
         foreach ($mappings as $mapping) {
-            $reflect = new ReflectionClass($mapping->mapFor());
+            $reflect = new \ReflectionClass($mapping->mapFor());
             $namespace = explode('\\', $reflect->getNamespaceName());
 
             $driverName = $namespace[0];
             if (count($namespace) > 1) {
-                $driverName .= '\\'.$namespace[1];
+                $driverName .= '\\' . $namespace[1];
             }
 
             $fluent = $this->getOrCreateFluentDriver($entityManager, $driverName);

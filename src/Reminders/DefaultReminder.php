@@ -48,7 +48,7 @@ class DefaultReminder implements Reminder
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function complete()
     {
@@ -81,7 +81,7 @@ class DefaultReminder implements Reminder
     }
 
     /**
-     * @return \Carbon\Carbon
+     * @return Carbon
      */
     public function getCreatedAt()
     {
@@ -89,7 +89,7 @@ class DefaultReminder implements Reminder
     }
 
     /**
-     * @return \Carbon\Carbon
+     * @return Carbon
      */
     public function getUpdatedAt()
     {

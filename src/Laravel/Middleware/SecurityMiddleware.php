@@ -51,9 +51,9 @@ final class SecurityMiddleware
      * @param  Request  $request
      * @param  \Closure  $next
      * @param  string  $context
-     * @return mixed
      *
-     * @throws \Digbang\Security\Exceptions\Unauthorized
+     * @throws Unauthorized
+     * @return mixed
      */
     public function handle(Request $request, \Closure $next, $context)
     {
@@ -96,7 +96,7 @@ final class SecurityMiddleware
         } catch (\Exception $e) {
             // Silently fail and report, but still serve the content.
             $this->logger->error(
-                'Unable to garbage collect reminders or activations: '.
+                'Unable to garbage collect reminders or activations: ' .
                 $e->getMessage(),
                 $e->getTrace()
             );

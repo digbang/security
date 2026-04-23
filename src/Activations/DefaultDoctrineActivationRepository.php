@@ -27,19 +27,11 @@ class DefaultDoctrineActivationRepository extends DoctrineActivationRepository
     }
 
     /**
-     * @inheritdoc
-     */
-    protected function entityName()
-    {
-        return static::ENTITY_CLASSNAME;
-    }
-
-    /**
      * Gets the activation for the given user.
      *
-     * @param  \Cartalyst\Sentinel\Users\UserInterface  $user
+     * @param  UserInterface  $user
      * @param  string|null  $code
-     * @return \Cartalyst\Sentinel\Activations\ActivationInterface|null
+     * @return ActivationInterface|null
      */
     public function get(UserInterface $user, string $code = null): ?ActivationInterface
     {
@@ -52,5 +44,13 @@ class DefaultDoctrineActivationRepository extends DoctrineActivationRepository
             ->setParameter('user', $user);
 
         return $queryBuilder->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function entityName()
+    {
+        return static::ENTITY_CLASSNAME;
     }
 }

@@ -20,9 +20,9 @@ interface SecurityApi
      *
      * @param  array  $credentials
      * @param  \Closure|bool  $callback
-     * @return User|bool
      *
      * @throws \InvalidArgumentException
+     * @return User|bool
      */
     public function register(array $credentials, $callback = null);
 
@@ -38,9 +38,9 @@ interface SecurityApi
      * Activates the given user.
      *
      * @param  mixed  $user
-     * @return bool
      *
      * @throws \InvalidArgumentException
+     * @return bool
      */
     public function activate($user);
 
@@ -132,9 +132,8 @@ interface SecurityApi
     /**
      * Sends a response when HTTP basic authentication fails.
      *
-     * @return mixed
-     *
      * @throws \RuntimeException
+     * @return mixed
      */
     public function getBasicResponse();
 

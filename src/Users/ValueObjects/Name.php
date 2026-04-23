@@ -17,8 +17,8 @@ class Name
     /**
      * Name constructor.
      *
-     * @param  null|string  $firstName
-     * @param  null|string  $lastName
+     * @param  string|null  $firstName
+     * @param  string|null  $lastName
      */
     public function __construct(?string $firstName = null, ?string $lastName = null)
     {
@@ -60,6 +60,6 @@ class Name
      */
     public function getFullName($separator = ' ')
     {
-        return $this->firstName.$separator.$this->lastName;
+        return $this->firstName . $separator . $this->lastName;
     }
 }

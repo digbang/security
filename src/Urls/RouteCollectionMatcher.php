@@ -55,7 +55,7 @@ class RouteCollectionMatcher extends RouteCollection
             return 'matchAgainstRoutes';
         }
 
-        //Laravel <= 5.3
+        // Laravel <= 5.3
         return 'check';
     }
 }

@@ -29,7 +29,7 @@ interface User extends UserInterface, PersistableInterface
     public function getEmail();
 
     /**
-     * @return \Digbang\Security\Users\ValueObjects\Name|string
+     * @return ValueObjects\Name|string
      */
     public function getName();
 
@@ -44,22 +44,22 @@ interface User extends UserInterface, PersistableInterface
     public function isActivated();
 
     /**
-     * @return \Carbon\Carbon
+     * @return Carbon
      */
     public function getLastLogin(): ?Carbon;
 
     /**
-     * @return \Carbon\Carbon
+     * @return Carbon
      */
     public function getCreatedAt();
 
     /**
-     * @return \Carbon\Carbon
+     * @return Carbon
      */
     public function getUpdatedAt();
 
     /**
-     * @return \Carbon\Carbon|null
+     * @return Carbon|null
      */
     public function getActivatedAt();
 }

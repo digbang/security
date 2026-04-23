@@ -50,7 +50,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function createPersistenceRepository($context)
     {
@@ -79,7 +79,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function createUserRepository($context, PersistenceRepository $persistenceRepository, RoleRepository $roleRepository)
     {
@@ -98,7 +98,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function createRoleRepository($context)
     {
@@ -119,7 +119,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function createActivationRepository($context)
     {
@@ -141,7 +141,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function createReminderRepository($context, UserRepository $userRepository)
     {
@@ -164,7 +164,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function createPermissionRepository($context)
     {
@@ -183,7 +183,7 @@ class ConfigurationRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function createThrottleRepository($context)
     {

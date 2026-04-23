@@ -35,5 +35,5 @@ interface RoleRepository extends ObjectRepository, RoleRepositoryInterface, Sele
     /**
      * @return Collection|array
      */
-    public function findAll();
+    public function findAll(): array;
 }

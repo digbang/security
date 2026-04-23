@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\Criteria;
 class NullRoleRepository implements RoleRepository
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function findById(int $id): ?RoleInterface
     {
@@ -17,7 +17,7 @@ class NullRoleRepository implements RoleRepository
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function findBySlug($slug): ?RoleInterface
     {
@@ -25,7 +25,7 @@ class NullRoleRepository implements RoleRepository
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function findByName($name): ?RoleInterface
     {
@@ -33,7 +33,7 @@ class NullRoleRepository implements RoleRepository
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function find($id)
     {
@@ -41,39 +41,39 @@ class NullRoleRepository implements RoleRepository
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function findAll()
-    {
-        return new \Illuminate\Support\Collection;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+    public function findAll(): array
     {
         return [];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function findOneBy(array $criteria)
+    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function findOneBy(array $criteria): object|null
     {
         return null;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function getClassName()
+    public function getClassName(): string
     {
         return Role::class;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function matching(Criteria $criteria)
     {
@@ -89,10 +89,7 @@ class NullRoleRepository implements RoleRepository
      */
     public function create($name, $slug = null)
     {
-        throw new \BadMethodCallException(
-            "Cannot create role [$name], Roles are disabled. ".
-            'Enable Roles through the configuration and try again.'
-        );
+        throw new \BadMethodCallException("Cannot create role [$name], Roles are disabled. " . 'Enable Roles through the configuration and try again.');
     }
 
     /**
@@ -102,10 +99,7 @@ class NullRoleRepository implements RoleRepository
      */
     public function save(Role $role)
     {
-        throw new \BadMethodCallException(
-            'Cannot save role, Roles are disabled. '.
-            'Enable Roles through the configuration and try again.'
-        );
+        throw new \BadMethodCallException('Cannot save role, Roles are disabled. Enable Roles through the configuration and try again.');
     }
 
     /**
@@ -115,9 +109,6 @@ class NullRoleRepository implements RoleRepository
      */
     public function delete(Role $role)
     {
-        throw new \BadMethodCallException(
-            'Cannot delete role, Roles are disabled. '.
-            'Enable Roles through the configuration and try again.'
-        );
+        throw new \BadMethodCallException('Cannot delete role, Roles are disabled. Enable Roles through the configuration and try again.');
     }
 }

@@ -3,7 +3,7 @@
 namespace Digbang\Security\Permissions;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PostLoadEventArgs;
 use Doctrine\ORM\Events;
 
 class PermissionStrategyEventListener implements EventSubscriber
@@ -33,9 +33,9 @@ class PermissionStrategyEventListener implements EventSubscriber
         return [Events::postLoad];
     }
 
-    public function postLoad(LifecycleEventArgs $eventArgs)
+    public function postLoad(PostLoadEventArgs $eventArgs)
     {
-        $entity = $eventArgs->getEntity();
+        $entity = $eventArgs->getObject();
 
         if ($entity instanceof Permissible) {
             $entity->setPermissionsFactory($this->permissionFactory);

@@ -14,7 +14,6 @@ use Digbang\Security\Users\User;
 /**
  * Class Security.
  *
- *
  * @method User findById(int $id)
  * @method User findByCredentials(array $credentials)
  * @method User findByPersistenceCode(string $code)
@@ -71,9 +70,9 @@ final class Security implements SecurityApi
      *
      * @param  string  $method
      * @param  array  $parameters
-     * @return mixed
      *
      * @throws \BadMethodCallException
+     * @return mixed
      */
     public function __call($method, $parameters)
     {
@@ -94,9 +93,9 @@ final class Security implements SecurityApi
      *
      * @param  array  $credentials
      * @param  \Closure|bool  $callback
-     * @return User|bool
      *
      * @throws \InvalidArgumentException
+     * @return User|bool
      */
     public function register(array $credentials, $callback = null)
     {
@@ -118,9 +117,9 @@ final class Security implements SecurityApi
      * Activates the given user.
      *
      * @param  mixed  $user
-     * @return bool
      *
      * @throws \InvalidArgumentException
+     * @return bool
      */
     public function activate($user)
     {
@@ -248,9 +247,8 @@ final class Security implements SecurityApi
     /**
      * Sends a response when HTTP basic authentication fails.
      *
-     * @return mixed
-     *
      * @throws \RuntimeException
+     * @return mixed
      */
     public function getBasicResponse()
     {
