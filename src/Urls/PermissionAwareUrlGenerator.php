@@ -56,6 +56,30 @@ class PermissionAwareUrlGenerator implements UrlGenerator
     /**
      * {@inheritdoc}
      */
+    public function signedRoute($name, $parameters = [], $expiration = null, $absolute = true)
+    {
+        $permission = $this->securityApi->permissions()->getForRoute($name);
+
+        $this->checkPermission($permission);
+
+        return $this->url->signedRoute($name, $parameters, $expiration, $absolute);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function temporarySignedRoute($name, $expiration, $parameters = [], $absolute = true)
+    {
+        $permission = $this->securityApi->permissions()->getForRoute($name);
+
+        $this->checkPermission($permission);
+
+        return $this->url->temporarySignedRoute($name, $expiration, $parameters, $absolute);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function action($action, $parameters = [], $absolute = true)
     {
         $permission = $this->securityApi->permissions()->getForAction($action);
