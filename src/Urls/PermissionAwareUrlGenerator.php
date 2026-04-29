@@ -122,6 +122,20 @@ class PermissionAwareUrlGenerator implements UrlGenerator
     /**
      * {@inheritdoc}
      */
+    public function query($path, $query = [], $extra = [], $secure = null)
+    {
+        $url = $this->url->query($path, $query, $extra, $secure);
+
+        $permission = $this->securityApi->permissions()->getForPath($url);
+
+        $this->checkPermission($permission);
+
+        return $url;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function asset($path, $secure = null)
     {
         // Assets are not subject to permissions.
