@@ -2,6 +2,7 @@
 
 namespace Digbang\Security\Urls;
 
+use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Routing\RouteCollectionInterface;
 use Illuminate\Routing\UrlGenerator;
@@ -79,12 +80,12 @@ class PermissionAwareUrlGeneratorExtension extends UrlGenerator
         return $this->urlGenerator->url()->temporarySignedRoute($name, $expiration, $parameters, $absolute);
     }
 
-    public function hasValidSignature(Request $request, $absolute = true, array $ignoreQuery = [])
+    public function hasValidSignature(Request $request, $absolute = true, Closure|array $ignoreQuery = [])
     {
         return $this->urlGenerator->url()->hasValidSignature($request, $absolute, $ignoreQuery);
     }
 
-    public function hasCorrectSignature(Request $request, $absolute = true, array $ignoreQuery = [])
+    public function hasCorrectSignature(Request $request, $absolute = true, Closure|array $ignoreQuery = [])
     {
         return $this->urlGenerator->url()->hasCorrectSignature($request, $absolute, $ignoreQuery);
     }
